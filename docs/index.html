@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Stefan Eschgfäller — Software Developer</title>
+  <meta name="description" content="Stefan Eschgfäller — software developer with almost two decades of experience in C#, C++, Python, ASP.NET Core, gRPC, Entity Framework Core, PostgreSQL and Qt." />
+  <meta name="author" content="Stefan Eschgfäller" />
+  <meta name="theme-color" content="#0a0e14" />
+
+  <!-- Open Graph / Twitter -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Stefan Eschgfäller — Software Developer" />
+  <meta property="og:description" content="Software developer with almost two decades of experience in C#, C++, Python, ASP.NET Core, gRPC, EF Core, PostgreSQL and Qt." />
+  <meta property="og:url" content="https://eschgi.com/" />
+  <meta property="og:image" content="https://eschgi.com/assets/avatar.jpg" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Stefan Eschgfäller — Software Developer" />
+  <meta name="twitter:description" content="Software developer with almost two decades of experience." />
+  <meta name="twitter:image" content="https://eschgi.com/assets/avatar.jpg" />
+
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="scanlines" aria-hidden="true"></div>
+
+  <main class="terminal" role="main">
+    <!-- Window title bar -->
+    <header class="titlebar">
+      <span class="dots" aria-hidden="true">
+        <span class="dot dot--red"></span>
+        <span class="dot dot--yellow"></span>
+        <span class="dot dot--green"></span>
+      </span>
+      <span class="titlebar__title">stefan@eschgi: ~</span>
+      <span class="titlebar__spacer" aria-hidden="true"></span>
+    </header>
+
+    <div class="terminal__body">
+      <!-- Hero -->
+      <section class="hero" aria-label="Introduction">
+        <img class="hero__avatar" src="assets/avatar.jpg" width="140" height="140"
+             alt="Portrait of Stefan Eschgfäller" />
+        <div class="hero__intro">
+          <p class="hero__greeting"><span class="muted">$</span> whoami</p>
+          <h1 class="hero__name">Stefan Eschgfäller</h1>
+          <p class="hero__role">
+            <span id="typed" class="typed"></span><span class="cursor" aria-hidden="true">▋</span>
+          </p>
+        </div>
+      </section>
+
+      <!-- whoami -->
+      <section class="block" aria-labelledby="about-cmd">
+        <p class="prompt" id="about-cmd"><span class="muted">$</span> cat <span class="file">about.txt</span></p>
+        <p class="output">
+          I'm a software developer with <strong>almost two decades</strong> of experience,
+          working mainly with C#, C++, Python, ASP.NET Core, REST, gRPC,
+          Entity Framework Core, PostgreSQL, and Qt.
+        </p>
+        <ul class="output bullets">
+          <li><span class="arrow">&gt;</span> Always learning and exploring new technologies to sharpen my skills.</li>
+          <li><span class="arrow">&gt;</span> Open to collaborating on open-source projects and innovative solutions.</li>
+        </ul>
+      </section>
+
+      <!-- skills -->
+      <section class="block" aria-labelledby="skills-cmd">
+        <p class="prompt" id="skills-cmd"><span class="muted">$</span> ls <span class="file">skills/</span></p>
+        <div class="output skills">
+          <div class="skill-group">
+            <h2 class="skill-group__title">languages/</h2>
+            <ul class="badges">
+              <li class="badge">C#</li>
+              <li class="badge">C++</li>
+              <li class="badge">Python</li>
+              <li class="badge">Java</li>
+              <li class="badge">Delphi</li>
+            </ul>
+          </div>
+          <div class="skill-group">
+            <h2 class="skill-group__title">frameworks/</h2>
+            <ul class="badges">
+              <li class="badge">ASP.NET Core</li>
+              <li class="badge">gRPC</li>
+              <li class="badge">Entity Framework Core</li>
+              <li class="badge">Qt</li>
+            </ul>
+          </div>
+          <div class="skill-group">
+            <h2 class="skill-group__title">databases/</h2>
+            <ul class="badges">
+              <li class="badge">PostgreSQL</li>
+              <li class="badge">Firebird</li>
+              <li class="badge">MySQL</li>
+              <li class="badge">DuckDB</li>
+            </ul>
+          </div>
+          <div class="skill-group">
+            <h2 class="skill-group__title">tools/</h2>
+            <ul class="badges">
+              <li class="badge">Docker</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- contact -->
+      <section class="block" aria-labelledby="contact-cmd">
+        <p class="prompt" id="contact-cmd"><span class="muted">$</span> cat <span class="file">contact.txt</span></p>
+        <ul class="output links">
+          <li>
+            <a href="https://github.com/eschgi" target="_blank" rel="noopener noreferrer">
+              <span class="arrow">&gt;</span> GitHub <span class="muted">— github.com/eschgi</span>
+            </a>
+          </li>
+          <li>
+            <a href="https://www.linkedin.com/in/stefaneschgfaeller" target="_blank" rel="noopener noreferrer">
+              <span class="arrow">&gt;</span> LinkedIn <span class="muted">— /in/stefaneschgfaeller</span>
+            </a>
+          </li>
+        </ul>
+      </section>
+
+      <footer class="footer">
+        <p class="prompt"><span class="muted">$</span> echo "Thanks for visiting!" <span class="blink" aria-hidden="true">▋</span></p>
+        <p class="footer__meta muted">© <span id="year"></span> Stefan Eschgfäller · Built with HTML, CSS &amp; a terminal.</p>
+      </footer>
+    </div>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>

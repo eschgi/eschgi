@@ -1,0 +1,252 @@
+/* ===========================================================
+   Terminal-style portfolio — Stefan Eschgfäller
+   Dependency-free. Palette: deep ink + green/cyan accents.
+   =========================================================== */
+
+:root {
+  --bg:        #05070d;
+  --term-bg:   #0a0e14;
+  --term-bar:  #11161f;
+  --border:    #1d2733;
+  --fg:        #c9d3df;
+  --muted:     #5c6b7a;
+  --green:     #38e07b;
+  --cyan:      #4dd0e1;
+  --magenta:   #c792ea;
+  --yellow:    #ffcb6b;
+  --shadow:    0 24px 60px rgba(0, 0, 0, 0.55);
+  --radius:    12px;
+  --mono: "JetBrains Mono", "Fira Code", "SF Mono", "Cascadia Code",
+          "Consolas", "Liberation Mono", monospace;
+}
+
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  padding: clamp(1rem, 4vw, 3rem);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--mono);
+  font-size: clamp(0.9rem, 0.6rem + 0.6vw, 1rem);
+  line-height: 1.65;
+  color: var(--fg);
+  background:
+    radial-gradient(1200px 600px at 15% -10%, rgba(56, 224, 123, 0.10), transparent 60%),
+    radial-gradient(1000px 500px at 110% 110%, rgba(77, 208, 225, 0.10), transparent 55%),
+    var(--bg);
+  background-attachment: fixed;
+}
+
+/* Subtle CRT scanline overlay */
+.scanlines {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.02) 0,
+    rgba(255, 255, 255, 0.02) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+  mix-blend-mode: overlay;
+  opacity: 0.5;
+}
+
+/* ---------- Terminal window ---------- */
+.terminal {
+  width: min(820px, 100%);
+  background: var(--term-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.titlebar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.7rem 1rem;
+  background: var(--term-bar);
+  border-bottom: 1px solid var(--border);
+}
+
+.dots { display: inline-flex; gap: 0.5rem; }
+
+.dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  display: inline-block;
+}
+.dot--red    { background: #ff5f56; }
+.dot--yellow { background: #ffbd2e; }
+.dot--green  { background: #27c93f; }
+
+.titlebar__title {
+  flex: 0 1 auto;
+  color: var(--muted);
+  font-size: 0.85em;
+  letter-spacing: 0.02em;
+}
+.titlebar__spacer { flex: 1; }
+
+.terminal__body {
+  padding: clamp(1.25rem, 4vw, 2.5rem);
+}
+
+/* ---------- Hero ---------- */
+.hero {
+  display: flex;
+  align-items: center;
+  gap: clamp(1rem, 4vw, 2rem);
+  flex-wrap: wrap;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px dashed var(--border);
+}
+
+.hero__avatar {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--green);
+  padding: 4px;
+  background: var(--term-bg);
+  box-shadow: 0 0 0 1px var(--border), 0 0 28px rgba(56, 224, 123, 0.35);
+  flex: 0 0 auto;
+}
+
+.hero__intro { flex: 1 1 280px; min-width: 0; }
+
+.hero__greeting {
+  margin: 0 0 0.25rem;
+  color: var(--muted);
+}
+
+.hero__name {
+  margin: 0 0 0.4rem;
+  font-size: clamp(1.6rem, 1rem + 3vw, 2.6rem);
+  font-weight: 700;
+  line-height: 1.1;
+  color: #fff;
+}
+
+.hero__role {
+  margin: 0;
+  font-size: clamp(1rem, 0.8rem + 1vw, 1.25rem);
+  color: var(--cyan);
+  min-height: 1.6em;
+}
+
+/* ---------- Blocks ---------- */
+.block { padding: 1.5rem 0; border-bottom: 1px dashed var(--border); }
+.block:last-of-type { border-bottom: none; }
+
+.prompt { margin: 0 0 0.75rem; color: var(--green); font-weight: 500; }
+.muted  { color: var(--muted); }
+.file   { color: var(--yellow); }
+.arrow  { color: var(--green); margin-right: 0.4rem; }
+
+.output { margin: 0; color: var(--fg); }
+.output strong { color: var(--cyan); font-weight: 700; }
+
+.bullets {
+  list-style: none;
+  padding: 0;
+  margin: 0.5rem 0 0;
+}
+.bullets li { margin: 0.35rem 0; }
+
+/* ---------- Skills ---------- */
+.skills {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.25rem;
+}
+
+.skill-group__title {
+  margin: 0 0 0.6rem;
+  font-size: 0.9em;
+  font-weight: 500;
+  color: var(--magenta);
+}
+
+.badges {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0;
+  margin: 0;
+}
+
+.badge {
+  padding: 0.3rem 0.7rem;
+  font-size: 0.85em;
+  color: var(--fg);
+  background: rgba(77, 208, 225, 0.06);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  transition: transform 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+.badge:hover {
+  transform: translateY(-2px);
+  border-color: var(--green);
+  color: var(--green);
+}
+
+/* ---------- Links ---------- */
+.links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.links li { margin: 0.4rem 0; }
+
+.links a {
+  color: var(--cyan);
+  text-decoration: none;
+  transition: color 0.15s ease, letter-spacing 0.15s ease;
+}
+.links a:hover,
+.links a:focus-visible {
+  color: var(--green);
+  outline: none;
+}
+.links a:focus-visible { text-decoration: underline; }
+
+/* ---------- Footer ---------- */
+.footer { padding-top: 1.5rem; }
+.footer__meta { margin: 0.5rem 0 0; font-size: 0.82em; }
+
+/* ---------- Cursor / blink ---------- */
+.cursor,
+.blink {
+  color: var(--green);
+  animation: blink 1.05s step-end infinite;
+}
+@keyframes blink { 50% { opacity: 0; } }
+
+/* ---------- Reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .cursor, .blink { animation: none; }
+  .badge { transition: none; }
+  .scanlines { display: none; }
+}
+
+/* ---------- Small screens ---------- */
+@media (max-width: 520px) {
+  .hero { justify-content: center; text-align: center; }
+  .hero__intro { flex-basis: 100%; }
+  .titlebar__title { display: none; }
+}
