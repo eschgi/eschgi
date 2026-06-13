@@ -446,3 +446,167 @@ body {
   .hero__intro { flex-basis: 100%; }
   .titlebar__title { display: none; }
 }
+
+/* ===========================================================
+   Hidden easter egg — terminal Snake (built/destroyed by JS)
+   =========================================================== */
+.egg {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(1rem, 4vw, 2rem);
+  background: rgba(3, 5, 10, 0.72);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+  animation: egg-in 0.18s ease-out;
+}
+
+@keyframes egg-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.egg__panel {
+  width: min(92vw, 460px);
+  background: var(--term-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow), 0 0 40px rgba(56, 224, 123, 0.12);
+  overflow: hidden;
+}
+
+.egg__close {
+  margin-left: auto;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 0.9em;
+  line-height: 1;
+  cursor: pointer;
+  transition: color 0.15s ease, background 0.15s ease;
+}
+.egg__close:hover,
+.egg__close:focus-visible { color: var(--fg); background: rgba(255, 255, 255, 0.06); }
+
+.egg__body { padding: clamp(0.9rem, 3vw, 1.25rem); }
+
+.egg__hud {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.6rem;
+  font-size: 0.85em;
+  color: var(--muted);
+}
+.egg__hud b { color: var(--green); font-weight: 700; }
+
+.egg__stage {
+  position: relative;
+  display: grid;
+  place-items: center;
+  touch-action: none; /* capture swipes; stop the page scrolling under it */
+}
+
+.egg__canvas {
+  width: 100%;
+  max-width: 400px;
+  height: auto;
+  aspect-ratio: 1 / 1;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  image-rendering: pixelated;
+}
+
+/* ---------- Touch D-pad (shown only on coarse pointers) ---------- */
+.egg__controls { display: none; }
+
+@media (pointer: coarse) {
+  .egg__controls {
+    display: grid;
+    grid-template-columns: repeat(3, 56px);
+    grid-template-rows: repeat(3, 56px);
+    justify-content: center;
+    gap: 0.4rem;
+    margin-top: 0.9rem;
+  }
+  .egg__pad--up    { grid-area: 1 / 2; }
+  .egg__pad--left  { grid-area: 2 / 1; }
+  .egg__pad--mid   { grid-area: 2 / 2; }
+  .egg__pad--right { grid-area: 2 / 3; }
+  .egg__pad--down  { grid-area: 3 / 2; }
+}
+
+.egg__pad-btn {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--term-bar);
+  color: var(--green);
+  font-size: 1.1rem;
+  line-height: 1;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+.egg__pad-btn:active { background: rgba(56, 224, 123, 0.18); }
+.egg__pad--mid { color: var(--cyan); }
+
+.egg__msg {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  text-align: center;
+  background: rgba(5, 7, 13, 0.78);
+  border-radius: 8px;
+}
+/* A class selector would otherwise beat the UA `[hidden]` rule. */
+.egg__msg[hidden] { display: none; }
+.egg__over {
+  font-size: clamp(1.4rem, 6vw, 2rem);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--green);
+}
+/* Keep the glitch alive without a hover (the base class only runs on :hover). */
+.egg__over.glitch::before { animation: glitch-x 0.6s steps(2, end) infinite; }
+.egg__over.glitch::after  { animation: glitch-y 0.6s steps(2, end) infinite; }
+.egg__final { color: var(--fg); }
+.egg__record { color: var(--yellow); font-style: normal; }
+.egg__again,
+.egg__paused { font-size: 0.85em; }
+.egg__paused {
+  font-size: clamp(1.1rem, 5vw, 1.6rem);
+  letter-spacing: 0.1em;
+  color: var(--cyan);
+}
+
+.egg__hint {
+  margin: 0.7rem 0 0;
+  text-align: center;
+  font-size: 0.78em;
+}
+
+/* Snappy triple-tap unlock on touch (no double-tap-zoom delay). */
+.hero__avatar { touch-action: manipulation; }
+
+/* Keep the whole game within a phone viewport (board + D-pad + chrome). */
+@media (pointer: coarse) and (max-height: 760px) {
+  .egg__canvas { max-width: min(400px, 56vh); }
+}
