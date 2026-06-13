@@ -511,6 +511,7 @@ body {
   position: relative;
   display: grid;
   place-items: center;
+  touch-action: none; /* capture swipes; stop the page scrolling under it */
 }
 
 .egg__canvas {
@@ -521,8 +522,47 @@ body {
   border: 1px solid var(--border);
   border-radius: 8px;
   image-rendering: pixelated;
-  touch-action: none;
 }
+
+/* ---------- Touch D-pad (shown only on coarse pointers) ---------- */
+.egg__controls { display: none; }
+
+@media (pointer: coarse) {
+  .egg__controls {
+    display: grid;
+    grid-template-columns: repeat(3, 56px);
+    grid-template-rows: repeat(3, 56px);
+    justify-content: center;
+    gap: 0.4rem;
+    margin-top: 0.9rem;
+  }
+  .egg__pad--up    { grid-area: 1 / 2; }
+  .egg__pad--left  { grid-area: 2 / 1; }
+  .egg__pad--mid   { grid-area: 2 / 2; }
+  .egg__pad--right { grid-area: 2 / 3; }
+  .egg__pad--down  { grid-area: 3 / 2; }
+}
+
+.egg__pad-btn {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--term-bar);
+  color: var(--green);
+  font-size: 1.1rem;
+  line-height: 1;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+.egg__pad-btn:active { background: rgba(56, 224, 123, 0.18); }
+.egg__pad--mid { color: var(--cyan); }
 
 .egg__msg {
   position: absolute;
@@ -561,4 +601,12 @@ body {
   margin: 0.7rem 0 0;
   text-align: center;
   font-size: 0.78em;
+}
+
+/* Snappy triple-tap unlock on touch (no double-tap-zoom delay). */
+.hero__avatar { touch-action: manipulation; }
+
+/* Keep the whole game within a phone viewport (board + D-pad + chrome). */
+@media (pointer: coarse) and (max-height: 760px) {
+  .egg__canvas { max-width: min(400px, 56vh); }
 }

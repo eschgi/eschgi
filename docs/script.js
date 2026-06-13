@@ -318,6 +318,9 @@
     var HS_KEY = "eschgi.snake.hi";
     var BASE_MS = 130, // step interval at score 0
       MIN_MS = 70;
+    var coarse = !!(
+      window.matchMedia && window.matchMedia("(pointer: coarse)").matches
+    );
 
     // --- unlock: 3 clicks within a rolling 700ms window ----------------------
     var clicks = 0,
@@ -399,21 +402,37 @@
       stage.appendChild(canvas);
       stage.appendChild(msg);
 
+      // On-screen controls for touch (CSS shows them only on coarse pointers).
+      var controls = el("div", "egg__controls");
+      controls.innerHTML =
+        '<button type="button" class="egg__pad-btn egg__pad--up" data-dir="up" aria-label="Up">&#9650;</button>' +
+        '<button type="button" class="egg__pad-btn egg__pad--left" data-dir="left" aria-label="Left">&#9664;</button>' +
+        '<button type="button" class="egg__pad-btn egg__pad--mid" data-action="pause" aria-label="Pause or resume">&#9208;</button>' +
+        '<button type="button" class="egg__pad-btn egg__pad--right" data-dir="right" aria-label="Right">&#9654;</button>' +
+        '<button type="button" class="egg__pad-btn egg__pad--down" data-dir="down" aria-label="Down">&#9660;</button>';
+
       var hint = el(
         "p",
         "egg__hint muted",
-        "arrows / wasd&nbsp;·&nbsp;p pause&nbsp;·&nbsp;r restart&nbsp;·&nbsp;esc quit"
+        coarse
+          ? "swipe or use the pad&nbsp;·&nbsp;tap board to pause&nbsp;·&nbsp;✕ to quit"
+          : "arrows / wasd&nbsp;·&nbsp;p pause&nbsp;·&nbsp;r restart&nbsp;·&nbsp;esc quit"
       );
 
       var body = el("div", "egg__body");
       body.appendChild(hud);
       body.appendChild(stage);
+      body.appendChild(controls);
       body.appendChild(hint);
 
       panel.appendChild(bar);
       panel.appendChild(body);
       overlay.appendChild(panel);
       document.body.appendChild(overlay);
+
+      // Lock background scroll while the game is open (iOS rubber-banding etc.).
+      var prevBodyOverflow = document.body.style.overflow;
+      document.body.style.overflow = "hidden";
 
       var ctx = canvas.getContext("2d");
       var prevFocus = document.activeElement;
@@ -589,7 +608,9 @@
             score +
             (record ? ' · <em class="egg__record">new high!</em>' : "") +
             "</span>" +
-            '<span class="egg__again muted">press r to retry · esc to quit</span>'
+            '<span class="egg__again muted">' +
+            (coarse ? "tap to retry · ✕ to quit" : "press r to retry · esc to quit") +
+            "</span>"
         );
       }
 
@@ -629,20 +650,25 @@
           setDir(1, 0);
           e.preventDefault();
         } else if (k === "p" || k === " ") {
-          paused = !paused;
           e.preventDefault();
-          if (paused) {
-            showMsg('<span class="egg__paused">paused</span>');
-          } else {
-            hideMsg();
-            last = 0;
-          }
+          togglePause();
         } else if (k === "r") {
           reset();
         }
       }
 
-      // Touch: swipe to steer.
+      function togglePause() {
+        if (over) return;
+        paused = !paused;
+        if (paused) {
+          showMsg('<span class="egg__paused">paused</span>');
+        } else {
+          hideMsg();
+          last = 0;
+        }
+      }
+
+      // Touch: swipe to steer, tap to pause/resume, tap to retry when over.
       var tsx = 0,
         tsy = 0;
       function onTouchStart(e) {
@@ -651,19 +677,33 @@
         tsy = t.clientY;
       }
       function onTouchEnd(e) {
-        if (over) {
-          reset();
-          return;
-        }
         var t = e.changedTouches[0];
         var dx = t.clientX - tsx,
           dy = t.clientY - tsy;
-        if (Math.abs(dx) < 16 && Math.abs(dy) < 16) return; // a tap, not a swipe
+        var isTap = Math.abs(dx) < 16 && Math.abs(dy) < 16;
+        if (over) return reset(); // tap the board to retry
+        if (isTap) return togglePause(); // tap to pause/resume
         if (Math.abs(dx) > Math.abs(dy)) setDir(dx > 0 ? 1 : -1, 0);
         else setDir(0, dy > 0 ? 1 : -1);
       }
       function onTouchMove(e) {
         e.preventDefault(); // stop the page scrolling under the board
+      }
+
+      // On-screen D-pad / pause button (touch).
+      function onPad(e) {
+        var btn = e.target.closest("[data-dir],[data-action]");
+        if (!btn) return;
+        e.preventDefault();
+        if (btn.getAttribute("data-action") === "pause") {
+          return over ? reset() : togglePause();
+        }
+        if (over) return reset();
+        var d = btn.getAttribute("data-dir");
+        if (d === "up") setDir(0, -1);
+        else if (d === "down") setDir(0, 1);
+        else if (d === "left") setDir(-1, 0);
+        else if (d === "right") setDir(1, 0);
       }
 
       function onVisibility() {
@@ -677,11 +717,13 @@
       function exitGame() {
         open = false;
         if (rafId) cancelAnimationFrame(rafId);
+        document.body.style.overflow = prevBodyOverflow; // restore scroll
         window.removeEventListener("keydown", onKey, true);
         document.removeEventListener("visibilitychange", onVisibility);
-        canvas.removeEventListener("touchstart", onTouchStart);
-        canvas.removeEventListener("touchend", onTouchEnd);
-        canvas.removeEventListener("touchmove", onTouchMove);
+        stage.removeEventListener("touchstart", onTouchStart);
+        stage.removeEventListener("touchend", onTouchEnd);
+        stage.removeEventListener("touchmove", onTouchMove);
+        controls.removeEventListener("pointerdown", onPad);
         closeBtn.removeEventListener("click", exitGame);
         overlay.removeEventListener("mousedown", onBackdrop);
         if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
@@ -695,9 +737,10 @@
       // --- wire up & go ------------------------------------------------------
       window.addEventListener("keydown", onKey, true);
       document.addEventListener("visibilitychange", onVisibility);
-      canvas.addEventListener("touchstart", onTouchStart, { passive: true });
-      canvas.addEventListener("touchend", onTouchEnd, { passive: true });
-      canvas.addEventListener("touchmove", onTouchMove, { passive: false });
+      stage.addEventListener("touchstart", onTouchStart, { passive: true });
+      stage.addEventListener("touchend", onTouchEnd, { passive: true });
+      stage.addEventListener("touchmove", onTouchMove, { passive: false });
+      controls.addEventListener("pointerdown", onPad);
       closeBtn.addEventListener("click", exitGame);
       overlay.addEventListener("mousedown", onBackdrop);
 
