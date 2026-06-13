@@ -3,20 +3,20 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Stefan Eschgfäller — Software Developer</title>
-  <meta name="description" content="Stefan Eschgfäller — software developer with almost two decades of experience in C#, C++, Python, ASP.NET Core, gRPC, Entity Framework Core, PostgreSQL and Qt." />
+  <title>Stefan Eschgfäller — Software Engineer</title>
+  <meta name="description" content="Stefan Eschgfäller — software engineer with almost two decades of experience in C#, C++, Python, ASP.NET Core, gRPC, Entity Framework Core, PostgreSQL and Qt." />
   <meta name="author" content="Stefan Eschgfäller" />
   <meta name="theme-color" content="#0a0e14" />
 
   <!-- Open Graph / Twitter -->
   <meta property="og:type" content="website" />
-  <meta property="og:title" content="Stefan Eschgfäller — Software Developer" />
-  <meta property="og:description" content="Software developer with almost two decades of experience in C#, C++, Python, ASP.NET Core, gRPC, EF Core, PostgreSQL and Qt." />
+  <meta property="og:title" content="Stefan Eschgfäller — Software Engineer" />
+  <meta property="og:description" content="Software engineer with almost two decades of experience in C#, C++, Python, ASP.NET Core, gRPC, EF Core, PostgreSQL and Qt." />
   <meta property="og:url" content="https://eschgi.com/" />
   <meta property="og:image" content="https://eschgi.com/assets/avatar.jpg" />
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Stefan Eschgfäller — Software Developer" />
-  <meta name="twitter:description" content="Software developer with almost two decades of experience." />
+  <meta name="twitter:title" content="Stefan Eschgfäller — Software Engineer" />
+  <meta name="twitter:description" content="Software engineer with almost two decades of experience." />
   <meta name="twitter:image" content="https://eschgi.com/assets/avatar.jpg" />
 
   <link rel="icon" type="image/svg+xml" href="favicon.svg" />
@@ -26,9 +26,19 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
+  <!-- Animated matrix rain backdrop -->
+  <canvas class="matrix" id="matrix" aria-hidden="true"></canvas>
+  <!-- Cursor-following spotlight glow -->
+  <div class="spotlight" aria-hidden="true"></div>
+  <!-- CRT scanline overlay -->
   <div class="scanlines" aria-hidden="true"></div>
 
-  <main class="terminal" role="main">
+  <!-- Boot sequence overlay (shown + removed by JS; hidden for no-JS/reduced-motion) -->
+  <div class="boot" id="boot" aria-hidden="true" hidden>
+    <pre class="boot__log" id="boot-log"></pre>
+  </div>
+
+  <main class="terminal" role="main" id="terminal">
     <!-- Window title bar -->
     <header class="titlebar">
       <span class="dots" aria-hidden="true">
@@ -47,7 +57,7 @@
              alt="Portrait of Stefan Eschgfäller" />
         <div class="hero__intro">
           <p class="hero__greeting"><span class="muted">$</span> whoami</p>
-          <h1 class="hero__name">Stefan Eschgfäller</h1>
+          <h1 class="hero__name glitch" data-text="Stefan Eschgfäller">Stefan Eschgfäller</h1>
           <p class="hero__role">
             <span id="typed" class="typed"></span><span class="cursor" aria-hidden="true">▋</span>
           </p>
@@ -58,7 +68,7 @@
       <section class="block" aria-labelledby="about-cmd">
         <p class="prompt" id="about-cmd"><span class="muted">$</span> cat <span class="file">about.txt</span></p>
         <p class="output">
-          I'm a software developer with <strong>almost two decades</strong> of experience,
+          I'm a software engineer with <strong>almost two decades</strong> of experience,
           working mainly with C#, C++, Python, ASP.NET Core, REST, gRPC,
           Entity Framework Core, PostgreSQL, and Qt.
         </p>
@@ -68,11 +78,20 @@
         </ul>
       </section>
 
+      <!-- now -->
+      <section class="block" aria-labelledby="now-cmd">
+        <p class="prompt" id="now-cmd"><span class="muted">$</span> cat <span class="file">now.txt</span></p>
+        <p class="output now">
+          <span class="now__dot" aria-hidden="true"></span>
+          Currently building a <strong>self-hostable crypto trading platform</strong>.
+        </p>
+      </section>
+
       <!-- skills -->
       <section class="block" aria-labelledby="skills-cmd">
         <p class="prompt" id="skills-cmd"><span class="muted">$</span> ls <span class="file">skills/</span></p>
         <div class="output skills">
-          <div class="skill-group">
+          <div class="skill-group tilt">
             <h2 class="skill-group__title">languages/</h2>
             <ul class="badges">
               <li class="badge">C#</li>
@@ -82,7 +101,7 @@
               <li class="badge">Delphi</li>
             </ul>
           </div>
-          <div class="skill-group">
+          <div class="skill-group tilt">
             <h2 class="skill-group__title">frameworks/</h2>
             <ul class="badges">
               <li class="badge">ASP.NET Core</li>
@@ -91,7 +110,7 @@
               <li class="badge">Qt</li>
             </ul>
           </div>
-          <div class="skill-group">
+          <div class="skill-group tilt">
             <h2 class="skill-group__title">databases/</h2>
             <ul class="badges">
               <li class="badge">PostgreSQL</li>
@@ -100,13 +119,39 @@
               <li class="badge">DuckDB</li>
             </ul>
           </div>
-          <div class="skill-group">
+          <div class="skill-group tilt">
             <h2 class="skill-group__title">tools/</h2>
             <ul class="badges">
               <li class="badge">Docker</li>
             </ul>
           </div>
         </div>
+      </section>
+
+      <!-- github stats (revealed by JS once stats.json loads) -->
+      <section class="block" id="stats" aria-labelledby="stats-cmd" hidden>
+        <p class="prompt" id="stats-cmd"><span class="muted">$</span> gh <span class="file">stats</span> <span class="muted">--include-private</span></p>
+        <div class="output stats-grid">
+          <div class="stat tilt">
+            <span class="stat__num" data-stat="repos">0</span>
+            <span class="stat__label">repositories</span>
+          </div>
+          <div class="stat tilt">
+            <span class="stat__num" data-stat="stars">0</span>
+            <span class="stat__label">stars earned</span>
+          </div>
+          <div class="stat tilt">
+            <span class="stat__num" data-stat="contribs">0</span>
+            <span class="stat__label">contributions / yr</span>
+          </div>
+          <div class="stat tilt">
+            <span class="stat__num" data-stat="followers">0</span>
+            <span class="stat__label">followers</span>
+          </div>
+        </div>
+        <h3 class="stats-subtitle muted"># top languages</h3>
+        <ul class="output lang-bars" id="lang-bars" aria-label="Top languages"></ul>
+        <p class="output muted stats-meta" id="stats-meta"></p>
       </section>
 
       <!-- contact -->
