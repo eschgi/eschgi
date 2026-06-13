@@ -42,7 +42,58 @@ body {
     radial-gradient(1000px 500px at 110% 110%, rgba(77, 208, 225, 0.10), transparent 55%),
     var(--bg);
   background-attachment: fixed;
+  overflow-x: hidden;
 }
+
+/* ---------- Matrix rain backdrop ---------- */
+.matrix {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.22;
+}
+
+/* ---------- Cursor-following spotlight ---------- */
+.spotlight {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: radial-gradient(
+    340px 340px at var(--mx, 50%) var(--my, 35%),
+    rgba(56, 224, 123, 0.10),
+    transparent 70%
+  );
+  transition: background 0.1s linear;
+}
+
+/* ---------- Boot sequence overlay ---------- */
+.boot {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(1rem, 5vw, 3rem);
+  background: var(--bg);
+  transition: opacity 0.5s ease;
+}
+.boot.boot--done { opacity: 0; pointer-events: none; }
+.boot__log {
+  margin: 0;
+  width: min(680px, 100%);
+  font-size: clamp(0.75rem, 0.6rem + 0.6vw, 0.95rem);
+  line-height: 1.7;
+  color: var(--green);
+  white-space: pre-wrap;
+  text-shadow: 0 0 8px rgba(56, 224, 123, 0.5);
+}
+.boot__log .ok { color: var(--cyan); }
+.boot__cursor { animation: blink 1.05s step-end infinite; }
 
 /* Subtle CRT scanline overlay */
 .scanlines {
@@ -63,12 +114,21 @@ body {
 
 /* ---------- Terminal window ---------- */
 .terminal {
+  position: relative;
+  z-index: 2;
   width: min(820px, 100%);
-  background: var(--term-bg);
+  background: rgba(10, 14, 20, 0.92);
+  backdrop-filter: blur(2px);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  box-shadow: var(--shadow);
+  box-shadow: var(--shadow), 0 0 60px rgba(56, 224, 123, 0.08);
   overflow: hidden;
+  animation: terminal-in 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes terminal-in {
+  from { opacity: 0; transform: translateY(18px) scale(0.985); }
+  to   { opacity: 1; transform: none; }
 }
 
 .titlebar {
@@ -124,6 +184,12 @@ body {
   background: var(--term-bg);
   box-shadow: 0 0 0 1px var(--border), 0 0 28px rgba(56, 224, 123, 0.35);
   flex: 0 0 auto;
+  animation: avatar-glow 3.4s ease-in-out infinite;
+}
+
+@keyframes avatar-glow {
+  0%, 100% { box-shadow: 0 0 0 1px var(--border), 0 0 24px rgba(56, 224, 123, 0.30); }
+  50%      { box-shadow: 0 0 0 1px var(--border), 0 0 40px rgba(56, 224, 123, 0.60); }
 }
 
 .hero__intro { flex: 1 1 280px; min-width: 0; }
@@ -139,6 +205,35 @@ body {
   font-weight: 700;
   line-height: 1.1;
   color: #fff;
+}
+
+/* Glitch effect on the name (two coloured offset clones). */
+.glitch {
+  position: relative;
+  text-shadow: 0 0 12px rgba(56, 224, 123, 0.25);
+}
+.glitch::before,
+.glitch::after {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  clip-path: inset(0 0 0 0);
+}
+.glitch::before { color: var(--cyan); }
+.glitch::after  { color: var(--magenta); }
+.glitch:hover::before { animation: glitch-x 0.5s steps(2, end) infinite; }
+.glitch:hover::after  { animation: glitch-y 0.5s steps(2, end) infinite; }
+
+@keyframes glitch-x {
+  0%   { transform: translate(0, 0); clip-path: inset(0 0 70% 0); }
+  50%  { transform: translate(-2px, -1px); clip-path: inset(40% 0 20% 0); }
+  100% { transform: translate(2px, 1px); clip-path: inset(70% 0 0 0); }
+}
+@keyframes glitch-y {
+  0%   { transform: translate(0, 0); clip-path: inset(60% 0 10% 0); }
+  50%  { transform: translate(2px, 1px); clip-path: inset(20% 0 50% 0); }
+  100% { transform: translate(-2px, -1px); clip-path: inset(0 0 80% 0); }
 }
 
 .hero__role {
@@ -174,6 +269,13 @@ body {
   gap: 1.25rem;
 }
 
+.skill-group {
+  padding: 1rem;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: rgba(199, 146, 234, 0.04);
+}
+
 .skill-group__title {
   margin: 0 0 0.6rem;
   font-size: 0.9em;
@@ -203,6 +305,91 @@ body {
   transform: translateY(-2px);
   border-color: var(--green);
   color: var(--green);
+}
+
+/* ---------- Now ---------- */
+.now { display: flex; align-items: center; gap: 0.6rem; }
+.now__dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 10px var(--green);
+  flex: 0 0 auto;
+  animation: pulse 1.8s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%, 100% { transform: scale(1);   opacity: 1; }
+  50%      { transform: scale(1.5); opacity: 0.6; }
+}
+
+/* ---------- Tilt cards (skills + stats) ---------- */
+.tilt {
+  transform-style: preserve-3d;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+  will-change: transform;
+}
+.tilt:hover {
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45),
+              0 0 18px rgba(56, 224, 123, 0.12);
+}
+
+/* ---------- GitHub stats ---------- */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: linear-gradient(160deg, rgba(77, 208, 225, 0.06), rgba(56, 224, 123, 0.04));
+}
+.stat__num {
+  font-size: clamp(1.5rem, 1rem + 1.5vw, 2.1rem);
+  font-weight: 700;
+  color: var(--cyan);
+  text-shadow: 0 0 14px rgba(77, 208, 225, 0.35);
+  font-variant-numeric: tabular-nums;
+}
+.stat__label { font-size: 0.78em; color: var(--muted); }
+
+.stats-subtitle { margin: 0 0 0.6rem; font-size: 0.85em; font-weight: 500; }
+
+.lang-bars { list-style: none; padding: 0; margin: 0; }
+.lang-bar {
+  display: grid;
+  grid-template-columns: 8rem 1fr 3.5rem;
+  align-items: center;
+  gap: 0.6rem;
+  margin: 0.45rem 0;
+}
+.lang-bar__name { color: var(--fg); font-size: 0.88em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.lang-bar__track {
+  height: 9px;
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.05);
+  overflow: hidden;
+}
+.lang-bar__fill {
+  display: block;
+  height: 100%;
+  width: 0;
+  border-radius: 5px;
+  background: var(--green);
+  box-shadow: 0 0 12px rgba(56, 224, 123, 0.4);
+  transition: width 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.lang-bar__pct { font-size: 0.8em; text-align: right; font-variant-numeric: tabular-nums; }
+.stats-meta { margin-top: 1.25rem; font-size: 0.8em; }
+
+@media (max-width: 520px) {
+  .lang-bar { grid-template-columns: 6rem 1fr 3rem; }
 }
 
 /* ---------- Links ---------- */
@@ -242,6 +429,15 @@ body {
   .cursor, .blink { animation: none; }
   .badge { transition: none; }
   .scanlines { display: none; }
+  .matrix { display: none; }
+  .spotlight { display: none; }
+  .terminal { animation: none; }
+  .hero__avatar { animation: none; }
+  .now__dot { animation: none; }
+  .glitch:hover::before,
+  .glitch:hover::after { animation: none; }
+  .tilt { transition: none; }
+  .lang-bar__fill { transition: none; }
 }
 
 /* ---------- Small screens ---------- */

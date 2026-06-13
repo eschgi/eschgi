@@ -2,7 +2,9 @@
 
 🌐 **Website:** [eschgi.com](https://eschgi.com)
 
-I am a software developer with almost two decades of experience, working mainly with C#, C++, Python, ASP.NET Core, REST, gRPC, Entity Framework Core, PostgreSQL, and Qt.
+I am a software engineer with almost two decades of experience, working mainly with C#, C++, Python, ASP.NET Core, REST, gRPC, Entity Framework Core, PostgreSQL, and Qt.
+
+🛠️ Currently building a self-hostable crypto trading platform.
 
 ## 🚀 About Me
 - 🌱 I’m always learning and exploring new technologies to enhance my skills.
