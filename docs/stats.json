@@ -1,21 +1,64 @@
 {
-  "placeholder": true,
-  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "generatedAt": "2026-06-13T20:01:34.863Z",
   "login": "eschgi",
   "name": "Stefan Eschgfäller",
-  "followers": 0,
+  "followers": 2,
   "following": 0,
-  "repos": { "total": 0, "nonFork": 0 },
-  "stars": 0,
-  "contributions": {
-    "lastYearTotal": 0,
-    "commits": 0,
-    "restrictedPrivate": 0,
-    "pullRequests": 0,
-    "reviews": 0,
-    "issues": 0,
-    "repositories": 0
+  "repos": {
+    "total": 13,
+    "nonFork": 9
   },
-  "languages": [],
+  "stars": 2,
+  "contributions": {
+    "lastYearTotal": 1170,
+    "commits": 1023,
+    "restrictedPrivate": 0,
+    "pullRequests": 49,
+    "reviews": 0,
+    "issues": 95,
+    "repositories": 3
+  },
+  "languages": [
+    {
+      "name": "C#",
+      "color": "#178600",
+      "percent": 70
+    },
+    {
+      "name": "Java",
+      "color": "#b07219",
+      "percent": 19.8
+    },
+    {
+      "name": "HTML",
+      "color": "#e34c26",
+      "percent": 5.2
+    },
+    {
+      "name": "Objective-C",
+      "color": "#438eff",
+      "percent": 2
+    },
+    {
+      "name": "ShaderLab",
+      "color": "#222c37",
+      "percent": 0.8
+    },
+    {
+      "name": "Go",
+      "color": "#00ADD8",
+      "percent": 0.5
+    },
+    {
+      "name": "Objective-C++",
+      "color": "#6866fb",
+      "percent": 0.4
+    },
+    {
+      "name": "Kotlin",
+      "color": "#A97BFF",
+      "percent": 0.3
+    }
+  ],
   "schemaVersion": 1
 }
