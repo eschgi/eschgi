@@ -518,6 +518,22 @@ body.crt--boot::before {
 .cli__err  { color: var(--magenta); }
 .cli__key  { color: var(--yellow); }
 
+/* `hack` easter egg: a cinematic fake-intrusion sequence in the CLI. */
+.cli__hack { color: var(--cyan); }
+.cli__hack--bar { color: var(--green); letter-spacing: 0.04em; }
+.cli__granted {
+  display: inline-block;
+  margin-top: 0.2rem;
+  font-weight: 700;
+  color: var(--green);
+  text-shadow: 0 0 12px rgba(56, 224, 123, 0.4);
+}
+/* Keep the glitch alive without a hover (base .glitch only animates on :hover). */
+.cli__granted.glitch::before { animation: glitch-x 0.6s steps(2, end) infinite; }
+.cli__granted.glitch::after  { animation: glitch-y 0.6s steps(2, end) infinite; }
+/* A disabled input during the sequence should read as intentional, not broken. */
+.cli__input:disabled { opacity: 0.5; cursor: progress; }
+
 .cli__form {
   display: flex;
   align-items: baseline;
