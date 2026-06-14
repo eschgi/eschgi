@@ -814,6 +814,184 @@
   })();
 
   // ---------------------------------------------------------------------------
+  // Hidden easter egg: DOM gravity. Detaches the visible page into rigid bodies
+  // that tumble + pile up at the bottom of the viewport. Discoverable via the
+  // `gravity` / `destroy` CLI commands; ↻ reset / Esc rebuild the page.
+  // ---------------------------------------------------------------------------
+  (function gravityEgg() {
+    var open = false; // re-entrancy guard — one demolition at a time
+
+    // Leaf "chunk" selectors — each match becomes one falling rigid body. Order
+    // is cosmetic (top-to-bottom). Nested matches are de-duped below.
+    var SELECTORS = [
+      ".titlebar",
+      ".hero__avatar",
+      ".hero__name",
+      ".hero__role",
+      ".hero__greeting",
+      ".block .prompt",
+      ".block .output > li",
+      ".badge",
+      ".skill-group__title",
+      ".stat",
+      ".lang-bar",
+      ".footer p",
+    ];
+
+    // Physics constants (px / frame, frame ≈ 1/60s).
+    var GRAV = 0.45, // downward acceleration
+      REST = 0.55, // restitution (bounciness) off floor/walls
+      FRIC = 0.82, // tangential friction on floor contact
+      AIR = 0.999, // mild horizontal air drag
+      SLEEP_V = 0.35; // |v| below which a grounded body sleeps
+
+    function el(tag, cls, html) {
+      var n = document.createElement(tag);
+      if (cls) n.className = cls;
+      if (html != null) n.innerHTML = html;
+      return n;
+    }
+
+    // Gather matched nodes, then keep only "leaves": drop any node that is
+    // contained by another matched node, plus zero-size / hidden ones (which
+    // also excludes the still-hidden #stats section).
+    function collectTargets() {
+      var raw = [];
+      SELECTORS.forEach(function (sel) {
+        Array.prototype.forEach.call(document.querySelectorAll(sel), function (n) {
+          if (raw.indexOf(n) === -1) raw.push(n);
+        });
+      });
+      return raw.filter(function (n, i) {
+        var r = n.getBoundingClientRect();
+        if (r.width < 2 || r.height < 2) return false;
+        for (var j = 0; j < raw.length; j++) {
+          if (j !== i && raw[j].contains(n)) return false;
+        }
+        return true;
+      });
+    }
+
+    function launch() {
+      if (open) return;
+      open = true;
+
+      // The physics layer lives above the page but below the reset button.
+      var stage = el("div", "gravity-stage");
+      stage.setAttribute("aria-hidden", "true");
+
+      // Clone each target at its current on-screen rect (getBoundingClientRect
+      // is viewport-relative, so scroll is handled for us). Clones become fixed,
+      // size-locked bodies; ids are stripped so nothing duplicates.
+      var bodies = collectTargets().map(function (orig) {
+        var r = orig.getBoundingClientRect();
+        var clone = orig.cloneNode(true);
+        clone.removeAttribute("id");
+        Array.prototype.forEach.call(clone.querySelectorAll("[id]"), function (d) {
+          d.removeAttribute("id");
+        });
+        clone.classList.add("gravity-body");
+        clone.style.width = r.width + "px";
+        clone.style.height = r.height + "px";
+        stage.appendChild(clone);
+        return {
+          node: clone,
+          x: r.left,
+          y: r.top,
+          w: r.width,
+          h: r.height,
+          vx: (Math.random() - 0.5) * 2,
+          vy: 0,
+          angle: 0,
+          vAngle: (Math.random() - 0.5) * 0.04,
+          sleeping: false,
+        };
+      });
+
+      document.body.appendChild(stage);
+
+      // Hide the live page (the chaos is decorative — mute it for AT too).
+      document.body.classList.add("gravity-on");
+      var terminal = document.getElementById("terminal");
+      if (terminal) terminal.setAttribute("aria-hidden", "true");
+
+      // The way back: a focusable button + Esc both rebuild from scratch.
+      var resetBtn = el("button", "gravity-reset", "&#8635; reset");
+      resetBtn.setAttribute("type", "button");
+      resetBtn.setAttribute("aria-label", "Reset the page");
+      resetBtn.addEventListener("click", function () {
+        window.location.reload();
+      });
+      document.body.appendChild(resetBtn);
+      resetBtn.focus();
+
+      window.addEventListener(
+        "keydown",
+        function (e) {
+          if (e.key === "Escape") window.location.reload();
+        },
+        true
+      );
+
+      // Floor / right wall, recomputed on resize.
+      var floorY = window.innerHeight,
+        wallR = window.innerWidth;
+      window.addEventListener(
+        "resize",
+        function () {
+          floorY = window.innerHeight;
+          wallR = window.innerWidth;
+        },
+        { passive: true }
+      );
+
+      function step(b) {
+        if (b.sleeping) return;
+        b.vy += GRAV;
+        b.vx *= AIR;
+        b.x += b.vx;
+        b.y += b.vy;
+        b.angle += b.vAngle;
+
+        // Floor.
+        if (b.y + b.h >= floorY) {
+          b.y = floorY - b.h;
+          b.vy = -b.vy * REST;
+          b.vx *= FRIC;
+          b.vAngle *= FRIC;
+          if (Math.abs(b.vy) < SLEEP_V && Math.abs(b.vx) < SLEEP_V) {
+            b.vy = 0;
+            b.vx = 0;
+            b.vAngle *= 0.5;
+            if (Math.abs(b.vAngle) < 0.005) {
+              b.vAngle = 0;
+              b.sleeping = true;
+            }
+          }
+        }
+        // Walls.
+        if (b.x <= 0) {
+          b.x = 0;
+          b.vx = -b.vx * REST;
+        } else if (b.x + b.w >= wallR) {
+          b.x = wallR - b.w;
+          b.vx = -b.vx * REST;
+        }
+
+        b.node.style.transform =
+          "translate(" + b.x + "px," + b.y + "px) rotate(" + b.angle + "rad)";
+      }
+
+      (function frame() {
+        for (var i = 0; i < bodies.length; i++) step(bodies[i]);
+        window.requestAnimationFrame(frame);
+      })();
+    }
+
+    document.addEventListener("eschgi:gravity", launch);
+  })();
+
+  // ---------------------------------------------------------------------------
   // Interactive terminal: a real prompt visitors can type into.
   // Commands surface content already on the page (single source of truth).
   // ---------------------------------------------------------------------------
@@ -1008,6 +1186,22 @@
       })();
     }
 
+    // Hidden easter egg: demolish the page with gravity. Mirrors `matrix`'s
+    // guard/dispatch style; the gravityEgg module does the actual work.
+    function cmdGravity() {
+      if (prefersReduced) {
+        return print(
+          "gravity: physics is off in reduced-motion mode — everything stays where it belongs.",
+          "cli__err"
+        );
+      }
+      if (typeof window.CustomEvent !== "function") {
+        return print("gravity: unsupported in this browser", "cli__err");
+      }
+      print("detaching the DOM… mind your head. (↻ reset or Esc to rebuild)");
+      document.dispatchEvent(new CustomEvent("eschgi:gravity"));
+    }
+
     var COMMANDS = {
       help: function () {
         print("available commands:");
@@ -1051,6 +1245,8 @@
           print("crt: unsupported in this browser", "cli__err");
         }
       },
+      gravity: cmdGravity,
+      destroy: cmdGravity,
       matrix: function (args) {
         // `matrix` toggles, `matrix on` / `matrix off` force a state. The rain
         // canvas doesn't exist under reduced-motion, so bail gracefully there.
