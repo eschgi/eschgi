@@ -914,6 +914,83 @@
       }
     }
 
+    // Hidden easter egg: a cinematic fake "hacking" sequence. Like snake/crt it's
+    // discoverable via tab-complete but never advertised in `help`.
+    var hacking = false; // re-entrancy guard so two runs can't overlap
+    function hackHex() {
+      var s = "";
+      for (var i = 0; i < 8; i++) {
+        s += ("0" + Math.floor(Math.random() * 256).toString(16)).slice(-2).toUpperCase() + " ";
+      }
+      return s.trim();
+    }
+    function cmdHack(args) {
+      if (hacking) return print("hack: operation already in progress…", "cli__err");
+      var target = args && args[0] ? args[0] : "mainframe";
+      var grantedHtml =
+        '<span class="glitch cli__granted" data-text="ACCESS GRANTED">ACCESS GRANTED</span>';
+      var payoff = "…just kidding. it's a static site — nothing to steal but good vibes 😄";
+      var hint = "(try `help`, or triple-click the avatar)";
+
+      // Accessibility: skip the timed animation, dump the gist at once.
+      if (prefersReduced) {
+        print("> establishing uplink to " + target + "…", "cli__hack");
+        print("> bypassing firewall… done", "cli__hack");
+        print("> cracking root credentials… done", "cli__hack");
+        line(grantedHtml);
+        print(payoff);
+        print(hint, "cli__hack");
+        return;
+      }
+
+      hacking = true;
+      input.disabled = true;
+
+      // Port-scan progress bar, redrawn in place on a single line.
+      var bar = null;
+      function drawBar(pct) {
+        var WIDTH = 20;
+        var fill = Math.round((pct / 100) * WIDTH);
+        var blocks = new Array(fill + 1).join("█") + new Array(WIDTH - fill + 1).join("░");
+        var text = "> scanning ports  [" + blocks + "] " + pct + "%";
+        if (!bar) bar = line(esc(text), "cli__hack cli__hack--bar");
+        else bar.textContent = text;
+        log.scrollTop = log.scrollHeight;
+      }
+
+      // Each step is [delayBeforeMs, fn]; run them back to back.
+      var steps = [
+        [0, function () { print("> initializing exploit framework…", "cli__hack"); }],
+        [260, function () { print("> establishing uplink to " + target + "…", "cli__hack"); }],
+      ];
+      [0, 18, 47, 73, 91, 100].forEach(function (pct, i) {
+        steps.push([i === 0 ? 320 : 170, function () { drawBar(pct); }]);
+      });
+      steps.push([260, function () { print("> firewall breached. dumping memory:", "cli__hack"); }]);
+      steps.push([180, function () { print("  " + hackHex(), "cli__hack"); }]);
+      steps.push([140, function () { print("  " + hackHex(), "cli__hack"); }]);
+      steps.push([140, function () { print("  " + hackHex(), "cli__hack"); }]);
+      steps.push([300, function () { print("> cracking root credentials… ✓", "cli__hack"); }]);
+      steps.push([360, function () { line(grantedHtml); }]);
+      steps.push([420, function () { print(payoff); }]);
+      steps.push([180, function () { print(hint, "cli__hack"); }]);
+
+      var idx = 0;
+      (function tick() {
+        if (idx >= steps.length) {
+          hacking = false;
+          input.disabled = false;
+          input.focus();
+          return;
+        }
+        var step = steps[idx++];
+        window.setTimeout(function () {
+          step[1]();
+          tick();
+        }, step[0]);
+      })();
+    }
+
     var COMMANDS = {
       help: function () {
         print("available commands:");
@@ -958,6 +1035,7 @@
         }
       },
       sudo: function () { print("Permission denied: nice try 😏", "cli__err"); },
+      hack: cmdHack,
     };
     var NAMES = Object.keys(COMMANDS).concat(["help"]);
 
