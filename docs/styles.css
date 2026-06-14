@@ -782,3 +782,51 @@ body.crt--boot::before {
 @media (pointer: coarse) and (max-height: 760px) {
   .egg__canvas { max-width: min(400px, 56vh); }
 }
+
+/* ===========================================================
+   Hidden easter egg — DOM gravity / destroy (built by JS)
+   =========================================================== */
+.gravity-stage {
+  position: fixed;
+  inset: 0;
+  z-index: 60;          /* above the page, below the reset button */
+  pointer-events: none; /* let clicks fall through to the reset button */
+  overflow: hidden;
+}
+
+.gravity-body {
+  position: fixed;
+  left: 0;
+  top: 0;
+  margin: 0;
+  transform-origin: 50% 50%;
+  will-change: transform;
+  list-style: none;     /* badges/links are <li> — drop bullets when detached */
+  box-sizing: border-box;
+}
+
+/* The way back — floats top-right, always reachable + keyboard-focusable. */
+.gravity-reset {
+  position: fixed;
+  top: 14px;
+  right: 14px;
+  z-index: 70;          /* above the falling bodies */
+  padding: 0.5rem 0.9rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--term-bg);
+  color: var(--green);
+  font-family: var(--mono);
+  font-size: 0.9rem;
+  cursor: pointer;
+  box-shadow: var(--shadow);
+  transition: color 0.15s ease, background 0.15s ease;
+}
+.gravity-reset:hover,
+.gravity-reset:focus-visible {
+  color: var(--fg);
+  background: rgba(56, 224, 123, 0.12);
+}
+
+/* While gravity runs, the live page is hidden (JS also sets aria-hidden). */
+body.gravity-on .terminal { visibility: hidden; }
