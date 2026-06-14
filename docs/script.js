@@ -212,6 +212,47 @@
   })();
 
   // ---------------------------------------------------------------------------
+  // CRT / retro mode (hidden easter egg — toggle via the `crt` CLI command)
+  // Intensifies the always-on .scanlines overlay into a full old-monitor look.
+  // ---------------------------------------------------------------------------
+  (function crtMode() {
+    var KEY = "eschgi.crt";
+    var bootTimer = null;
+
+    function read() {
+      try { return localStorage.getItem(KEY) === "1"; } catch (e) { return false; }
+    }
+    function write(on) {
+      try { localStorage.setItem(KEY, on ? "1" : "0"); } catch (e) {}
+    }
+
+    // Apply persisted state on load (no flash — runs before paint settles).
+    if (read()) document.body.classList.add("crt");
+
+    function setCrt(on, animate) {
+      document.body.classList.toggle("crt", on);
+      write(on);
+      // Brief power-on flash when switching on (skipped for reduced motion).
+      if (on && animate && !prefersReduced) {
+        document.body.classList.add("crt--boot");
+        window.clearTimeout(bootTimer);
+        bootTimer = window.setTimeout(function () {
+          document.body.classList.remove("crt--boot");
+        }, 650);
+      }
+      return on;
+    }
+
+    // CLI bridge: `crt` toggles, `crt on` / `crt off` force a state.
+    // The handler returns the resulting state so the command can report it.
+    document.addEventListener("eschgi:toggle-crt", function (e) {
+      var force = e && e.detail ? e.detail.force : null; // "on" | "off" | null
+      var on = force === "on" ? true : force === "off" ? false : !document.body.classList.contains("crt");
+      setCrt(on, true);
+    });
+  })();
+
+  // ---------------------------------------------------------------------------
   // GitHub stats (progressive enhancement; hidden until data loads)
   // ---------------------------------------------------------------------------
   (function githubStats() {
@@ -901,6 +942,19 @@
         print("launching nibbles.exe…");
         if (typeof window.CustomEvent === "function") {
           document.dispatchEvent(new CustomEvent("eschgi:launch-snake"));
+        }
+      },
+      crt: function (args) {
+        // `crt` toggles, `crt on` / `crt off` force a state. The crtMode module
+        // handles the event synchronously, so we can read the result right after.
+        var arg = (args[0] || "").toLowerCase();
+        var force = arg === "on" ? "on" : arg === "off" ? "off" : null;
+        if (typeof window.CustomEvent === "function") {
+          document.dispatchEvent(new CustomEvent("eschgi:toggle-crt", { detail: { force: force } }));
+          var on = document.body.classList.contains("crt");
+          line('crt mode: <span class="cli__key">' + (on ? "on" : "off") + "</span>");
+        } else {
+          print("crt: unsupported in this browser", "cli__err");
         }
       },
       sudo: function () { print("Permission denied: nice try 😏", "cli__err"); },

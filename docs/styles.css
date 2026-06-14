@@ -112,6 +112,80 @@ body {
   opacity: 0.5;
 }
 
+/* ---------- CRT / retro mode (easter egg: `crt` in the terminal) ---------- */
+/* Default look is untouched; everything here is scoped under body.crt. */
+
+/* Heavier, animated scanlines + a slow vertical roll + a faint flicker. */
+body.crt .scanlines {
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.28) 0,
+    rgba(0, 0, 0, 0.28) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+  mix-blend-mode: normal;
+  opacity: 0.85;
+  animation: crt-flicker 5.5s steps(60) infinite;
+}
+
+/* A second, moving band that sweeps down the screen like a CRT refresh. */
+body.crt .scanlines::after {
+  content: "";
+  position: absolute;
+  inset: -100% 0 0 0;
+  background: linear-gradient(
+    to bottom,
+    transparent 0,
+    rgba(56, 224, 123, 0.06) 50%,
+    transparent 100%
+  );
+  height: 18%;
+  animation: crt-roll 7s linear infinite;
+}
+
+/* Vignette (dark corners) + soft green phosphor glow over the whole page. */
+body.crt::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 9998; /* just below .scanlines (9999) */
+  pointer-events: none;
+  background:
+    radial-gradient(120% 120% at 50% 50%, transparent 55%, rgba(0, 0, 0, 0.55) 100%),
+    radial-gradient(80% 60% at 50% 45%, rgba(56, 224, 123, 0.06), transparent 70%);
+}
+
+/* Power-on flash: a quick bright sweep applied for ~650ms when toggled on. */
+body.crt--boot::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  pointer-events: none;
+  background: #cdfbe0;
+  animation: crt-on 0.65s ease-out forwards;
+}
+
+@keyframes crt-flicker {
+  0%, 100% { opacity: 0.85; }
+  50%      { opacity: 0.78; }
+  52%      { opacity: 0.92; }
+  54%      { opacity: 0.80; }
+}
+
+@keyframes crt-roll {
+  from { transform: translateY(0); }
+  to   { transform: translateY(120vh); }
+}
+
+@keyframes crt-on {
+  0%   { opacity: 0; transform: scaleY(0.004); filter: brightness(2.4); }
+  18%  { opacity: 0.9; transform: scaleY(0.02); }
+  45%  { opacity: 0.55; transform: scaleY(1); }
+  100% { opacity: 0; transform: scaleY(1); }
+}
+
 /* ---------- Terminal window ---------- */
 .terminal {
   position: relative;
@@ -509,6 +583,11 @@ body {
   .glitch:hover::after { animation: none; }
   .tilt { transition: none; }
   .lang-bar__fill { transition: none; }
+
+  /* CRT mode stays visible as a *static* effect — no flicker, roll, or flash. */
+  body.crt .scanlines { display: block; animation: none; }
+  body.crt .scanlines::after { display: none; }
+  body.crt--boot::before { display: none; }
 }
 
 /* ---------- Small screens ---------- */
