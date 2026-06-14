@@ -171,6 +171,20 @@
         </ul>
       </section>
 
+      <!-- interactive terminal -->
+      <section class="block cli" id="cli" aria-labelledby="cli-cmd">
+        <p class="prompt" id="cli-cmd"><span class="muted">$</span> <span class="file">help</span> <span class="muted"># try a command below — type 'help' to start</span></p>
+        <div class="output cli__log" id="cli-log" role="log" aria-live="polite" aria-label="Command output"></div>
+        <form class="cli__form" id="cli-form" autocomplete="off">
+          <label class="cli__ps1" for="cli-input">
+            <span class="muted">stefan@eschgi</span>:<span class="cli__tilde">~</span><span class="cli__sign">$</span>
+          </label>
+          <input id="cli-input" class="cli__input" type="text" name="cmd"
+                 aria-label="Type a command and press Enter"
+                 autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" />
+        </form>
+      </section>
+
       <footer class="footer">
         <p class="prompt"><span class="muted">$</span> echo "Thanks for visiting!" <span class="blink" aria-hidden="true">▋</span></p>
         <p class="footer__meta muted">© <span id="year"></span> Stefan Eschgfäller · Built with HTML, CSS &amp; a terminal.</p>
