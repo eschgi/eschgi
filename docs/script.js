@@ -992,6 +992,117 @@
   })();
 
   // ---------------------------------------------------------------------------
+  // Hidden easter egg: a 3·2·1 rocket launch. Like gravity it builds a
+  // full-screen overlay in JS and listens on a custom event, but it cleans up
+  // after itself (~5s) instead of waiting for a reset.
+  // ---------------------------------------------------------------------------
+  (function rocketEgg() {
+    var open = false; // re-entrancy guard — one flight at a time
+
+    // Small ASCII rocket. The base (last line) is where smoke puffs spawn.
+    var ROCKET =
+      "    /\\\n" +
+      "   /  \\\n" +
+      "  |    |\n" +
+      "  | [] |\n" +
+      "  |    |\n" +
+      " /|    |\\\n" +
+      "/ |    | \\\n" +
+      "  '----'";
+
+    function el(tag, cls, html) {
+      var n = document.createElement(tag);
+      if (cls) n.className = cls;
+      if (html != null) n.innerHTML = html;
+      return n;
+    }
+
+    function launch() {
+      if (open) return;
+      open = true;
+
+      var stage = el("div", "rocket-stage");
+      stage.setAttribute("aria-hidden", "true");
+
+      var rocket = el("pre", "rocket");
+      var flame = el("span", "rocket-flame", "▲▼▲");
+      rocket.textContent = ROCKET;
+      rocket.appendChild(flame);
+
+      var banner = el("div", "rocket-banner");
+
+      stage.appendChild(rocket);
+      stage.appendChild(banner);
+      document.body.appendChild(stage);
+
+      var timers = [];
+      var trail = null;
+      function after(ms, fn) {
+        timers.push(window.setTimeout(fn, ms));
+      }
+
+      function teardown() {
+        timers.forEach(window.clearTimeout);
+        if (trail) window.clearInterval(trail);
+        window.removeEventListener("keydown", onKey, true);
+        if (stage.parentNode) stage.parentNode.removeChild(stage);
+        open = false;
+        var input = document.getElementById("cli-input");
+        if (input) input.focus();
+      }
+
+      function onKey(e) {
+        if (e.key === "Escape") teardown();
+      }
+
+      // Reduced motion shouldn't reach here (the CLI command short-circuits),
+      // but if it does, bail without animating.
+      if (prefersReduced) return teardown();
+
+      window.addEventListener("keydown", onKey, true);
+
+      // Phase 1 — countdown.
+      banner.textContent = "3";
+      after(450, function () { banner.textContent = "2"; });
+      after(900, function () { banner.textContent = "1"; });
+      after(1350, function () {
+        banner.textContent = "LIFTOFF";
+        rocket.classList.add("rocket--shake");
+      });
+
+      // Phase 2 — ignite + rise, spilling a smoke trail along the way.
+      after(1850, function () {
+        banner.textContent = "";
+        rocket.classList.remove("rocket--shake");
+        rocket.classList.add("rocket--rise");
+        trail = window.setInterval(function () {
+          var r = rocket.getBoundingClientRect();
+          if (r.bottom < 0) return; // rocket has left the viewport
+          var puff = el("span", "rocket-smoke");
+          var spread = (Math.random() - 0.5) * 24;
+          puff.style.left = r.left + r.width / 2 + spread + "px";
+          puff.style.top = r.bottom - 12 + "px";
+          stage.appendChild(puff);
+          window.setTimeout(function () {
+            if (puff.parentNode) puff.parentNode.removeChild(puff);
+          }, 900);
+        }, 90);
+      });
+
+      // Phase 3 — payoff, then clean up.
+      after(4400, function () {
+        if (trail) { window.clearInterval(trail); trail = null; }
+        rocket.style.display = "none";
+        banner.className = "rocket-banner rocket-banner--orbit";
+        banner.textContent = "in orbit ✨";
+      });
+      after(5400, teardown);
+    }
+
+    document.addEventListener("eschgi:launch", launch);
+  })();
+
+  // ---------------------------------------------------------------------------
   // Interactive terminal: a real prompt visitors can type into.
   // Commands surface content already on the page (single source of truth).
   // ---------------------------------------------------------------------------
@@ -1202,6 +1313,19 @@
       document.dispatchEvent(new CustomEvent("eschgi:gravity"));
     }
 
+    // Hidden easter egg: a 3·2·1 rocket launch. Mirrors gravity/matrix —
+    // bail politely under reduced motion, otherwise dispatch to rocketEgg.
+    function cmdLaunch() {
+      if (prefersReduced) {
+        return print("🚀 liftoff! … (animation off in reduced-motion mode) — in orbit ✨");
+      }
+      if (typeof window.CustomEvent !== "function") {
+        return print("launch: unsupported in this browser", "cli__err");
+      }
+      print("ignition sequence start… 🚀 (Esc to abort)");
+      document.dispatchEvent(new CustomEvent("eschgi:launch"));
+    }
+
     var COMMANDS = {
       help: function () {
         print("available commands:");
@@ -1247,6 +1371,9 @@
       },
       gravity: cmdGravity,
       destroy: cmdGravity,
+      launch: cmdLaunch,
+      liftoff: cmdLaunch,
+      rocket: cmdLaunch,
       matrix: function (args) {
         // `matrix` toggles, `matrix on` / `matrix off` force a state. The rain
         // canvas doesn't exist under reduced-motion, so bail gracefully there.
