@@ -337,6 +337,11 @@
       }
     });
 
+    // Also launchable from the interactive CLI (`snake` command).
+    document.addEventListener("eschgi:launch-snake", function () {
+      if (!open) launchGame();
+    });
+
     // --- helpers -------------------------------------------------------------
     function readHigh() {
       try {
@@ -747,6 +752,242 @@
       reset();
       closeBtn.focus();
       rafId = requestAnimationFrame(tick);
+    }
+  })();
+
+  // ---------------------------------------------------------------------------
+  // Interactive terminal: a real prompt visitors can type into.
+  // Commands surface content already on the page (single source of truth).
+  // ---------------------------------------------------------------------------
+  (function interactiveCli() {
+    var form = document.getElementById("cli-form");
+    var input = document.getElementById("cli-input");
+    var log = document.getElementById("cli-log");
+    var root = document.getElementById("cli");
+    if (!form || !input || !log) return;
+
+    // --- output helpers ------------------------------------------------------
+    function line(html, cls) {
+      var div = document.createElement("div");
+      div.className = "cli__line" + (cls ? " " + cls : "");
+      div.innerHTML = html;
+      log.appendChild(div);
+      log.scrollTop = log.scrollHeight;
+      return div;
+    }
+    function print(text, cls) {
+      // text may be multi-line; render newlines literally (pre-wrap handles it).
+      line(esc(text), cls);
+    }
+    function esc(s) {
+      return String(s).replace(/[&<>]/g, function (c) {
+        return c === "&" ? "&amp;" : c === "<" ? "&lt;" : "&gt;";
+      });
+    }
+    // Collapse whitespace from DOM text so output reads as clean lines.
+    function clean(s) {
+      return (s || "").replace(/\s+/g, " ").trim();
+    }
+    function textOf(sel) {
+      var el = document.querySelector(sel);
+      return el ? clean(el.textContent) : "";
+    }
+
+    // --- command implementations (read from existing DOM where possible) -----
+    function cmdAbout() {
+      var bio = textOf("#about-cmd ~ .output");
+      if (bio) print(bio);
+      var bullets = document.querySelectorAll("#about-cmd ~ .bullets li");
+      Array.prototype.forEach.call(bullets, function (li) {
+        print("> " + clean(li.textContent).replace(/^>\s*/, ""));
+      });
+    }
+    function cmdNow() {
+      print(textOf(".now") || "Nothing scheduled.");
+    }
+    function cmdSkills(arg) {
+      var groups = document.querySelectorAll(".skill-group");
+      var want = (arg || "").toLowerCase().replace(/\/$/, "");
+      var matched = false;
+      Array.prototype.forEach.call(groups, function (g) {
+        var title = clean(g.querySelector(".skill-group__title").textContent);
+        var key = title.toLowerCase().replace(/\/$/, "");
+        if (want && key !== want) return;
+        matched = true;
+        var badges = [];
+        Array.prototype.forEach.call(g.querySelectorAll(".badge"), function (b) {
+          badges.push(clean(b.textContent));
+        });
+        line(
+          '<span class="cli__key">' + esc(title) + "</span> " + esc(badges.join("  ·  "))
+        );
+      });
+      if (want && !matched) {
+        print("skills: no such group: " + want + " (try: languages, frameworks, databases, tools)", "cli__err");
+      }
+    }
+    function cmdContact() {
+      var links = document.querySelectorAll(".links a");
+      if (!links.length) return print("No contacts listed.");
+      Array.prototype.forEach.call(links, function (a) {
+        // Anchor text minus the muted "— url" suffix, plus the real href.
+        var label = clean(a.childNodes[2] ? a.childNodes[2].textContent : a.textContent);
+        line(
+          '<a href="' + esc(a.href) + '" target="_blank" rel="noopener noreferrer">' +
+            esc(label || a.href) + "</a> " +
+            '<span class="muted">' + esc(a.getAttribute("href")) + "</span>"
+        );
+      });
+    }
+    function cmdStats() {
+      var section = document.getElementById("stats");
+      if (!section || section.hidden) {
+        return print("stats: still fetching from github… try again in a moment.", "cli__err");
+      }
+      var parts = [];
+      Array.prototype.forEach.call(section.querySelectorAll(".stat"), function (s) {
+        var num = clean(s.querySelector(".stat__num").textContent);
+        var label = clean(s.querySelector(".stat__label").textContent);
+        parts.push(num + " " + label);
+      });
+      print(parts.join("  ·  "));
+      section.scrollIntoView({ behavior: prefersReduced ? "auto" : "smooth", block: "center" });
+    }
+    function cmdLs() {
+      line(
+        '<span class="cli__key">about.txt</span>  ' +
+          '<span class="cli__key">now.txt</span>  ' +
+          '<span class="cli__key">skills/</span>  ' +
+          '<span class="cli__key">contact.txt</span>'
+      );
+    }
+    function cmdCat(arg) {
+      switch ((arg || "").toLowerCase()) {
+        case "about.txt": return cmdAbout();
+        case "now.txt": return cmdNow();
+        case "contact.txt": return cmdContact();
+        case "skills":
+        case "skills/": return cmdSkills();
+        case "": return print("cat: missing file operand (try: cat about.txt)", "cli__err");
+        default: return print("cat: " + arg + ": No such file or directory", "cli__err");
+      }
+    }
+
+    var COMMANDS = {
+      help: function () {
+        print("available commands:");
+        line('  <span class="cli__key">about</span>     who I am');
+        line('  <span class="cli__key">now</span>       what I\'m building');
+        line('  <span class="cli__key">skills</span>    tech I work with (e.g. skills languages)');
+        line('  <span class="cli__key">stats</span>     github numbers');
+        line('  <span class="cli__key">contact</span>   where to find me');
+        line('  <span class="cli__key">ls</span> · <span class="cli__key">cat</span>   browse the "files"');
+        line('  <span class="cli__key">echo</span> · <span class="cli__key">date</span> · <span class="cli__key">clear</span>');
+        line('  <span class="muted">… and maybe a game. tab-completes, ↑/↓ for history.</span>');
+      },
+      about: cmdAbout,
+      whoami: cmdAbout,
+      now: cmdNow,
+      skills: function (args) { cmdSkills(args[0]); },
+      contact: cmdContact,
+      socials: cmdContact,
+      stats: cmdStats,
+      ls: cmdLs,
+      cat: function (args) { cmdCat(args[0]); },
+      echo: function (args) { print(args.join(" ")); },
+      date: function () { print(new Date().toString()); },
+      clear: function () { log.innerHTML = ""; },
+      snake: function () {
+        print("launching nibbles.exe…");
+        if (typeof window.CustomEvent === "function") {
+          document.dispatchEvent(new CustomEvent("eschgi:launch-snake"));
+        }
+      },
+      sudo: function () { print("Permission denied: nice try 😏", "cli__err"); },
+    };
+    var NAMES = Object.keys(COMMANDS).concat(["help"]);
+
+    // --- run a line ----------------------------------------------------------
+    function run(raw) {
+      var parts = raw.split(/\s+/);
+      var name = parts.shift().toLowerCase();
+      if (!name) return;
+      if (Object.prototype.hasOwnProperty.call(COMMANDS, name)) {
+        COMMANDS[name](parts);
+      } else {
+        print("command not found: " + name + " — type 'help'", "cli__err");
+      }
+    }
+
+    // --- history -------------------------------------------------------------
+    var history = [];
+    var hidx = 0; // points one past the newest entry
+
+    // --- submit --------------------------------------------------------------
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      var raw = input.value.replace(/\s+$/, "");
+      input.value = "";
+      // Echo the prompt + command.
+      line(
+        '<span class="muted">stefan@eschgi</span>:<span class="cli__tilde">~</span>$ ' + esc(raw),
+        "cli__echo"
+      );
+      var trimmed = raw.trim();
+      if (trimmed) {
+        if (history[history.length - 1] !== trimmed) history.push(trimmed);
+        run(trimmed);
+      }
+      hidx = history.length;
+    });
+
+    // --- history nav + tab completion ---------------------------------------
+    input.addEventListener("keydown", function (e) {
+      if (e.key === "ArrowUp") {
+        if (!history.length) return;
+        e.preventDefault();
+        hidx = Math.max(0, hidx - 1);
+        input.value = history[hidx] || "";
+        moveCaretToEnd();
+      } else if (e.key === "ArrowDown") {
+        if (!history.length) return;
+        e.preventDefault();
+        hidx = Math.min(history.length, hidx + 1);
+        input.value = history[hidx] || "";
+        moveCaretToEnd();
+      } else if (e.key === "Tab") {
+        e.preventDefault();
+        var frag = input.value.trim().toLowerCase();
+        if (!frag || /\s/.test(input.value.trim())) return;
+        var hits = NAMES.filter(function (n, i, a) {
+          return n.indexOf(frag) === 0 && a.indexOf(n) === i;
+        });
+        if (hits.length === 1) {
+          input.value = hits[0] + " ";
+          moveCaretToEnd();
+        } else if (hits.length > 1) {
+          print(hits.join("  "));
+        }
+      }
+    });
+
+    function moveCaretToEnd() {
+      var v = input.value;
+      // Defer so the value is committed before we set the selection.
+      window.setTimeout(function () {
+        input.value = v;
+        try { input.setSelectionRange(v.length, v.length); } catch (e) {}
+      }, 0);
+    }
+
+    // Clicking anywhere in the block focuses the input (terminal feel),
+    // but don't steal selection or link clicks.
+    if (root) {
+      root.addEventListener("click", function (e) {
+        if (e.target.tagName === "A") return;
+        if (window.getSelection && String(window.getSelection())) return;
+        input.focus();
+      });
     }
   })();
 })();
