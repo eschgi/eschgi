@@ -118,6 +118,13 @@
     var drops = [];
     var running = true;
 
+    // Tunables, flipped by the hidden `matrix` command's "rabbit hole" mode.
+    var deep = false;
+    var FRAME_CALM = 55; // ms between frames (~18fps, gentle + cheap)
+    var FRAME_DEEP = 33; // ~30fps — denser, faster rain
+    var brightChance = 0.975; // leading-glyph brightness threshold (lower = more)
+    var resetChance = 0.975; // drop-reset threshold (lower = busier columns)
+
     function resize() {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
@@ -131,10 +138,9 @@
     window.addEventListener("resize", resize, { passive: true });
 
     var last = 0;
-    var FRAME = 55; // ms between frames (~18fps, gentle + cheap)
     function draw(now) {
       if (!running) return;
-      if (now - last >= FRAME) {
+      if (now - last >= (deep ? FRAME_DEEP : FRAME_CALM)) {
         last = now;
         ctx.fillStyle = "rgba(5, 7, 13, 0.10)";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -144,15 +150,26 @@
           var x = i * fontSize;
           var y = drops[i] * fontSize;
           // Leading glyph brighter than the trail.
-          ctx.fillStyle = Math.random() > 0.975 ? "#aef5c8" : "#2fae62";
+          ctx.fillStyle = Math.random() > brightChance ? "#aef5c8" : "#2fae62";
           ctx.fillText(text, x, y);
-          if (y > canvas.height && Math.random() > 0.975) drops[i] = 0;
+          if (y > canvas.height && Math.random() > resetChance) drops[i] = 0;
           drops[i]++;
         }
       }
       requestAnimationFrame(draw);
     }
     requestAnimationFrame(draw);
+
+    // "rabbit hole" toggle — driven by the hidden `matrix` CLI command via a
+    // CustomEvent, mirroring the snake/crt decoupling. detail.force: on/off/null.
+    document.addEventListener("eschgi:matrix", function (e) {
+      var force = e.detail && e.detail.force;
+      deep = force === "on" ? true : force === "off" ? false : !deep;
+      document.body.classList.toggle("matrix-deep", deep);
+      // Denser, brighter, busier when deep; back to gentle defaults otherwise.
+      brightChance = deep ? 0.9 : 0.975;
+      resetChance = deep ? 0.94 : 0.975;
+    });
 
     // Pause when the tab is hidden to save CPU/battery.
     document.addEventListener("visibilitychange", function () {
@@ -1033,6 +1050,22 @@
         } else {
           print("crt: unsupported in this browser", "cli__err");
         }
+      },
+      matrix: function (args) {
+        // `matrix` toggles, `matrix on` / `matrix off` force a state. The rain
+        // canvas doesn't exist under reduced-motion, so bail gracefully there.
+        if (prefersReduced) {
+          return print("matrix: rain is off in reduced-motion mode — there is no spoon.", "cli__err");
+        }
+        if (typeof window.CustomEvent !== "function") {
+          return print("matrix: unsupported in this browser", "cli__err");
+        }
+        var arg = (args[0] || "").toLowerCase();
+        var force = arg === "on" ? "on" : arg === "off" ? "off" : null;
+        document.dispatchEvent(new CustomEvent("eschgi:matrix", { detail: { force: force } }));
+        var on = document.body.classList.contains("matrix-deep");
+        print(on ? "wake up, Neo… 🐇 following the white rabbit." : "unplugged.");
+        line('matrix mode: <span class="cli__key">' + (on ? "on" : "off") + "</span>");
       },
       sudo: function () { print("Permission denied: nice try 😏", "cli__err"); },
       hack: cmdHack,
