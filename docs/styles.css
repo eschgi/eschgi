@@ -937,3 +937,89 @@ body.gravity-on .terminal { visibility: hidden; }
   0%   { opacity: 0; transform: translate(-50%, -50%) scale(0.7); }
   100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
 }
+
+/* ===========================================================
+   Hidden easter egg — black hole / supernova (built by JS)
+   =========================================================== */
+.blackhole-stage {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  overflow: hidden;
+  background: radial-gradient(
+    circle at 50% 50%,
+    rgba(0, 0, 0, 0.55),
+    rgba(5, 7, 13, 0) 60%
+  );
+}
+
+.blackhole-body {
+  position: fixed;
+  left: 0;
+  top: 0;
+  margin: 0;
+  transform-origin: 50% 50%;
+  will-change: transform;
+  list-style: none;     /* badges/links are <li> — drop bullets when detached */
+  box-sizing: border-box;
+}
+
+/* The singularity: a dark core ringed by an accretion glow, centered by JS. */
+.blackhole-core {
+  position: fixed;
+  width: 26px;
+  height: 26px;
+  margin: -13px 0 0 -13px;   /* center on its (left, top) point */
+  border-radius: 50%;
+  background: radial-gradient(circle, #05070d 38%, rgba(5, 7, 13, 0) 70%);
+  box-shadow:
+    0 0 18px 6px rgba(77, 208, 225, 0.45),
+    0 0 42px 14px rgba(199, 146, 234, 0.35),
+    0 0 80px 30px rgba(56, 224, 123, 0.18);
+  animation: blackhole-spin 2.4s linear infinite;
+  will-change: transform, box-shadow;
+}
+
+/* Brief brighten/swell each time the core swallows a body. */
+.blackhole-core--fed {
+  box-shadow:
+    0 0 26px 10px rgba(77, 208, 225, 0.7),
+    0 0 60px 22px rgba(199, 146, 234, 0.55),
+    0 0 110px 44px rgba(56, 224, 123, 0.3);
+  transform: scale(1.25);
+}
+
+@keyframes blackhole-spin {
+  0%   { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Detonation: the core flashes white and expands to engulf the viewport. */
+.blackhole-supernova {
+  animation: blackhole-nova 0.9s ease-out forwards;
+}
+
+@keyframes blackhole-nova {
+  0% {
+    transform: scale(1);
+    background: radial-gradient(circle, #ffffff 40%, rgba(5, 7, 13, 0) 70%);
+    box-shadow:
+      0 0 40px 16px rgba(255, 255, 255, 0.9),
+      0 0 120px 50px rgba(77, 208, 225, 0.7);
+    opacity: 1;
+  }
+  55% {
+    transform: scale(90);
+    background: radial-gradient(circle, #ffffff 30%, rgba(56, 224, 123, 0.4) 60%, rgba(5, 7, 13, 0) 75%);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(160);
+    background: radial-gradient(circle, rgba(255, 255, 255, 0) 40%, rgba(5, 7, 13, 0) 75%);
+    opacity: 0;
+  }
+}
+
+/* While the black hole runs, the live page is hidden (JS also sets aria-hidden). */
+body.blackhole-on .terminal { visibility: hidden; }
