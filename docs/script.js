@@ -1103,6 +1103,216 @@
   })();
 
   // ---------------------------------------------------------------------------
+  // Hidden easter egg: a black hole that swallows the page, then a supernova.
+  // Like gravity it clones the visible page into a physics stage, but instead of
+  // dropping bodies it drags them inward (spiralling + shrinking) toward a
+  // singularity at screen center; once everything is consumed it detonates in a
+  // flash and — unlike gravity — cleans up after itself (no reload needed).
+  // ---------------------------------------------------------------------------
+  (function blackHoleEgg() {
+    var open = false; // re-entrancy guard — one collapse at a time
+
+    // Same leaf "chunk" selectors gravity uses — each match becomes one body.
+    var SELECTORS = [
+      ".titlebar",
+      ".hero__avatar",
+      ".hero__name",
+      ".hero__role",
+      ".hero__greeting",
+      ".block .prompt",
+      ".block .output > li",
+      ".badge",
+      ".skill-group__title",
+      ".stat",
+      ".lang-bar",
+      ".footer p",
+    ];
+
+    function el(tag, cls, html) {
+      var n = document.createElement(tag);
+      if (cls) n.className = cls;
+      if (html != null) n.innerHTML = html;
+      return n;
+    }
+
+    // Keep only visible "leaves" (drop nodes contained by another match, plus
+    // zero-size / hidden ones — same shape as gravity's collector).
+    function collectTargets() {
+      var raw = [];
+      SELECTORS.forEach(function (sel) {
+        Array.prototype.forEach.call(document.querySelectorAll(sel), function (n) {
+          if (raw.indexOf(n) === -1) raw.push(n);
+        });
+      });
+      return raw.filter(function (n, i) {
+        var r = n.getBoundingClientRect();
+        if (r.width < 2 || r.height < 2) return false;
+        for (var j = 0; j < raw.length; j++) {
+          if (j !== i && raw[j].contains(n)) return false;
+        }
+        return true;
+      });
+    }
+
+    function launch() {
+      if (open) return;
+      open = true;
+
+      // Reduced motion shouldn't reach here (the CLI command short-circuits),
+      // but guard anyway.
+      if (prefersReduced) { open = false; return; }
+
+      var stage = el("div", "blackhole-stage");
+      stage.setAttribute("aria-hidden", "true");
+
+      // Singularity sits dead center; everything is pulled toward it.
+      var cx = window.innerWidth / 2;
+      var cy = window.innerHeight / 2;
+      var core = el("div", "blackhole-core");
+      core.style.left = cx + "px";
+      core.style.top = cy + "px";
+
+      // Clone each target at its current on-screen rect into fixed bodies.
+      var bodies = collectTargets().map(function (orig) {
+        var r = orig.getBoundingClientRect();
+        var clone = orig.cloneNode(true);
+        clone.removeAttribute("id");
+        Array.prototype.forEach.call(clone.querySelectorAll("[id]"), function (d) {
+          d.removeAttribute("id");
+        });
+        clone.classList.add("blackhole-body");
+        clone.style.width = r.width + "px";
+        clone.style.height = r.height + "px";
+        stage.appendChild(clone);
+        // Body center, so we can aim its pull at the singularity.
+        return {
+          node: clone,
+          x: r.left,
+          y: r.top,
+          w: r.width,
+          h: r.height,
+          vx: (Math.random() - 0.5) * 1.5,
+          vy: (Math.random() - 0.5) * 1.5,
+          angle: 0,
+          vAngle: (Math.random() - 0.5) * 0.05,
+          scale: 1,
+          life: 0,
+          gone: false,
+        };
+      });
+
+      stage.appendChild(core);
+      document.body.appendChild(stage);
+
+      // Hide the live page (the chaos is decorative — mute it for AT too).
+      document.body.classList.add("blackhole-on");
+      var terminal = document.getElementById("terminal");
+      if (terminal) terminal.setAttribute("aria-hidden", "true");
+
+      var timers = [];
+      var raf = 0;
+      var detonated = false;
+      function after(ms, fn) { timers.push(window.setTimeout(fn, ms)); }
+
+      function teardown() {
+        timers.forEach(window.clearTimeout);
+        if (raf) window.cancelAnimationFrame(raf);
+        window.removeEventListener("keydown", onKey, true);
+        window.removeEventListener("resize", onResize);
+        if (stage.parentNode) stage.parentNode.removeChild(stage);
+        document.body.classList.remove("blackhole-on");
+        if (terminal) terminal.removeAttribute("aria-hidden");
+        open = false;
+        var input = document.getElementById("cli-input");
+        if (input) input.focus();
+      }
+
+      function onKey(e) {
+        if (e.key === "Escape") teardown();
+      }
+      window.addEventListener("keydown", onKey, true);
+
+      // Keep the singularity centered if the viewport changes mid-collapse.
+      function onResize() {
+        cx = window.innerWidth / 2;
+        cy = window.innerHeight / 2;
+        core.style.left = cx + "px";
+        core.style.top = cy + "px";
+      }
+      window.addEventListener("resize", onResize, { passive: true });
+
+      // Physics tuning (px / frame, frame ≈ 1/60s). Tuned so every body actually
+      // spirals into the core (not just orbits): the bodies all reach the
+      // singularity within ~1–3s across phone→ultrawide viewports.
+      var ACCEL_MIN = 0.45, // constant inward pull so even distant bodies move
+        PULL = 9000, // inverse-square term → much stronger up close
+        SWIRL = 0.35, // tangential pull as a fraction of inward accel → spiral
+        DRAG = 0.93, // bleed off speed so orbits decay inward
+        EAT = 40, // distance from center at which a body is swallowed
+        MAX_LIFE = 300; // frames after which a straggler is absorbed anyway (~5s)
+
+      function supernova() {
+        if (detonated) return;
+        detonated = true;
+        core.className = "blackhole-core blackhole-supernova";
+        after(900, teardown);
+      }
+
+      function step(b) {
+        if (b.gone) return;
+        b.life++;
+        var bx = b.x + b.w / 2,
+          by = b.y + b.h / 2;
+        var dx = cx - bx,
+          dy = cy - by;
+        var dist = Math.sqrt(dx * dx + dy * dy) || 1;
+        if (dist < EAT || b.life > MAX_LIFE) {
+          b.gone = true;
+          b.node.style.display = "none";
+          core.classList.add("blackhole-core--fed");
+          // A brief pop on each feeding, then settle back.
+          after(140, function () { core.classList.remove("blackhole-core--fed"); });
+          return;
+        }
+        var nx = dx / dist,
+          ny = dy / dist;
+        // Inward accel: a constant floor plus an inverse-square term that ramps
+        // up close. Swirl adds a perpendicular (-ny, nx) component proportional
+        // to the pull, so bodies spiral in rather than diving straight.
+        var accel = ACCEL_MIN + PULL / (dist * dist);
+        b.vx += nx * accel - ny * accel * SWIRL;
+        b.vy += ny * accel + nx * accel * SWIRL;
+        b.vx *= DRAG;
+        b.vy *= DRAG;
+        b.x += b.vx;
+        b.y += b.vy;
+        b.angle += b.vAngle + accel * 0.05;
+        // Shrink toward nothing as the body nears the horizon.
+        b.scale = Math.max(0.05, Math.min(1, dist / 320));
+        b.node.style.transform =
+          "translate(" + b.x + "px," + b.y + "px) rotate(" + b.angle +
+          "rad) scale(" + b.scale + ")";
+      }
+
+      (function frame() {
+        var alive = 0;
+        for (var i = 0; i < bodies.length; i++) {
+          step(bodies[i]);
+          if (!bodies[i].gone) alive++;
+        }
+        if (alive === 0) { supernova(); return; }
+        raf = window.requestAnimationFrame(frame);
+      })();
+
+      // Safety net: never trap the page if a body somehow can't reach center.
+      // Generous so slow (<60fps) devices still finish the frame-based collapse.
+      after(8000, supernova);
+    }
+
+    document.addEventListener("eschgi:blackhole", launch);
+  })();
+
+  // ---------------------------------------------------------------------------
   // Interactive terminal: a real prompt visitors can type into.
   // Commands surface content already on the page (single source of truth).
   // ---------------------------------------------------------------------------
@@ -1326,6 +1536,22 @@
       document.dispatchEvent(new CustomEvent("eschgi:launch"));
     }
 
+    // Hidden easter egg: collapse the page into a black hole, then supernova.
+    // Mirrors gravity/launch — bail under reduced motion, otherwise dispatch.
+    function cmdBlackhole() {
+      if (prefersReduced) {
+        return print(
+          "blackhole: spacetime stays flat in reduced-motion mode — nothing collapses.",
+          "cli__err"
+        );
+      }
+      if (typeof window.CustomEvent !== "function") {
+        return print("blackhole: unsupported in this browser", "cli__err");
+      }
+      print("crossing the event horizon… 🕳️ (Esc to escape)");
+      document.dispatchEvent(new CustomEvent("eschgi:blackhole"));
+    }
+
     var COMMANDS = {
       help: function () {
         print("available commands:");
@@ -1371,6 +1597,9 @@
       },
       gravity: cmdGravity,
       destroy: cmdGravity,
+      blackhole: cmdBlackhole,
+      supernova: cmdBlackhole,
+      collapse: cmdBlackhole,
       launch: cmdLaunch,
       liftoff: cmdLaunch,
       rocket: cmdLaunch,
