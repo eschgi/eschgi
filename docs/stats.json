@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-29T08:24:29.715Z",
+  "generatedAt": "2026-06-30T07:02:46.813Z",
   "login": "eschgi",
   "name": "Stefan Eschgfäller",
   "followers": 2,
@@ -10,8 +10,8 @@
   },
   "stars": 2,
   "contributions": {
-    "lastYearTotal": 1277,
-    "commits": 1086,
+    "lastYearTotal": 1298,
+    "commits": 1107,
     "restrictedPrivate": 0,
     "pullRequests": 93,
     "reviews": 0,
@@ -22,42 +22,42 @@
     {
       "name": "C#",
       "color": "#178600",
-      "percent": 73.5
+      "percent": 82
     },
     {
       "name": "Java",
       "color": "#b07219",
-      "percent": 17.2
+      "percent": 11.7
     },
     {
       "name": "HTML",
       "color": "#e34c26",
-      "percent": 5
+      "percent": 3.4
     },
     {
       "name": "Objective-C",
       "color": "#438eff",
-      "percent": 1.8
+      "percent": 1.2
     },
     {
       "name": "ShaderLab",
       "color": "#222c37",
-      "percent": 0.7
+      "percent": 0.5
     },
     {
       "name": "Go",
       "color": "#00ADD8",
-      "percent": 0.4
+      "percent": 0.3
     },
     {
       "name": "Objective-C++",
       "color": "#6866fb",
-      "percent": 0.3
+      "percent": 0.2
     },
     {
       "name": "Kotlin",
       "color": "#A97BFF",
-      "percent": 0.3
+      "percent": 0.2
     }
   ],
   "schemaVersion": 1
