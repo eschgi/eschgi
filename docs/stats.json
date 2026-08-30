@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-29T10:01:38.486Z",
+  "generatedAt": "2026-08-30T09:12:22.144Z",
   "login": "eschgi",
   "name": "Stefan Eschgfäller",
   "followers": 2,
@@ -10,10 +10,10 @@
   },
   "stars": 2,
   "contributions": {
-    "lastYearTotal": 1677,
-    "commits": 1439,
+    "lastYearTotal": 1712,
+    "commits": 1472,
     "restrictedPrivate": 0,
-    "pullRequests": 128,
+    "pullRequests": 130,
     "reviews": 0,
     "issues": 107,
     "repositories": 3
@@ -22,12 +22,12 @@
     {
       "name": "C#",
       "color": "#7355dd",
-      "percent": 79.3
+      "percent": 78.2
     },
     {
       "name": "Java",
       "color": "#b07219",
-      "percent": 9.4
+      "percent": 9.2
     },
     {
       "name": "HTML",
@@ -37,12 +37,12 @@
     {
       "name": "Dart",
       "color": "#00B4AB",
-      "percent": 3.3
+      "percent": 4.3
     },
     {
       "name": "Objective-C",
       "color": "#438eff",
-      "percent": 1
+      "percent": 0.9
     },
     {
       "name": "CSS",
@@ -50,14 +50,14 @@
       "percent": 0.5
     },
     {
-      "name": "ShaderLab",
-      "color": "#222c37",
+      "name": "Python",
+      "color": "#3572A5",
       "percent": 0.4
     },
     {
-      "name": "Kotlin",
-      "color": "#A97BFF",
-      "percent": 0.3
+      "name": "ShaderLab",
+      "color": "#222c37",
+      "percent": 0.4
     }
   ],
   "schemaVersion": 1
