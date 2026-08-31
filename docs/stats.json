@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-30T09:12:22.144Z",
+  "generatedAt": "2026-08-31T09:42:36.370Z",
   "login": "eschgi",
   "name": "Stefan Eschgfäller",
   "followers": 2,
@@ -10,10 +10,10 @@
   },
   "stars": 2,
   "contributions": {
-    "lastYearTotal": 1712,
-    "commits": 1472,
+    "lastYearTotal": 1707,
+    "commits": 1466,
     "restrictedPrivate": 0,
-    "pullRequests": 130,
+    "pullRequests": 131,
     "reviews": 0,
     "issues": 107,
     "repositories": 3
@@ -52,7 +52,7 @@
     {
       "name": "Python",
       "color": "#3572A5",
-      "percent": 0.4
+      "percent": 0.5
     },
     {
       "name": "ShaderLab",
