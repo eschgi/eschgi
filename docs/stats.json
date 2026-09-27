@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-26T08:34:07.201Z",
+  "generatedAt": "2026-09-27T09:13:38.934Z",
   "login": "eschgi",
   "name": "Stefan Eschgfäller",
   "followers": 2,
@@ -10,10 +10,10 @@
   },
   "stars": 2,
   "contributions": {
-    "lastYearTotal": 1894,
-    "commits": 1630,
+    "lastYearTotal": 1935,
+    "commits": 1662,
     "restrictedPrivate": 0,
-    "pullRequests": 155,
+    "pullRequests": 164,
     "reviews": 0,
     "issues": 107,
     "repositories": 2
@@ -22,22 +22,27 @@
     {
       "name": "C#",
       "color": "#7355dd",
-      "percent": 77.3
+      "percent": 77.4
     },
     {
       "name": "Java",
       "color": "#b07219",
-      "percent": 8.3
+      "percent": 8.1
     },
     {
       "name": "HTML",
       "color": "#e34c26",
-      "percent": 5.2
+      "percent": 5.1
     },
     {
       "name": "Dart",
       "color": "#00B4AB",
-      "percent": 5.2
+      "percent": 5.1
+    },
+    {
+      "name": "Python",
+      "color": "#3572A5",
+      "percent": 0.8
     },
     {
       "name": "Objective-C",
@@ -47,17 +52,12 @@
     {
       "name": "Go",
       "color": "#00ADD8",
-      "percent": 0.7
+      "percent": 0.6
     },
     {
       "name": "Kotlin",
       "color": "#A97BFF",
       "percent": 0.6
-    },
-    {
-      "name": "CSS",
-      "color": "#663399",
-      "percent": 0.4
     }
   ],
   "schemaVersion": 1
