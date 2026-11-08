@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-07T10:03:13.901Z",
+  "generatedAt": "2026-11-08T10:17:42.758Z",
   "login": "eschgi",
   "name": "Stefan Eschgfäller",
   "followers": 2,
@@ -8,12 +8,12 @@
     "total": 15,
     "nonFork": 10
   },
-  "stars": 2,
+  "stars": 3,
   "contributions": {
-    "lastYearTotal": 2611,
-    "commits": 2292,
+    "lastYearTotal": 2642,
+    "commits": 2319,
     "restrictedPrivate": 0,
-    "pullRequests": 222,
+    "pullRequests": 226,
     "reviews": 0,
     "issues": 94,
     "repositories": 3
@@ -22,12 +22,12 @@
     {
       "name": "C#",
       "color": "#7355dd",
-      "percent": 63
+      "percent": 62.3
     },
     {
       "name": "TypeScript",
       "color": "#3178c6",
-      "percent": 12.9
+      "percent": 13.6
     },
     {
       "name": "Dart",
@@ -37,7 +37,7 @@
     {
       "name": "Java",
       "color": "#b07219",
-      "percent": 4.8
+      "percent": 4.7
     },
     {
       "name": "Go",
@@ -52,7 +52,7 @@
     {
       "name": "Python",
       "color": "#3572A5",
-      "percent": 1.1
+      "percent": 1.3
     },
     {
       "name": "CSS",
