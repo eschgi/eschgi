@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Stefan Eschgfäller — Software Engineer</title>
-  <meta name="description" content="Stefan Eschgfäller, software engineer. Reliable software, end to end: backends on ASP.NET Core and PostgreSQL, and the desktop, web and mobile applications that use them — almost two decades of C#, C++ and Python." />
+  <title data-i18n>Stefan Eschgfäller — Software Engineer</title>
+  <meta name="description" content="Stefan Eschgfäller, software engineer. Reliable software, end to end: backends on ASP.NET Core and PostgreSQL, and the desktop, web and mobile applications that use them — almost two decades of C#, C++ and Python." data-i18n-attr="content" />
   <meta name="author" content="Stefan Eschgfäller" />
   <meta name="theme-color" content="#0c0c0e" />
   <meta name="color-scheme" content="dark" />
@@ -26,7 +26,38 @@
   <link rel="icon" type="image/svg+xml" href="favicon.svg" />
   <link rel="preload" href="assets/fonts/inter-latin-variable.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="stylesheet" href="styles.css" />
-  <script>document.documentElement.classList.add("js");</script>
+  <script>
+    // Before anything is drawn: .js for the styles, and the visitor's language: the one they chose
+    // here before, else the first of their browser's languages the site speaks, else English. A page
+    // that is to be in German or Italian stays hidden until js/i18n.js has put it into that language,
+    // 3 s at most. The same in index.html and lab.html.
+    (function (root) {
+      root.classList.add("js");
+      var wanted = [];
+      try {
+        wanted.push(localStorage.getItem("eschgi.lang"));
+      } catch (error) {
+        // Storage can be unavailable; then the browser's languages decide.
+      }
+      wanted = wanted.concat(navigator.languages || [navigator.language]);
+      var lang = "en";
+      for (var i = 0; i < wanted.length; i++) {
+        var code = String(wanted[i] || "").toLowerCase().split("-")[0];
+        if (code === "en" || code === "de" || code === "it") {
+          lang = code;
+          break;
+        }
+      }
+      root.setAttribute("data-lang", lang);
+      if (lang !== "en") {
+        root.classList.add("i18n-pending");
+        setTimeout(function () {
+          root.classList.remove("i18n-pending");
+        }, 3000);
+      }
+    })(document.documentElement);
+  </script>
+  <script src="js/i18n.js" defer></script>
   <script src="js/site.js" defer></script>
   <script src="js/scale.js" defer></script>
   <script src="js/backtest.js" defer></script>
@@ -48,30 +79,35 @@
     <symbol id="i-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16" /></symbol>
   </svg>
 
-  <a href="#main" class="skip-link">Skip to content</a>
+  <a href="#main" class="skip-link" data-i18n>Skip to content</a>
 
   <header class="site-header">
     <div class="wrap site-header__bar">
       <a class="site-name" href="#top">Stefan Eschgfäller</a>
-      <nav class="site-nav" aria-label="Main" data-navlinks>
-        <a href="#work">Work</a>
-        <a href="#how">How I work</a>
-        <a href="#expertise">Expertise</a>
-        <a href="#activity">Activity</a>
-        <a href="#contact">Contact</a>
+      <nav class="site-nav" aria-label="Main" data-i18n-attr="aria-label" data-navlinks>
+        <a href="#work" data-i18n>Work</a>
+        <a href="#how" data-i18n>How I work</a>
+        <a href="#expertise" data-i18n>Expertise</a>
+        <a href="#activity" data-i18n>Activity</a>
+        <a href="#contact" data-i18n>Contact</a>
       </nav>
+      <div class="lang-switch needs-js" role="group" aria-label="Language" data-i18n-attr="aria-label" data-lang-switch>
+        <button type="button" lang="en" title="English" aria-label="English" aria-pressed="true">EN</button>
+        <button type="button" lang="de" title="Deutsch" aria-label="Deutsch" aria-pressed="false">DE</button>
+        <button type="button" lang="it" title="Italiano" aria-label="Italiano" aria-pressed="false">IT</button>
+      </div>
       <button class="menu-button" type="button" data-nav-toggle aria-expanded="false" aria-controls="mobile-menu">
         <svg aria-hidden="true"><use href="#i-menu" /></svg>
-        <span class="sr-only">Menu</span>
+        <span class="sr-only" data-i18n>Menu</span>
       </button>
     </div>
-    <nav id="mobile-menu" class="mobile-menu" aria-label="Main" data-nav-menu hidden>
+    <nav id="mobile-menu" class="mobile-menu" aria-label="Main" data-i18n-attr="aria-label" data-nav-menu hidden>
       <div class="wrap">
-        <a href="#work">Work</a>
-        <a href="#how">How I work</a>
-        <a href="#expertise">Expertise</a>
-        <a href="#activity">Activity</a>
-        <a href="#contact">Contact</a>
+        <a href="#work" data-i18n>Work</a>
+        <a href="#how" data-i18n>How I work</a>
+        <a href="#expertise" data-i18n>Expertise</a>
+        <a href="#activity" data-i18n>Activity</a>
+        <a href="#contact" data-i18n>Contact</a>
       </div>
     </nav>
   </header>
@@ -79,31 +115,31 @@
   <main id="main">
     <section class="wrap hero" id="top" aria-labelledby="hero-title">
       <div class="hero__text reveal">
-        <p class="label">Software engineer · almost two decades of C#, C++ and Python</p>
-        <h1 id="hero-title" data-cli="headline">Reliable software,<br /> end to end.</h1>
-        <p class="hero__lead" data-cli="intro">
+        <p class="label" data-i18n>Software engineer · almost two decades of C#, C++ and Python</p>
+        <h1 id="hero-title" data-cli="headline" data-i18n>Reliable software,<br> end to end.</h1>
+        <p class="hero__lead" data-cli="intro" data-i18n>
           Backends on ASP.NET Core and PostgreSQL, and the applications that use them: desktop with Qt,
           web with React, mobile with Flutter. I work with AI coding agents; the architecture and the
           review stay with me.
         </p>
         <div class="text-links">
-          <a href="#work">Selected work <span aria-hidden="true">↓</span></a>
+          <a href="#work"><span data-i18n>Selected work</span> <span aria-hidden="true">↓</span></a>
           <a href="https://github.com/eschgi" target="_blank" rel="noopener noreferrer">GitHub <span aria-hidden="true">↗</span></a>
           <a href="https://www.linkedin.com/in/stefaneschgfaeller" target="_blank" rel="noopener noreferrer">LinkedIn <span aria-hidden="true">↗</span></a>
         </div>
       </div>
       <figure class="portrait reveal">
-        <img src="assets/avatar.jpg" width="460" height="460" alt="Portrait of Stefan Eschgfäller" />
+        <img src="assets/avatar.jpg" width="460" height="460" alt="Portrait of Stefan Eschgfäller" data-i18n-attr="alt" />
         <figcaption><span>Stefan Eschgfäller</span><span>eschgi.com</span></figcaption>
       </figure>
     </section>
 
     <div class="wrap">
       <dl class="facts reveal">
-        <div><dt>of production software</dt><dd>~20 years</dd></div>
-        <div><dt>primary languages</dt><dd>C# · C++ · Python</dd></div>
-        <div><dt>one at work, two in my free time</dt><dd>3 products</dd></div>
-        <div><dt>GitHub contributions, last 12 months</dt><dd data-fact="contributions">2,954</dd></div>
+        <div><dt data-i18n>of production software</dt><dd data-i18n>~20 years</dd></div>
+        <div><dt data-i18n>primary languages</dt><dd>C# · C++ · Python</dd></div>
+        <div><dt data-i18n>one at work, two in my free time</dt><dd data-i18n>3 products</dd></div>
+        <div><dt data-i18n>GitHub contributions, last 12 months</dt><dd data-fact="contributions">2,954</dd></div>
       </dl>
     </div>
 
@@ -111,30 +147,30 @@
     <section class="wrap section" id="work" aria-labelledby="work-title">
       <div class="section-top reveal">
         <div>
-          <p class="label">Selected work</p>
-          <h2 id="work-title">At work, and in my free time.</h2>
+          <p class="label" data-i18n>Selected work</p>
+          <h2 id="work-title" data-i18n>At work, and in my free time.</h2>
         </div>
-        <p class="section-note">foodProcess is what I build at work. The self-hosted trading software, kept private, and Share, an open-source app for sharing photos, are my own projects, built in my free time.</p>
+        <p class="section-note" data-i18n>foodProcess is what I build at work. The self-hosted trading software, kept private, and Share, an open-source app for sharing photos, are my own projects, built in my free time.</p>
       </div>
 
       <article class="case reveal" aria-labelledby="case-foodprocess" data-cli="foodprocess">
         <div class="case__text">
-          <p class="case__tag"><b>At work</b> · TopControl</p>
+          <p class="case__tag"><b data-i18n>At work</b> · TopControl</p>
           <h3 id="case-foodprocess">foodProcess</h3>
-          <p>Production software for food packing. Its main goal is to reduce giveaway: the extra product packed above the weight on the label. It connects to the scales that weigh punnets of strawberries, blueberries, tomatoes and more, sends orders from the ERP to the packing lines, monitors and controls the lines in real time, and records every batch from goods receipt to dispatch.</p>
+          <p data-i18n>Production software for food packing. Its main goal is to reduce giveaway: the extra product packed above the weight on the label. It connects to the scales that weigh punnets of strawberries, blueberries, tomatoes and more, sends orders from the ERP to the packing lines, monitors and controls the lines in real time, and records every batch from goods receipt to dispatch.</p>
           <dl class="case__facts">
-            <div><dt>the main goal: less of it</dt><dd>Giveaway</dd></div>
-            <div><dt>weighing every punnet</dt><dd>Scales</dd></div>
-            <div><dt>per order, line and user</dt><dd>KPIs</dd></div>
+            <div><dt data-i18n>the main goal: less of it</dt><dd data-i18n>Giveaway</dd></div>
+            <div><dt data-i18n>weighing every punnet</dt><dd data-i18n>Scales</dd></div>
+            <div><dt data-i18n>per order, line and user</dt><dd data-i18n>KPIs</dd></div>
           </dl>
           <div class="text-links text-links--small">
-            <a href="https://www.topcontrol.it/product/foodProcess" target="_blank" rel="noopener noreferrer" data-cli-source="product">Product page <span aria-hidden="true">↗</span></a>
+            <a href="https://www.topcontrol.it/product/foodProcess" target="_blank" rel="noopener noreferrer" data-cli-source="product"><span data-i18n>Product page</span> <span aria-hidden="true">↗</span></a>
           </div>
         </div>
         <!-- A hand-packing scale, drawn after the real one and played by js/scale.js: a picture until someone plays. -->
         <figure class="case__visual scale" data-scale>
           <div class="scale__head">
-            <span>Try the scale</span>
+            <span data-i18n>Try the scale</span>
             <span data-scale-progress>Goal: least giveaway</span>
           </div>
           <div class="scale__scene">
@@ -194,7 +230,7 @@
               <text class="scale__tft-small scale__tft-small--muted" data-scale-operator x="221" y="36">Station 1</text>
               <text class="scale__tft-product" data-scale-product-name x="221" y="45.5">Strawberries 250 g</text>
               <rect x="285" y="29.5" width="66" height="20" rx="1.5" fill="#0f8b8d" />
-              <text class="scale__tft-label" x="288.5" y="36.5">Net</text>
+              <text class="scale__tft-label" x="288.5" y="36.5" data-i18n>Net</text>
               <text class="scale__tft-weight" x="348.5" y="46.5" text-anchor="end"><tspan data-scale-weight>0.000</tspan><tspan class="scale__tft-unit" dx="1.5">kg</tspan></text>
               <path d="M219 52.5H351" stroke="#dfe3e6" />
               <rect class="scale__tft-icon" x="223" y="57" width="36" height="36" rx="3" />
@@ -204,7 +240,7 @@
               <path d="M332.2 60.5v29" stroke="#2b2f33" stroke-dasharray="2 1.5" />
               <path d="M219 101.5H351" stroke="#dfe3e6" />
               <text class="scale__tft-tiny" data-scale-zero x="222" y="117">›0‹</text>
-              <text class="scale__tft-tiny" data-scale-stable x="234" y="117">STABLE</text>
+              <text class="scale__tft-tiny" data-scale-stable x="234" y="117" data-i18n>STABLE</text>
               <path d="M262 111.5h3v3h-3zM266 111.5h3v3h-3zM270 111.5h3v3h-3zM262 115.5h3v3h-3zM266 115.5h3v3h-3zM270 115.5h3v3h-3z" fill="#a3a9b0" />
               <path d="M278 118.5v-3M281 118.5v-6.5M284 118.5v-4.5" stroke="#a3a9b0" stroke-width="1.6" />
               <circle cx="312.5" cy="115.2" r="1.9" fill="#22c55e" />
@@ -220,41 +256,41 @@
             </svg>
           </div>
           <div class="play__controls needs-js">
-            <div class="play__choices" role="group" aria-label="Fruit">
-              <button type="button" class="play__choice" data-scale-product="blueberries" aria-pressed="false"><b>Blueberries</b><small>125 g</small></button>
-              <button type="button" class="play__choice" data-scale-product="strawberries" aria-pressed="true"><b>Strawberries</b><small>250 g</small></button>
-              <button type="button" class="play__choice" data-scale-product="tomatoes" aria-pressed="false"><b>Tomatoes</b><small>500 g</small></button>
+            <div class="play__choices" role="group" aria-label="Fruit" data-i18n-attr="aria-label">
+              <button type="button" class="play__choice" data-scale-product="blueberries" aria-pressed="false"><b data-i18n>Blueberries</b><small>125 g</small></button>
+              <button type="button" class="play__choice" data-scale-product="strawberries" aria-pressed="true"><b data-i18n>Strawberries</b><small>250 g</small></button>
+              <button type="button" class="play__choice" data-scale-product="tomatoes" aria-pressed="false"><b data-i18n>Tomatoes</b><small>500 g</small></button>
             </div>
             <dl class="play__kpis" data-scale-summary hidden>
-              <div><dt>giveaway</dt><dd data-scale-kpi="giveaway">–</dd></div>
-              <div><dt>punnets a minute</dt><dd data-scale-kpi="rate">–</dd></div>
-              <div><dt>rejected</dt><dd data-scale-kpi="rejected">–</dd></div>
+              <div><dt data-i18n>giveaway</dt><dd data-scale-kpi="giveaway">–</dd></div>
+              <div><dt data-i18n>punnets a minute</dt><dd data-scale-kpi="rate">–</dd></div>
+              <div><dt data-i18n>rejected</dt><dd data-scale-kpi="rejected">–</dd></div>
             </dl>
             <div class="play__row" data-scale-start-row>
               <button type="button" class="play__button play__button--primary" data-scale-start>Start packing</button>
             </div>
             <div class="play__row play__row--actions" data-scale-actions hidden>
-              <button type="button" class="play__button play__button--primary" data-scale-fill>Fill <small>hold</small></button>
-              <button type="button" class="play__button" data-scale-remove>Take one out</button>
-              <button type="button" class="play__button" data-scale-pack>Pack</button>
+              <button type="button" class="play__button play__button--primary" data-scale-fill data-i18n>Fill <small>hold</small></button>
+              <button type="button" class="play__button" data-scale-remove data-i18n>Take one out</button>
+              <button type="button" class="play__button" data-scale-pack data-i18n>Pack</button>
             </div>
             <p class="play__status" data-scale-status aria-live="polite">Fill five punnets to at least their target weight. Every gram above it is giveaway, so keep it as low as you can.</p>
           </div>
-          <figcaption class="scale__foot"><span>A mini game, not the product. On a real line every scale reports to foodProcess, which helps bring the giveaway down.</span></figcaption>
+          <figcaption class="scale__foot"><span data-i18n>A mini game, not the product. On a real line every scale reports to foodProcess, which helps bring the giveaway down.</span></figcaption>
         </figure>
       </article>
 
       <article class="case case--flip reveal" aria-labelledby="case-trading" data-cli="trading">
         <div class="case__text">
-          <p class="case__tag"><b>In my free time</b> · private, in development</p>
-          <h3 id="case-trading">Self-hosted trading software</h3>
-          <p>Automated trading agents for crypto, stocks and forex that run on a server of your own — each with its own capital and strategy, and each explaining what it does and why. Strategies are backtested against holding everything and against a random control before they get money.</p>
+          <p class="case__tag"><b data-i18n>In my free time</b> · <span data-i18n>private, in development</span></p>
+          <h3 id="case-trading" data-i18n>Self-hosted trading software</h3>
+          <p data-i18n>Automated trading agents for crypto, stocks and forex that run on a server of your own — each with its own capital and strategy, and each explaining what it does and why. Strategies are backtested against holding everything and against a random control before they get money.</p>
           <dl class="case__facts">
-            <div><dt>connectors</dt><dd>14</dd></div>
-            <div><dt>client apps</dt><dd>3</dd></div>
-            <div><dt>plugin SDKs</dt><dd>3</dd></div>
+            <div><dt data-i18n>connectors</dt><dd>14</dd></div>
+            <div><dt data-i18n>client apps</dt><dd>3</dd></div>
+            <div><dt data-i18n>plugin SDKs</dt><dd>3</dd></div>
           </dl>
-          <p class="case__stack"><b>Built with</b> .NET 11 · ASP.NET Core · PostgreSQL · gRPC · React · Flutter · Tauri</p>
+          <p class="case__stack"><b data-i18n>Built with</b> .NET 11 · ASP.NET Core · PostgreSQL · gRPC · React · Flutter · Tauri</p>
         </div>
         <!-- A backtest, drawn and played by js/backtest.js; this illustration shows when JavaScript is off. -->
         <figure class="case__visual chart" data-backtest>
@@ -264,8 +300,8 @@
           </div>
           <div class="chart__legend" aria-hidden="true">
             <span><i class="chart__key chart__key--strategy"></i><span data-backtest-name>Strategy</span> <b data-backtest-value="you"></b></span>
-            <span><i class="chart__key chart__key--hold" data-backtest-hold-key></i>Hold everything <b data-backtest-value="hold"></b></span>
-            <span><i class="chart__key chart__key--random"></i>Random control <b data-backtest-value="random"></b></span>
+            <span><i class="chart__key chart__key--hold" data-backtest-hold-key></i><span data-i18n>Hold everything</span> <b data-backtest-value="hold"></b></span>
+            <span><i class="chart__key chart__key--random"></i><span data-i18n>Random control</span> <b data-backtest-value="random"></b></span>
           </div>
           <svg class="chart__plot" data-backtest-plot viewBox="0 0 600 260" preserveAspectRatio="none" aria-hidden="true">
             <defs><linearGradient id="chart-fill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a3e635" stop-opacity="0.18" /><stop offset="1" stop-color="#a3e635" stop-opacity="0" /></linearGradient></defs>
@@ -276,52 +312,52 @@
             <path d="M0.0 230.3 L5.5 228.9 L11.0 226.3 L16.5 226.5 L22.0 228.3 L27.5 227.7 L33.0 226.1 L38.5 223.3 L44.0 224.9 L49.5 226.6 L55.0 224.6 L60.6 222.9 L66.1 219.2 L71.6 216.4 L77.1 215.9 L82.6 215.6 L88.1 209.5 L93.6 209.3 L99.1 210.2 L104.6 211.8 L110.1 210.8 L115.6 209.6 L121.1 209.5 L126.6 208.8 L132.1 207.4 L137.6 205.0 L143.1 201.7 L148.6 200.4 L154.1 203.6 L159.6 201.1 L165.1 203.5 L170.6 203.0 L176.1 205.5 L181.7 204.6 L187.2 205.5 L192.7 204.2 L198.2 195.9 L203.7 195.1 L209.2 192.1 L214.7 194.4 L220.2 194.2 L225.7 191.7 L231.2 190.9 L236.7 189.1 L242.2 187.9 L247.7 189.4 L253.2 187.1 L258.7 188.1 L264.2 182.5 L269.7 182.8 L275.2 180.0 L280.7 179.0 L286.2 175.4 L291.7 176.0 L297.2 172.3 L302.8 171.6 L308.3 167.0 L313.8 164.1 L319.3 162.6 L324.8 163.7 L330.3 160.4 L335.8 157.9 L341.3 151.8 L346.8 151.8 L352.3 148.9 L357.8 146.1 L363.3 144.0 L368.8 142.1 L374.3 140.2 L379.8 140.9 L385.3 143.0 L390.8 143.0 L396.3 139.8 L401.8 133.6 L407.3 129.0 L412.8 124.1 L418.3 120.0 L423.9 116.1 L429.4 114.0 L434.9 109.7 L440.4 101.6 L445.9 101.4 L451.4 102.5 L456.9 93.5 L462.4 90.9 L467.9 85.4 L473.4 80.2 L478.9 83.4 L484.4 71.6 L489.9 62.1 L495.4 59.6 L500.9 54.4 L506.4 52.0 L511.9 54.3 L517.4 53.1 L522.9 49.5 L528.4 42.4 L533.9 37.1 L539.4 34.9 L545.0 26.3 L550.5 28.2 L556.0 22.2 L561.5 14.5 L567.0 14.0 L572.5 21.4 L578.0 24.1 L583.5 20.9 L589.0 16.2 L594.5 6.0 L600.0 9.3" fill="none" stroke="#a3e635" stroke-width="2" vector-effect="non-scaling-stroke" />
           </svg>
           <div class="play__controls needs-js">
-            <div class="play__choices" role="group" aria-label="Market">
-              <button type="button" class="play__choice" data-backtest-market="crypto" aria-pressed="true"><b>Crypto</b><small>volatile</small></button>
-              <button type="button" class="play__choice" data-backtest-market="stock" aria-pressed="false"><b>Stock</b><small>trending</small></button>
-              <button type="button" class="play__choice" data-backtest-market="forex" aria-pressed="false"><b>Forex</b><small>ranging</small></button>
+            <div class="play__choices" role="group" aria-label="Market" data-i18n-attr="aria-label">
+              <button type="button" class="play__choice" data-backtest-market="crypto" aria-pressed="true"><b data-i18n>Crypto</b><small data-i18n>volatile</small></button>
+              <button type="button" class="play__choice" data-backtest-market="stock" aria-pressed="false"><b data-i18n>Stock</b><small data-i18n>trending</small></button>
+              <button type="button" class="play__choice" data-backtest-market="forex" aria-pressed="false"><b>Forex</b><small data-i18n>ranging</small></button>
             </div>
             <dl class="play__kpis" data-backtest-summary hidden>
-              <div><dt>your return</dt><dd data-backtest-kpi="you">–</dd></div>
-              <div><dt>hold everything</dt><dd data-backtest-kpi="hold">–</dd></div>
-              <div><dt>random control</dt><dd data-backtest-kpi="random">–</dd></div>
+              <div><dt data-i18n>your return</dt><dd data-backtest-kpi="you">–</dd></div>
+              <div><dt data-i18n>hold everything</dt><dd data-backtest-kpi="hold">–</dd></div>
+              <div><dt data-i18n>random control</dt><dd data-backtest-kpi="random">–</dd></div>
             </dl>
             <div class="play__row" data-backtest-start-row>
               <button type="button" class="play__button play__button--primary" data-backtest-start>Start a backtest</button>
             </div>
             <div class="play__row play__row--actions play__row--trade" data-backtest-actions hidden>
-              <button type="button" class="play__button" data-backtest-buy>Buy</button>
-              <button type="button" class="play__button" data-backtest-sell>Sell</button>
-              <button type="button" class="play__button play__button--primary" data-backtest-next>Next day <small>hold</small></button>
+              <button type="button" class="play__button" data-backtest-buy data-i18n>Buy</button>
+              <button type="button" class="play__button" data-backtest-sell data-i18n>Sell</button>
+              <button type="button" class="play__button play__button--primary" data-backtest-next data-i18n>Next day <small>hold</small></button>
             </div>
             <p class="play__status" data-backtest-status aria-live="polite">Trade a demo market for 60 days. Make money and beat holding everything and a random control, and your strategy would get money. Each trade costs 0.1 %.</p>
           </div>
-          <figcaption class="chart__foot"><span>A mini game with demo data, not the software itself.</span></figcaption>
+          <figcaption class="chart__foot"><span data-i18n>A mini game with demo data, not the software itself.</span></figcaption>
         </figure>
       </article>
 
       <article class="case reveal" aria-labelledby="case-share" data-cli="share">
         <div class="case__text">
-          <p class="case__tag"><b>In my free time</b> · open source · v0.1.0 · built with AI, for myself</p>
+          <p class="case__tag"><b data-i18n>In my free time</b> · <span data-i18n>open source</span> · v0.1.0 · <span data-i18n>built with AI, for myself</span></p>
           <h3 id="case-share">Share</h3>
-          <p>A self-hosted place where family and friends drop photos, videos and documents: sending with a PIN and no account, folders with their own people, and end-to-end encryption per folder.</p>
+          <p data-i18n>A self-hosted place where family and friends drop photos, videos and documents: sending with a PIN and no account, folders with their own people, and end-to-end encryption per folder.</p>
           <dl class="case__facts">
-            <div><dt>server, one binary</dt><dd>Go</dd></div>
-            <div><dt>Flutter app</dt><dd>Android</dd></div>
-            <div><dt>per folder</dt><dd>E2EE</dd></div>
+            <div><dt data-i18n>server, one binary</dt><dd>Go</dd></div>
+            <div><dt data-i18n>Flutter app</dt><dd>Android</dd></div>
+            <div><dt data-i18n>per folder</dt><dd>E2EE</dd></div>
           </dl>
-          <p class="case__stack"><b>Built with</b> Go · PostgreSQL · Preact · TypeScript · Flutter · Kotlin · S3</p>
+          <p class="case__stack"><b data-i18n>Built with</b> Go · PostgreSQL · Preact · TypeScript · Flutter · Kotlin · S3</p>
           <div class="text-links text-links--small">
-            <a href="https://github.com/eschgi/share" target="_blank" rel="noopener noreferrer" data-cli-source>Source <span aria-hidden="true">↗</span></a>
-            <a href="https://github.com/eschgi/share/releases/latest" target="_blank" rel="noopener noreferrer">Latest release <span aria-hidden="true">↗</span></a>
+            <a href="https://github.com/eschgi/share" target="_blank" rel="noopener noreferrer" data-cli-source><span data-i18n>Source</span> <span aria-hidden="true">↗</span></a>
+            <a href="https://github.com/eschgi/share/releases/latest" target="_blank" rel="noopener noreferrer"><span data-i18n>Latest release</span> <span aria-hidden="true">↗</span></a>
           </div>
         </div>
         <figure class="case__visual shots">
           <img class="shots__computer" src="assets/share/library-computer.webp" width="1440" height="900" loading="lazy" decoding="async"
-               alt="Share's library on a computer: the folders Family, Wedding Anna &amp; Marco, Kindergarten and Taxes 2026 beside the photos, grouped by day" />
+               alt="Share's library on a computer: the folders Family, Wedding Anna &amp; Marco, Kindergarten and Taxes 2026 beside the photos, grouped by day" data-i18n-attr="alt" />
           <div class="shots__phone">
             <img src="assets/share/send-phone.webp" width="390" height="844" loading="lazy" decoding="async"
-                 alt="Sending on a phone with a PIN: Send your files. Photos, videos, documents, anything. No app, no account." />
+                 alt="Sending on a phone with a PIN: Send your files. Photos, videos, documents, anything. No app, no account." data-i18n-attr="alt" />
           </div>
         </figure>
       </article>
@@ -331,16 +367,16 @@
     <section class="wrap section" id="how" aria-labelledby="how-title">
       <div class="section-top reveal">
         <div>
-          <p class="label">How I work</p>
-          <h2 id="how-title">Four habits, with or without AI.</h2>
+          <p class="label" data-i18n>How I work</p>
+          <h2 id="how-title" data-i18n>Four habits, with or without AI.</h2>
         </div>
-        <p class="section-note" data-cli="ai">Like most engineers today, I use AI to build new software and to extend existing codebases. Coding agents such as Claude Code work under written rules and hooks, tests decide when a change is done, and the merge stays with me.</p>
+        <p class="section-note" data-cli="ai" data-i18n>Like most engineers today, I use AI to build new software and to extend existing codebases. Coding agents such as Claude Code work under written rules and hooks, tests decide when a change is done, and the merge stays with me.</p>
       </div>
       <ol class="principles reveal">
-        <li><small>01</small><h3>Readable first</h3><p>Code is read far more often than it is written; names and structure come before cleverness.</p></li>
-        <li><small>02</small><h3>Tests define done</h3><p>A change is finished when it builds without warnings and its tests pass — whoever, or whatever, typed it.</p></li>
-        <li><small>03</small><h3>Measure, then optimize</h3><p>Profiles, traces and metrics beat guesses about where the time goes.</p></li>
-        <li><small>04</small><h3>AI with guardrails</h3><p>Agents draft and refactor under written rules and hooks; a human reviews the diff and merges.</p></li>
+        <li><small>01</small><h3 data-i18n>Readable first</h3><p data-i18n>Code is read far more often than it is written; names and structure come before cleverness.</p></li>
+        <li><small>02</small><h3 data-i18n>Tests define done</h3><p data-i18n>A change is finished when it builds without warnings and its tests pass — whoever, or whatever, typed it.</p></li>
+        <li><small>03</small><h3 data-i18n>Measure, then optimize</h3><p data-i18n>Profiles, traces and metrics beat guesses about where the time goes.</p></li>
+        <li><small>04</small><h3 data-i18n>AI with guardrails</h3><p data-i18n>Agents draft and refactor under written rules and hooks; a human reviews the diff and merges.</p></li>
       </ol>
     </section>
 
@@ -349,30 +385,30 @@
     <section class="wrap section" id="expertise" aria-labelledby="expertise-title">
       <div class="section-top reveal">
         <div>
-          <p class="label">Expertise</p>
-          <h2 id="expertise-title">Languages and tools.</h2>
+          <p class="label" data-i18n>Expertise</p>
+          <h2 id="expertise-title" data-i18n>Languages and tools.</h2>
         </div>
-        <p class="section-note">What I reach for, from the languages to the infrastructure around them. <a href="lab.html#sphere">See them as a sphere <span aria-hidden="true">→</span></a></p>
+        <p class="section-note"><span data-i18n>What I reach for, from the languages to the infrastructure around them.</span> <a href="lab.html#sphere"><span data-i18n>See them as a sphere</span> <span aria-hidden="true">→</span></a></p>
       </div>
       <div class="expertise reveal">
         <div class="expertise__group" data-stack-group="languages">
-          <h3>Languages</h3>
+          <h3 data-i18n>Languages</h3>
           <ul><li data-weight="3">C#</li><li data-weight="3">C++</li><li data-weight="3">Python</li><li data-weight="2">TypeScript</li><li data-weight="2">JavaScript</li><li data-weight="2">Go</li><li data-weight="2">SQL</li><li data-weight="1">Java</li><li data-weight="1">Kotlin</li><li data-weight="1">Dart</li><li data-weight="1">Delphi</li></ul>
         </div>
         <div class="expertise__group" data-stack-group="frameworks">
-          <h3>Frameworks &amp; APIs</h3>
+          <h3 data-i18n>Frameworks &amp; APIs</h3>
           <ul><li data-weight="3">.NET</li><li data-weight="3">ASP.NET Core</li><li data-weight="2">gRPC</li><li data-weight="2">REST</li><li data-weight="2">Entity Framework Core</li><li data-weight="2">Qt</li><li data-weight="2">React</li><li data-weight="1">Flutter</li><li data-weight="1">Tauri</li></ul>
         </div>
         <div class="expertise__group" data-stack-group="data">
-          <h3>Databases</h3>
+          <h3 data-i18n>Databases</h3>
           <ul><li data-weight="3">PostgreSQL</li><li data-weight="1">DuckDB</li><li data-weight="1">Firebird</li><li data-weight="1">MySQL</li></ul>
         </div>
         <div class="expertise__group" data-stack-group="ops">
-          <h3>DevOps &amp; observability</h3>
+          <h3 data-i18n>DevOps &amp; observability</h3>
           <ul><li data-weight="2">Docker</li><li data-weight="2">Git</li><li data-weight="1">GitHub Actions</li><li data-weight="1">Docker Compose</li><li data-weight="1">OpenTelemetry</li><li data-weight="1">Seq</li><li data-weight="1">Nginx</li><li data-weight="1">Cloudflare</li><li data-weight="1">Linux</li></ul>
         </div>
         <div class="expertise__group" data-stack-group="ai">
-          <h3>AI-assisted engineering</h3>
+          <h3 data-i18n>AI-assisted engineering</h3>
           <ul><li data-weight="2">Claude Code</li><li data-weight="1">MCP</li><li data-weight="1">Agentic coding</li></ul>
         </div>
       </div>
@@ -382,17 +418,17 @@
     <section class="wrap section" id="activity" aria-labelledby="activity-title">
       <div class="section-top reveal">
         <div>
-          <p class="label">Activity</p>
-          <h2 id="activity-title">A year on GitHub.</h2>
+          <p class="label" data-i18n>Activity</p>
+          <h2 id="activity-title" data-i18n>A year on GitHub.</h2>
         </div>
-        <p class="section-note">Public and private contributions over the last twelve months, collected daily by a GitHub Action.</p>
+        <p class="section-note" data-i18n>Public and private contributions over the last twelve months, collected daily by a GitHub Action.</p>
       </div>
       <div class="activity reveal" data-activity hidden>
         <dl class="activity__numbers">
-          <div><dt>contributions</dt><dd data-stat="contributions">0</dd></div>
-          <div><dt>commits</dt><dd data-stat="commits">0</dd></div>
-          <div><dt>pull requests</dt><dd data-stat="pullRequests">0</dd></div>
-          <div><dt>active days</dt><dd data-stat="activeDays">0</dd></div>
+          <div><dt data-i18n>contributions</dt><dd data-stat="contributions">0</dd></div>
+          <div><dt data-i18n>commits</dt><dd data-stat="commits">0</dd></div>
+          <div><dt data-i18n>pull requests</dt><dd data-stat="pullRequests">0</dd></div>
+          <div><dt data-i18n>active days</dt><dd data-stat="activeDays">0</dd></div>
         </dl>
         <figure class="weeks">
           <div class="weeks__bars" data-weeks role="img"></div>
@@ -401,12 +437,12 @@
         <p class="activity__languages" data-languages></p>
         <p class="activity__meta" data-stats-meta></p>
       </div>
-      <p class="activity__fallback" data-stats-fallback>The numbers live on <a href="https://github.com/eschgi" target="_blank" rel="noopener noreferrer">github.com/eschgi</a>.</p>
+      <p class="activity__fallback" data-stats-fallback><span data-i18n>The numbers live on</span> <a href="https://github.com/eschgi" target="_blank" rel="noopener noreferrer">github.com/eschgi</a>.</p>
     </section>
 
     <!-- ===================================================================== CONTACT -->
     <section class="wrap contact" id="contact" aria-labelledby="contact-title">
-      <h2 id="contact-title">Not looking for a new role — but always happy to talk about software.</h2>
+      <h2 id="contact-title" data-i18n>Not looking for a new role — but always happy to talk about software.</h2>
       <div class="text-links" data-contact-links>
         <a href="https://github.com/eschgi" target="_blank" rel="noopener noreferrer" data-label="GitHub">GitHub <span aria-hidden="true">↗</span></a>
         <a href="https://www.linkedin.com/in/stefaneschgfaeller" target="_blank" rel="noopener noreferrer" data-label="LinkedIn">LinkedIn <span aria-hidden="true">↗</span></a>
@@ -416,8 +452,8 @@
 
   <footer class="site-footer">
     <div class="wrap site-footer__bar">
-      <span>© <span data-year>2026</span> Stefan Eschgfäller · Hand-built, no trackers</span>
-      <span>Lab: <a href="lab.html#bugbash">Bug Bash</a> · <a href="lab.html#sphere">Tech sphere</a> · <a href="lab.html#terminal">Terminal</a></span>
+      <span>© <span data-year>2026</span> Stefan Eschgfäller · <span data-i18n>Hand-built, no trackers</span></span>
+      <span>Lab: <a href="lab.html#bugbash">Bug Bash</a> · <a href="lab.html#sphere" data-i18n>Tech sphere</a> · <a href="lab.html#terminal" data-i18n>Terminal</a></span>
     </div>
   </footer>
 </body>

@@ -15,6 +15,13 @@
   function formatNumber(value) {
     return eschgi.formatNumber ? eschgi.formatNumber(value) : String(value);
   }
+  // The words, in the visitor's language (js/i18n.js), or in English as written here.
+  function t(text, params) {
+    if (eschgi.t) return eschgi.t(text, params);
+    return text.replace(/\{(\w+)\}/g, function (match, name) {
+      return params && params[name] !== undefined ? String(params[name]) : match;
+    });
+  }
 
   // ------------------------------------------------------------------ artwork
   // Every critter is drawn at the origin facing +x with "radius" r (half its length).
@@ -432,17 +439,29 @@
     var CROSS_TIME = { bug: 6.4, race: 3.4, heisen: 6.2, leak: 10.5, feature: 7 };
     var RADIUS = { bug: 15, race: 11, heisen: 15, leak: 15, feature: 17 };
     var POINTS = { bug: 10, race: 20, heisen: 30, leak: 25 };
-    var FIX_LINES = ["Fixed!", "LGTM ✓", "Resolved", "Closed", "Squashed!", "fix: bug", "Ship it!"];
-    var ESCAPE_LINES = ["Escaped to prod!", "A customer found it", "Hotfix needed 🔥", "📟 On-call paged", "Works on my machine", "Reopened"];
-    var MISS_LINES = ["miss", "false positive", "can't reproduce", "not a bug"];
-    var RANKS = [
-      [0, "Intern with a flyswatter"],
-      [150, "Junior Debugger"],
-      [400, "Senior Bug Hunter"],
-      [700, "Staff Exterminator"],
-      [1100, "Principal Debugger"],
-      [1600, "10x Engineer 🦄"],
-    ];
+    // What a popup says when a bug is fixed, escapes or a click misses: one of these, at random.
+    // Some developer slang stays as it is in every language.
+    function fixLines() {
+      return [t("Fixed!"), "LGTM ✓", t("Resolved"), t("Closed"), t("Squashed!"), "fix: bug", "Ship it!"];
+    }
+    function escapeLines() {
+      return [t("Escaped to prod!"), t("A customer found it"), t("Hotfix needed 🔥"), t("📟 On-call paged"), t("Works on my machine"), t("Reopened")];
+    }
+    function missLines() {
+      return [t("miss"), t("false positive"), t("can't reproduce"), t("not a bug")];
+    }
+    // The score at which each rank begins, and the ranks, in the same order.
+    var RANKS = [0, 150, 400, 700, 1100, 1600];
+    function rankNames() {
+      return [
+        t("Intern with a flyswatter"),
+        t("Junior Debugger"),
+        t("Senior Bug Hunter"),
+        t("Staff Exterminator"),
+        t("Principal Debugger"),
+        t("10x Engineer 🦄"),
+      ];
+    }
 
     var state = "idle";
     var critters = [];
@@ -705,7 +724,7 @@
       if (byPlayer) {
         setStreak(streak + 1);
         var gained = addScore(POINTS[critter.kind], true);
-        popup(critter.x, critter.y - critter.r - 6, Math.random() < 0.22 ? pickOne(FIX_LINES) : "+" + gained, colors.body);
+        popup(critter.x, critter.y - critter.r - 6, Math.random() < 0.22 ? pickOne(fixLines()) : "+" + gained, colors.body);
 
         // Both halves of a race condition within 1.6 s: synchronized.
         if (critter.kind === "race" && critter.group) {
@@ -714,13 +733,13 @@
           });
           if (!twinAlive && raceKills[critter.group] !== undefined && clock - raceKills[critter.group] < 1.6) {
             addScore(30, false);
-            popup(critter.x, critter.y - critter.r - 26, "Synchronized! +30", "#fde68a");
+            popup(critter.x, critter.y - critter.r - 26, t("Synchronized! +30"), "#fde68a");
           }
           raceKills[critter.group] = clock;
         }
       } else {
         addScore(POINTS[critter.kind], false);
-        popup(critter.x, critter.y - critter.r - 6, "AI fixed it 🤖", PALETTE.heisen.body);
+        popup(critter.x, critter.y - critter.r - 6, t("AI fixed it 🤖"), PALETTE.heisen.body);
       }
       burst(critter.x, critter.y, colors.body, 14);
       ring(critter.x, critter.y, "#2cb67d", critter.r * 2.2);
@@ -755,18 +774,18 @@
       if (critter.kind === "feature") {
         featuresShipped++;
         addScore(5, false);
-        popup(x, y, "Feature shipped 🚀", "#a3e635");
+        popup(x, y, t("Feature shipped 🚀"), "#a3e635");
         return;
       }
       if (shield > 0) {
         shield--;
-        popup(x, y, "Caught in CI ✅", "#2cb67d");
+        popup(x, y, t("Caught in CI ✅"), "#2cb67d");
         ring(x, y, "#2cb67d", 40);
         return;
       }
       escapedCount++;
       sla = Math.max(0, sla - (critter.kind === "leak" ? 20 : 10));
-      popup(x, y, critter.kind === "leak" ? "Out of memory in prod!" : pickOne(ESCAPE_LINES), "#f05252");
+      popup(x, y, critter.kind === "leak" ? t("Out of memory in prod!") : pickOne(escapeLines()), "#f05252");
       flashLine(y, "is-broken");
       setStreak(0);
       hurt();
@@ -778,16 +797,16 @@
       ring(powerUp.x, powerUp.y, color, 44);
       if (powerUp.kind === "coffee") {
         slowUntil = clock + 5;
-        popup(powerUp.x, powerUp.y - 24, "Coffee! Bugs slowed ☕", color);
+        popup(powerUp.x, powerUp.y - 24, t("Coffee! Bugs slowed ☕"), color);
       } else if (powerUp.kind === "ai") {
         aiActive = true;
         aiUntil = clock + 4.5;
         aiNextZap = clock + 0.3;
         aiZaps = 0;
-        popup(powerUp.x, powerUp.y - 24, "AI pair programmer on 🤖", color);
+        popup(powerUp.x, powerUp.y - 24, t("AI pair programmer on 🤖"), color);
       } else {
         shield = Math.min(3, shield + 2);
-        popup(powerUp.x, powerUp.y - 24, "Test suite +2 ✅", color);
+        popup(powerUp.x, powerUp.y - 24, t("Test suite +2 ✅"), color);
       }
     }
 
@@ -811,10 +830,10 @@
           y: rand(0.3, 0.7) * height,
           inside: true,
         });
-        popup(regression.x, regression.y - regression.r - 8, "AI introduced a regression 🙃", PALETTE.heisen.body);
+        popup(regression.x, regression.y - regression.r - 8, t("AI introduced a regression 🙃"), PALETTE.heisen.body);
         burst(regression.x, regression.y, PALETTE.heisen.body, 10, 120);
       } else {
-        popup(width / 2, 52, "AI pair: done ✓", PALETTE.heisen.body);
+        popup(width / 2, 52, t("AI pair: done ✓"), PALETTE.heisen.body);
       }
     }
 
@@ -855,13 +874,13 @@
         misses++;
         setStreak(0);
         ring(point.x, point.y, "#94a3b8", 18);
-        if (Math.random() < 0.35) popup(point.x, point.y - 14, pickOne(MISS_LINES), "#94a3b8");
+        if (Math.random() < 0.35) popup(point.x, point.y - 14, pickOne(missLines()), "#94a3b8");
         updateHud();
         return;
       }
 
       if (target.kind === "heisen" && target.blinks > 0 && Math.random() < 0.5) {
-        teleport(target, "it moved!");
+        teleport(target, t("it moved!"));
         return;
       }
 
@@ -871,7 +890,7 @@
         addScore(-25, false);
         setStreak(0);
         burst(target.x, target.y, PALETTE.feature.body, 12);
-        popup(target.x, target.y - target.r - 6, pickOne(["That was a feature! 🙃", "Not a bug! −25", "Product is calling 📞"]), "#f59e0b");
+        popup(target.x, target.y - target.r - 6, pickOne([t("That was a feature! 🙃"), t("Not a bug! −25"), t("Product is calling 📞")]), "#f59e0b");
         shake();
         updateHud();
         return;
@@ -908,7 +927,9 @@
       var key = event.key.toLowerCase();
       if (state === "running" && (key === "p" || key === "escape")) {
         event.preventDefault();
-        pause("You pressed pause. Even debuggers need a break.");
+        pause(function () {
+          return t("You pressed pause. Even debuggers need a break.");
+        });
       } else if (state === "paused" && key === "p") {
         event.preventDefault();
         resume();
@@ -963,7 +984,7 @@
           !coarse &&
           Math.hypot(pointer.x - critter.x, pointer.y - critter.y) < critter.r + 44
         ) {
-          teleport(critter, "observed!");
+          teleport(critter, t("observed!"));
         }
 
         critter.wander += dt * critter.wanderFreq;
@@ -1136,32 +1157,57 @@
     }
 
     // --- panels -----------------------------------------------------------
-    function showPanel(html, focusSelector) {
-      panelContent.innerHTML = html;
+    // A panel is a function that returns its HTML, so it can be drawn again in another language.
+    var panelView = null;
+    function showPanel(view) {
+      panelView = view;
+      panelContent.innerHTML = view();
       panel.hidden = false;
-      var focusTarget = panelContent.querySelector(focusSelector || "button");
+      var focusTarget = panelContent.querySelector("button");
       if (focusTarget) focusTarget.focus({ preventScroll: true });
     }
 
     function rankFor(value) {
-      var rank = RANKS[0][1];
-      RANKS.forEach(function (entry) {
-        if (value >= entry[0]) rank = entry[1];
+      var rank = 0;
+      RANKS.forEach(function (threshold, index) {
+        if (value >= threshold) rank = index;
       });
-      return rank;
+      return rankNames()[rank];
     }
 
+    // What the result panel says about the round, as a function of the language; a random one is
+    // picked now, so the panel says the same thing in another language.
     function quipFor(reason, accuracy) {
-      if (reason === "down") return "Production is down and somewhere a pager is buzzing. Maybe write a few more tests?";
-      if (featuresSquashed >= 3) return "You squashed " + featuresSquashed + " features. Product would like a word.";
-      if (escapedCount === 0) return "Zero bugs reached production. Deploy it — even on a Friday.";
-      if (hits + misses > 8 && accuracy < 50) return "Lots of false positives. Have you tried reading the stack trace?";
-      return pickOne([
-        "The backlog thanks you.",
-        "Solid work. Time for a coffee ☕",
-        "They'll be back. Bugs always are.",
-        "Not bad — merge approved.",
-      ]);
+      if (reason === "down") {
+        return function () {
+          return t("Production is down and somewhere a pager is buzzing. Maybe write a few more tests?");
+        };
+      }
+      if (featuresSquashed >= 3) {
+        var squashed = featuresSquashed;
+        return function () {
+          return t("You squashed {count} features. Product would like a word.", { count: squashed });
+        };
+      }
+      if (escapedCount === 0) {
+        return function () {
+          return t("Zero bugs reached production. Deploy it — even on a Friday.");
+        };
+      }
+      if (hits + misses > 8 && accuracy < 50) {
+        return function () {
+          return t("Lots of false positives. Have you tried reading the stack trace?");
+        };
+      }
+      var pick = Math.floor(Math.random() * 4);
+      return function () {
+        return [
+          t("The backlog thanks you."),
+          t("Solid work. Time for a coffee ☕"),
+          t("They'll be back. Bugs always are."),
+          t("Not bad — merge approved."),
+        ][pick];
+      };
     }
 
     function fact(label, value) {
@@ -1181,38 +1227,44 @@
       showBest();
 
       var accuracy = hits + misses > 0 ? Math.round((hits / (hits + misses)) * 100) : 0;
-      var title =
-        reason === "down" ? "Production is down 🔥" : escapedCount === 0 ? "Flawless release 🚀" : "Ship it! 🚀";
-      showPanel(
-        '<p class="overline">' +
-          (reason === "down" ? "SLA breached" : "Time's up") +
+      var quip = quipFor(reason, accuracy);
+      var round = { score: score, best: Math.max(best, score), record: record && score > 0, flawless: escapedCount === 0 };
+      var facts = { fixed: fixedCount, escaped: escapedCount, accuracy: accuracy, combo: bestMultiplier };
+      showPanel(function () {
+        var title = reason === "down" ? t("Production is down 🔥") : round.flawless ? t("Flawless release 🚀") : "Ship it! 🚀";
+        return (
+          '<p class="overline">' +
+          escapeHtml(reason === "down" ? t("SLA breached") : t("Time's up")) +
           "</p>" +
           '<h3 class="game__panel-title">' +
-          title +
+          escapeHtml(title) +
           "</h3>" +
           '<p class="bb-result__score">' +
-          formatNumber(score) +
+          formatNumber(round.score) +
           "</p>" +
           '<p class="bb-result__rank">' +
-          escapeHtml(rankFor(score)) +
+          escapeHtml(rankFor(round.score)) +
           "</p>" +
           '<p class="bb-result__quip">' +
-          escapeHtml(quipFor(reason, accuracy)) +
+          escapeHtml(quip()) +
           "</p>" +
-          (record && score > 0
-            ? '<span class="pill pill--positive bb-result__record">New personal best</span>'
-            : '<p class="game__hint">Your best: ' + formatNumber(Math.max(best, score)) + "</p>") +
+          (round.record
+            ? '<span class="pill pill--positive bb-result__record">' + escapeHtml(t("New personal best")) + "</span>"
+            : '<p class="game__hint">' + escapeHtml(t("Your best: {score}", { score: formatNumber(round.best) })) + "</p>") +
           '<dl class="bb-result__facts">' +
-          fact("Fixed", fixedCount) +
-          fact("Escaped", escapedCount) +
-          fact("Accuracy", accuracy + "%") +
-          fact("Best combo", "×" + bestMultiplier) +
+          fact(t("Fixed"), facts.fixed) +
+          fact(t("Escaped"), facts.escaped) +
+          fact(t("Accuracy"), facts.accuracy + "%") +
+          fact(t("Best combo"), "×" + facts.combo) +
           "</dl>" +
           '<div class="bb-result__actions">' +
           '<button class="btn btn--primary btn--lg" type="button" data-bb-start>' +
-          '<svg aria-hidden="true"><use href="#i-replay" /></svg>Play again</button>' +
+          '<svg aria-hidden="true"><use href="#i-replay" /></svg>' +
+          escapeHtml(t("Play again")) +
+          "</button>" +
           "</div>"
-      );
+        );
+      });
     }
 
     function startGame() {
@@ -1227,25 +1279,38 @@
       frameId = window.requestAnimationFrame(loop);
     }
 
-    function pause(message) {
+    // `why` is a function that returns why the game paused, in the current language.
+    function pause(why) {
       if (state !== "running") return;
       state = "paused";
       api.isRunning = false;
       window.cancelAnimationFrame(frameId);
-      showPanel(
-        '<p class="overline">Paused</p>' +
-          '<h3 class="game__panel-title">Taking a break ⏸</h3>' +
+      showPanel(function () {
+        return (
+          '<p class="overline">' +
+          escapeHtml(t("Paused")) +
+          "</p>" +
+          '<h3 class="game__panel-title">' +
+          escapeHtml(t("Taking a break ⏸")) +
+          "</h3>" +
           '<p class="game__panel-text">' +
-          escapeHtml(message) +
+          escapeHtml(why()) +
           "</p>" +
           '<div class="bb-result__actions">' +
           '<button class="btn btn--primary btn--lg" type="button" data-bb-resume>' +
-          '<svg aria-hidden="true"><use href="#i-play" /></svg>Resume</button>' +
+          '<svg aria-hidden="true"><use href="#i-play" /></svg>' +
+          escapeHtml(t("Resume")) +
+          "</button>" +
           '<button class="btn btn--ghost btn--lg" type="button" data-bb-start>' +
-          '<svg aria-hidden="true"><use href="#i-replay" /></svg>Restart</button>' +
+          '<svg aria-hidden="true"><use href="#i-replay" /></svg>' +
+          escapeHtml(t("Restart")) +
+          "</button>" +
           "</div>" +
-          '<p class="game__hint"><span class="hide-touch">P resumes</span></p>'
-      );
+          '<p class="game__hint"><span class="hide-touch">' +
+          escapeHtml(t("P resumes")) +
+          "</span></p>"
+        );
+      });
     }
 
     function resume() {
@@ -1260,19 +1325,34 @@
 
     // Pause when the tab or the board goes out of sight.
     document.addEventListener("visibilitychange", function () {
-      if (document.hidden) pause("The tab went to the background, so the bugs are waiting for you.");
+      if (document.hidden) {
+        pause(function () {
+          return t("The tab went to the background, so the bugs are waiting for you.");
+        });
+      }
     });
     if ("IntersectionObserver" in window) {
       new IntersectionObserver(
         function (entries) {
           entries.forEach(function (entry) {
             api.isOnScreen = entry.isIntersecting;
-            if (!entry.isIntersecting) pause("The board scrolled out of view, so the bugs are waiting for you.");
+            if (!entry.isIntersecting) {
+              pause(function () {
+                return t("The board scrolled out of view, so the bugs are waiting for you.");
+              });
+            }
           });
         },
         { threshold: 0.35 }
       ).observe(board);
     }
+
+    // Another language: the best score and a panel on show, drawn again, without moving the focus.
+    // The start panel is in the page, and i18n.js translates it itself.
+    document.addEventListener("eschgi:language", function () {
+      showBest();
+      if (!panel.hidden && panelView) panelContent.innerHTML = panelView();
+    });
 
     if ("ResizeObserver" in window) new ResizeObserver(resize).observe(board);
     else window.addEventListener("resize", resize);
@@ -1330,7 +1410,7 @@
       var button = document.createElement("button");
       button.type = "button";
       button.className = "stray-bug";
-      button.setAttribute("aria-label", "A bug escaped into the page. Squash it!");
+      button.setAttribute("aria-label", t("A bug escaped into the page. Squash it!"));
       var canvas = document.createElement("canvas");
       button.appendChild(canvas);
       document.body.appendChild(button);
@@ -1407,8 +1487,8 @@
           splat.remove();
         }, 800);
         if (eschgi.toast) {
-          eschgi.toast("Nice catch! 🐛 Its friends are hiding in Bug Bash.", {
-            label: "Play",
+          eschgi.toast(t("Nice catch! 🐛 Its friends are hiding in Bug Bash."), {
+            label: t("Play"),
             onClick: function () {
               if (eschgi.scrollToSection) eschgi.scrollToSection("bugbash");
               window.setTimeout(function () {

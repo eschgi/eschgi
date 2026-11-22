@@ -284,17 +284,67 @@ h3 {
 .site-header__bar {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 1.5rem;
+  gap: 0.75rem;
   height: 4.5rem;
 }
 
+/* The name holds the left; the nav, the language switch and the menu button sit on the right.
+   On the narrowest phones the name gives way before anything overflows. */
 .site-name {
+  min-width: 0;
+  margin-right: auto;
+  overflow: hidden;
   color: var(--text);
   font-size: 0.9375rem;
   font-weight: 600;
   letter-spacing: -0.01em;
   white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* The language switch: the three languages by their codes, the one in use lit as the games'
+   pickers light theirs. Each language is named in its own language for screen readers. */
+.lang-switch {
+  display: flex;
+  flex: none;
+  gap: 0.125rem;
+}
+
+.lang-switch button {
+  min-width: 2rem;
+  height: 2rem;
+  padding: 0 0.375rem;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  transition: color 120ms linear, background-color 120ms linear;
+}
+
+.lang-switch button:hover {
+  color: var(--text);
+}
+
+.lang-switch button[aria-pressed="true"] {
+  background: #1d1d22;
+  box-shadow: inset 0 0 0 1px var(--line-2);
+  color: var(--text);
+}
+
+/* Room for the whole name beside the switch and the menu button on the narrowest phones. */
+@media (max-width: 359px) {
+  .site-header__bar {
+    gap: 0.5rem;
+  }
+
+  .lang-switch button {
+    min-width: 1.75rem;
+    padding: 0 0.25rem;
+  }
 }
 
 .site-nav {
@@ -361,8 +411,28 @@ h3 {
 }
 
 @media (min-width: 860px) {
+  .site-header__bar {
+    gap: 1.5rem;
+  }
+
   .site-nav {
     display: flex;
+  }
+
+  /* Set off from the nav by a short rule. */
+  .lang-switch {
+    position: relative;
+    padding-left: 1.25rem;
+  }
+
+  .lang-switch::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 0;
+    height: 1rem;
+    border-left: 1px solid var(--line-2);
+    transform: translateY(-50%);
   }
 
   .menu-button,
@@ -590,9 +660,10 @@ h3 {
   line-height: 1.7;
 }
 
+/* Equal columns, none narrower than its longest word ("Überfüllung" on a phone). */
 .case__facts {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(min-content, 1fr));
   gap: 1rem;
   margin-top: 1.75rem;
   padding-top: 1.5rem;
@@ -1060,6 +1131,8 @@ h3 {
   color: var(--body);
   font-size: 0.8125rem;
   font-weight: 500;
+  -webkit-hyphens: auto;
+  hyphens: auto;
 }
 
 .play__choice:hover b,
@@ -1077,20 +1150,23 @@ h3 {
   grid-template-columns: minmax(0, 1fr);
 }
 
+/* A longer language's labels wrap rather than overflow: no column is narrower than its longest
+   word, and a button's "hold" moves below its label when the two don't fit side by side. */
 .play__row--actions {
-  grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr) minmax(0, 0.8fr);
+  grid-template-columns: minmax(min-content, 1.3fr) minmax(min-content, 1fr) minmax(min-content, 0.8fr);
   gap: 0.5rem;
 }
 
 .play__row--trade {
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.4fr);
+  grid-template-columns: minmax(min-content, 1fr) minmax(min-content, 1fr) minmax(min-content, 1.4fr);
 }
 
 .play__button {
   display: inline-flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: center;
-  gap: 0.375rem;
+  gap: 0 0.375rem;
   min-height: 2.75rem;
   padding: 0.5rem 0.75rem;
   border: 1px solid var(--line-2);
@@ -1099,7 +1175,8 @@ h3 {
   color: var(--text);
   font-size: 0.875rem;
   font-weight: 500;
-  white-space: nowrap;
+  line-height: 1.25;
+  text-align: center;
   cursor: pointer;
   touch-action: manipulation;
   -webkit-touch-callout: none;
@@ -1583,6 +1660,13 @@ h3 {
 
 html:not(.js) .needs-js {
   display: none !important;
+}
+
+/* A page that is to be in German or Italian stays hidden until js/i18n.js has put it into that
+   language, so nobody reads it in English first. The inline script in the head sets this, and
+   lifts it after 3 s whatever happens. */
+.i18n-pending body {
+  visibility: hidden;
 }
 
 /* ==========================================================================

@@ -1,0 +1,35 @@
+name: Check translations
+
+# The site's English is the key to its German and Italian (docs/js/i18n.js), so reworded or new
+# English has no translation until one is added. This lists what is missing or no longer used.
+on:
+  push:
+    branches: [main]
+    paths:
+      - "docs/**"
+      - "scripts/check-i18n.mjs"
+      - ".github/workflows/i18n.yml"
+  pull_request:
+    paths:
+      - "docs/**"
+      - "scripts/check-i18n.mjs"
+      - ".github/workflows/i18n.yml"
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Check docs/js/i18n.js
+        run: node scripts/check-i18n.mjs

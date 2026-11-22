@@ -13,6 +13,21 @@
   var figure = document.querySelector("[data-scale]");
   if (!figure) return;
 
+  // The words, in the visitor's language (js/i18n.js), or in English as written here.
+  function t(text, params) {
+    var eschgi = window.eschgi;
+    if (eschgi && eschgi.t) return eschgi.t(text, params);
+    return text.replace(/\{(\w+)\}/g, function (match, name) {
+      return params && params[name] !== undefined ? String(params[name]) : match;
+    });
+  }
+
+  // A number with a fixed count of decimals, written the visitor's way: 1.2, or 1,2 in German.
+  function decimal(value, digits) {
+    var eschgi = window.eschgi;
+    return eschgi && eschgi.formatNumber ? eschgi.formatNumber(value, digits) : value.toFixed(digits);
+  }
+
   var SVG_NS = "http://www.w3.org/2000/svg";
   var BEST_KEY = "eschgi.scale.best";
   var PUNNETS_PER_ORDER = 5;
@@ -26,10 +41,16 @@
 
   // Weights in grams: a piece weighs `mean` ± `spread`, and a held Fill pours one every `every`
   // milliseconds. `size` is a piece's drawn height at the mean weight, `width` its width as a share
-  // of that, and `tilt` how far, in degrees, a piece may turn as it lands.
+  // of that, and `tilt` how far, in degrees, a piece may turn as it lands. `name` is what the
+  // screen and the label say, `fruit` how a sentence names it, both in the current language.
   var PRODUCTS = {
     blueberries: {
-      name: "Blueberries",
+      name: function () {
+        return t("Blueberries");
+      },
+      fruit: function () {
+        return t("blueberries");
+      },
       target: 125,
       mean: 2,
       spread: 0.6,
@@ -41,7 +62,12 @@
       draw: drawBlueberry,
     },
     strawberries: {
-      name: "Strawberries",
+      name: function () {
+        return t("Strawberries");
+      },
+      fruit: function () {
+        return t("strawberries");
+      },
       target: 250,
       mean: 21,
       spread: 8,
@@ -53,7 +79,12 @@
       draw: drawStrawberry,
     },
     tomatoes: {
-      name: "Tomatoes",
+      name: function () {
+        return t("Tomatoes");
+      },
+      fruit: function () {
+        return t("tomatoes");
+      },
       target: 500,
       mean: 34,
       spread: 11,
@@ -105,8 +136,9 @@
     return !!(reducedQuery && reducedQuery.matches);
   }
 
-  var INTRO =
-    "Fill five punnets to at least their target weight. Every gram above it is giveaway, so keep it as low as you can.";
+  function intro() {
+    return t("Fill five punnets to at least their target weight. Every gram above it is giveaway, so keep it as low as you can.");
+  }
 
   var productKey = "strawberries";
   var product = PRODUCTS[productKey];
@@ -126,6 +158,9 @@
   var lastTime = 0;
   var shownReading = null;
   var scene = 0; // bumped when the fruit changes, so timers of the old scene do nothing
+  var saying = null; // what the status line says, as a function, so it can be said again in another language
+  var results = null; // the last order's numbers
+  var operatorOn = false; // whether the screen shows the operator, or the station
 
   function later(callback, milliseconds) {
     var mine = scene;
@@ -401,7 +436,7 @@
     var label = el("g", { class: "scale__label" });
     el("rect", { x: -32, y: -15, width: 64, height: 30, rx: 2 }, label);
     var name = el("text", { class: "scale__label-name", x: -27, y: -6 }, label);
-    name.textContent = product.name.toUpperCase();
+    name.textContent = product.name().toUpperCase();
     var netWeight = el("text", { class: "scale__label-weight", x: -27, y: 4.5 }, label);
     netWeight.textContent = product.target + " g";
     var bars = "";
@@ -529,7 +564,13 @@
     }
     if (announceWhenSettled && settled() && !pouring) {
       announceWhenSettled = false;
-      if (mode === "playing") say(grams(weight) + " g of " + product.target + " g.");
+      if (mode === "playing") {
+        var reading = grams(weight);
+        var target = product.target;
+        say(function () {
+          return t("{weight} g of {target} g.", { weight: reading, target: target });
+        });
+      }
     }
     if (pouring || tweens.length || !settled() || packWhenSettled || announceWhenSettled) {
       frame = window.requestAnimationFrame(tick);
@@ -603,11 +644,20 @@
   }
 
   function showProductOnScreen() {
-    screen.productName.textContent = product.name + " " + product.target + " g";
+    screen.productName.textContent = product.name() + " " + product.target + " g";
   }
 
   function showOperator(playing) {
-    screen.operator.textContent = playing ? "Operator: you" : "Station 1";
+    operatorOn = playing;
+    screen.operator.textContent = playing ? t("Operator: you") : t("Station 1");
+  }
+
+  // The labels already printed, in the current language.
+  function relabelPunnets() {
+    var name = product.name().toUpperCase();
+    Array.prototype.forEach.call(stage.querySelectorAll(".scale__label-name"), function (node) {
+      node.textContent = name;
+    });
   }
 
   // The operator's badge at the reader: a moment of lime on the RFID mark.
@@ -636,7 +686,9 @@
     if (!punnet || mode !== "playing") return;
     if (weight + inTheAir() >= product.target * FULL_SHARE) {
       haltPour();
-      say("The punnet is full. Take some out, or pack it.");
+      say(function () {
+        return t("The punnet is full. Take some out, or pack it.");
+      });
       return;
     }
     if (order && !order.firstFillAt) order.firstFillAt = now;
@@ -694,7 +746,10 @@
         }
       );
     }
-    say("Took out " + grams(piece.weight) + " g.");
+    var taken = grams(piece.weight);
+    say(function () {
+      return t("Took out {weight} g.", { weight: taken });
+    });
     announceWhenSettled = true;
     syncControls();
     wake();
@@ -742,14 +797,20 @@
     order.lastPackAt = performance.now();
     if (accepted) {
       var extra = net - product.target;
+      var share = (extra / product.target) * 100;
       order.packed += 1;
       order.giveaway += extra;
       printLabel(current);
-      say("Packed " + net + " g: " + extra + " g giveaway (" + ((extra / product.target) * 100).toFixed(1) + " %).");
+      say(function () {
+        return t("Packed {net} g: {extra} g giveaway ({share} %).", { net: net, extra: extra, share: decimal(share, 1) });
+      });
       leave(current, "packed", 380);
     } else {
+      var under = product.target - net;
       order.rejected += 1;
-      say("Rejected: " + (product.target - net) + " g under. Short punnets can't be sold.");
+      say(function () {
+        return t("Rejected: {grams} g under. Short punnets can't be sold.", { grams: under });
+      });
       leave(current, "rejected", 120);
     }
     updateProgress();
@@ -865,7 +926,9 @@
     if (punnet) leave(punnet, "packed", 0);
     arrive(hadPunnet ? 260 : 0);
     updateProgress();
-    say("Hold Fill to pour, tap it for a single piece. Pack once the reading settles.");
+    say(function () {
+      return t("Hold Fill to pour, tap it for a single piece. Pack once the reading settles.");
+    });
   }
 
   function finishOrder() {
@@ -873,36 +936,57 @@
     var share = order.packed ? (order.giveaway / (product.target * order.packed)) * 100 : 0;
     var minutes = order.firstFillAt && order.lastPackAt > order.firstFillAt ? (order.lastPackAt - order.firstFillAt) / 60000 : 0;
     var perMinute = minutes ? order.packed / minutes : 0;
-    setKpi("giveaway", order.packed ? share.toFixed(1) + " %" : "–");
-    setKpi("rate", perMinute ? perMinute.toFixed(1) : "–");
-    setKpi("rejected", String(order.rejected));
+    results = { share: share, perMinute: perMinute, packed: order.packed, rejected: order.rejected };
+    showResults();
 
     var best = loadBest();
     var previous = best[productKey];
     var clean = order.rejected === 0 && order.packed === PUNNETS_PER_ORDER;
-    var fruit = product.name.toLowerCase();
-    var line;
+    var fruit = product.fruit;
+    var words;
     if (clean && (!previous || share < previous.giveaway)) {
       best[productKey] = { giveaway: share, perMinute: perMinute };
       saveBest(best);
-      line = previous
-        ? "Order packed with " + share.toFixed(1) + " % giveaway: a new best for " + fruit + "."
-        : "Order packed with " + share.toFixed(1) + " % giveaway. Now try to get it lower.";
+      words = previous
+        ? function () {
+            return t("Order packed with {share} % giveaway: a new best for {fruit}.", { share: decimal(share, 1), fruit: fruit() });
+          }
+        : function () {
+            return t("Order packed with {share} % giveaway. Now try to get it lower.", { share: decimal(share, 1) });
+          };
     } else if (!clean) {
-      line = "Order done, with " + order.rejected + " rejected. Underweight costs more than giveaway.";
+      var rejected = order.rejected;
+      words = function () {
+        return t("Order done, with {count} rejected. Underweight costs more than giveaway.", { count: rejected });
+      };
     } else {
-      line = "Order packed. Your best for " + fruit + ": " + previous.giveaway.toFixed(1) + " % giveaway.";
+      var record = previous.giveaway;
+      words = function () {
+        return t("Order packed. Your best for {fruit}: {share} % giveaway.", { fruit: fruit(), share: decimal(record, 1) });
+      };
     }
-    say(line);
+    say(words);
     showOperator(false);
-    startButton.textContent = "Pack another order";
+    labelStart();
     syncControls();
     updateProgress();
+  }
+
+  function showResults() {
+    if (!results) return;
+    setKpi("giveaway", results.packed ? decimal(results.share, 1) + " %" : "–");
+    setKpi("rate", results.perMinute ? decimal(results.perMinute, 1) : "–");
+    setKpi("rejected", String(results.rejected));
   }
 
   function setKpi(name, value) {
     var node = figure.querySelector('[data-scale-kpi="' + name + '"]');
     if (node) node.textContent = value;
+  }
+
+  // Before the first order the button starts one; after it, it starts the next.
+  function labelStart() {
+    startButton.textContent = order ? t("Pack another order") : t("Start packing");
   }
 
   function loadBest() {
@@ -923,20 +1007,28 @@
   }
 
   // ---------------------------------------------------------------- the page around it
-  function say(text) {
+  // `words` is a function that returns the text, so the line can be said again in another language.
+  function say(words) {
+    saying = words;
+    var text = words();
     if (statusText && statusText.textContent !== text) statusText.textContent = text;
   }
 
   function updateProgress() {
     if (!progressText) return;
     if (mode === "done") {
-      progressText.textContent = "Order done";
+      progressText.textContent = t("Order done");
     } else if (order) {
-      progressText.textContent =
-        "Punnet " + Math.min(order.count + 1, PUNNETS_PER_ORDER) + " of " + PUNNETS_PER_ORDER + " · " + order.giveaway + " g giveaway";
+      progressText.textContent = t("Punnet {number} of {total} · {giveaway} g giveaway", {
+        number: Math.min(order.count + 1, PUNNETS_PER_ORDER),
+        total: PUNNETS_PER_ORDER,
+        giveaway: order.giveaway,
+      });
     } else {
       var best = loadBest()[productKey];
-      progressText.textContent = best ? "Best: " + best.giveaway.toFixed(1) + " % giveaway" : "Goal: least giveaway";
+      progressText.textContent = best
+        ? t("Best: {share} % giveaway", { share: decimal(best.giveaway, 1) })
+        : t("Goal: least giveaway");
     }
   }
 
@@ -995,14 +1087,15 @@
     });
     mode = "idle";
     order = null;
-    startButton.textContent = "Start packing";
+    results = null;
+    labelStart();
     if (rfid) setClass(rfid, "is-reading", false);
     showProductOnScreen();
     showOperator(false);
     showStation();
     syncControls();
     updateProgress();
-    say(INTRO);
+    say(intro);
   }
 
   var narrowQuery = window.matchMedia ? window.matchMedia("(max-width: 519px)") : null;
@@ -1054,6 +1147,17 @@
   });
   fillButton.addEventListener("contextmenu", function (event) {
     event.preventDefault();
+  });
+
+  // Another language: everything the scale says, said again, without touching the game.
+  document.addEventListener("eschgi:language", function () {
+    showProductOnScreen();
+    showOperator(operatorOn);
+    relabelPunnets();
+    labelStart();
+    showResults();
+    updateProgress();
+    if (saying) say(saying);
   });
 
   selectProduct(productKey);

@@ -2,7 +2,7 @@
 // page and the technology sphere on the Lab page.
 //
 // A classic deferred script rather than a module, so the pages also work when opened from disk.
-// It runs first and shares a few helpers on `window.eschgi` with bugbash.js and terminal.js.
+// It runs after i18n.js and shares a few helpers on `window.eschgi` with bugbash.js and terminal.js.
 (function () {
   "use strict";
 
@@ -17,10 +17,24 @@
     },
   });
 
-  var numberFormat = new Intl.NumberFormat("en-US");
-  eschgi.formatNumber = function (value) {
-    return numberFormat.format(value);
-  };
+  // Numbers and words come in the visitor's language from i18n.js; without it, in English.
+  if (!eschgi.formatNumber) {
+    var numberFormat = new Intl.NumberFormat("en-US");
+    eschgi.formatNumber = function (value, digits) {
+      return digits === undefined ? numberFormat.format(value) : value.toFixed(digits);
+    };
+  }
+
+  function t(text, params) {
+    if (eschgi.t) return eschgi.t(text, params);
+    return text.replace(/\{(\w+)\}/g, function (match, name) {
+      return params && params[name] !== undefined ? String(params[name]) : match;
+    });
+  }
+
+  function locale() {
+    return eschgi.locale || "en-US";
+  }
 
   // Calls `callback` once, the first time `element` scrolls into view.
   eschgi.onceVisible = function (element, callback, options) {
@@ -105,7 +119,8 @@
     target.scrollIntoView({ behavior: eschgi.reducedMotion ? "auto" : "smooth", block: "start" });
   };
 
-  // The front page holds the content: the Lab's sphere and terminal read it from there.
+  // The front page holds the content: the Lab's sphere and terminal read it from there, in the
+  // visitor's language, which i18n.js keeps it in.
   var homePromise = null;
   eschgi.homeDocument = function () {
     if (document.body.getAttribute("data-page") === "home") return Promise.resolve(document);
@@ -116,7 +131,9 @@
           return response.text();
         })
         .then(function (html) {
-          return new DOMParser().parseFromString(html, "text/html");
+          var doc = new DOMParser().parseFromString(html, "text/html");
+          if (eschgi.translate) eschgi.translate(doc);
+          return doc;
         });
     }
     return homePromise;
@@ -229,44 +246,50 @@
       .loadStats()
       .then(function (data) {
         var contributions = data.contributions || {};
-        if (fact && contributions.lastYearTotal) fact.textContent = eschgi.formatNumber(contributions.lastYearTotal);
-        if (!root) return;
-
         var calendar = data.calendar;
         var counts = calendar && Array.isArray(calendar.counts) && calendar.counts.length ? calendar.counts : null;
         var start = counts && typeof calendar.start === "string" ? new Date(calendar.start + "T00:00:00Z") : null;
         if (start && isNaN(start)) start = null;
+        var weeks = root ? drawWeeks(root, counts, start) : null;
 
-        var values = {
-          contributions: contributions.lastYearTotal || 0,
-          commits: contributions.commits || 0,
-          pullRequests: contributions.pullRequests || 0,
-          activeDays: counts
-            ? counts.filter(function (count) {
-                return count > 0;
-              }).length
-            : null,
-        };
-        Object.keys(values).forEach(function (key) {
-          var element = root.querySelector('[data-stat="' + key + '"]');
-          if (!element) return;
-          if (values[key] === null) element.parentNode.hidden = true;
-          else element.textContent = eschgi.formatNumber(values[key]);
-        });
+        // Everything with words, numbers or dates in it, said again when the language changes.
+        function label() {
+          if (fact && contributions.lastYearTotal) fact.textContent = eschgi.formatNumber(contributions.lastYearTotal);
+          if (!root) return;
 
-        renderWeeks(root, counts, start);
-        renderLanguages(root, data.languages || []);
+          var values = {
+            contributions: contributions.lastYearTotal || 0,
+            commits: contributions.commits || 0,
+            pullRequests: contributions.pullRequests || 0,
+            activeDays: counts
+              ? counts.filter(function (count) {
+                  return count > 0;
+                }).length
+              : null,
+          };
+          Object.keys(values).forEach(function (key) {
+            var element = root.querySelector('[data-stat="' + key + '"]');
+            if (!element) return;
+            if (values[key] === null) element.parentNode.hidden = true;
+            else element.textContent = eschgi.formatNumber(values[key]);
+          });
 
-        var meta = root.querySelector("[data-stats-meta]");
-        var updated = data.generatedAt ? new Date(data.generatedAt) : null;
-        if (meta && updated && !isNaN(updated)) {
-          meta.textContent =
-            "Updated " +
-            updated.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" }) +
-            " · github.com/" +
-            (data.login || "eschgi");
+          if (weeks) weeks.label();
+          renderLanguages(root, data.languages || []);
+
+          var meta = root.querySelector("[data-stats-meta]");
+          var updated = data.generatedAt ? new Date(data.generatedAt) : null;
+          if (meta && updated && !isNaN(updated)) {
+            meta.textContent = t("Updated {date} · github.com/{login}", {
+              date: updated.toLocaleDateString(locale(), { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" }),
+              login: data.login || "eschgi",
+            });
+          }
         }
+        label();
+        document.addEventListener("eschgi:language", label);
 
+        if (!root) return;
         root.hidden = false;
         var fallback = document.querySelector("[data-stats-fallback]");
         if (fallback) fallback.hidden = true;
@@ -276,14 +299,15 @@
       });
   }
 
-  // One bar a week, Sunday to Saturday, as GitHub's calendar counts them.
-  function renderWeeks(root, counts, start) {
+  // One bar a week, Sunday to Saturday, as GitHub's calendar counts them. Drawn once; label()
+  // writes what the bars say, in the current language.
+  function drawWeeks(root, counts, start) {
     var bars = root.querySelector("[data-weeks]");
     var figure = bars && bars.closest("figure");
-    if (!bars) return;
+    if (!bars) return null;
     if (!counts || !start) {
       if (figure) figure.hidden = true;
-      return;
+      return null;
     }
 
     var dayMs = 86400000;
@@ -300,48 +324,57 @@
     var busiest = weeks.reduce(function (max, week) {
       return Math.max(max, week.total);
     }, 0);
-    var dayFormat = new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", timeZone: "UTC" });
-    var monthFormat = new Intl.DateTimeFormat("en-US", { month: "short", year: "numeric", timeZone: "UTC" });
     var readout = root.querySelector("[data-weeks-readout]");
     var range = root.querySelector("[data-weeks-range]");
-    var resting = "Contributions per week, last 12 months";
+    function resting() {
+      return t("Contributions per week, last 12 months");
+    }
 
     var fragment = document.createDocumentFragment();
-    weeks.forEach(function (week, index) {
+    var elements = weeks.map(function (week, index) {
       var bar = document.createElement("span");
       bar.style.height = busiest ? (week.total / busiest) * 100 + "%" : "0";
       if (!week.total) bar.className = "is-empty";
       if (index === weeks.length - 1) bar.classList.add("is-latest");
-      var label =
-        "Week of " +
-        dayFormat.format(week.first) +
-        ": " +
-        (week.total ? eschgi.formatNumber(week.total) : "no") +
-        (week.total === 1 ? " contribution" : " contributions");
-      bar.title = label;
-      bar.setAttribute("data-label", label);
       fragment.appendChild(bar);
+      return bar;
     });
     bars.appendChild(fragment);
-    bars.setAttribute(
-      "aria-label",
-      "Contributions per week over the last twelve months; the busiest week had " + eschgi.formatNumber(busiest) + "."
-    );
 
     if (readout) {
-      readout.textContent = resting;
       bars.addEventListener("pointerover", function (event) {
         var label = event.target.getAttribute && event.target.getAttribute("data-label");
         if (label) readout.textContent = label;
       });
       bars.addEventListener("pointerleave", function () {
-        readout.textContent = resting;
+        readout.textContent = resting();
       });
     }
-    if (range) {
-      var end = new Date(start.getTime() + (counts.length - 1) * dayMs);
-      range.textContent = monthFormat.format(start) + " – " + monthFormat.format(end);
-    }
+
+    return {
+      label: function () {
+        var dayFormat = new Intl.DateTimeFormat(locale(), { month: "short", day: "numeric", timeZone: "UTC" });
+        var monthFormat = new Intl.DateTimeFormat(locale(), { month: "short", year: "numeric", timeZone: "UTC" });
+        elements.forEach(function (bar, index) {
+          var week = weeks[index];
+          var date = dayFormat.format(week.first);
+          var label = week.total
+            ? t("Week of {date}: {count} contributions", { date: date, count: week.total })
+            : t("Week of {date}: no contributions", { date: date });
+          bar.title = label;
+          bar.setAttribute("data-label", label);
+        });
+        bars.setAttribute(
+          "aria-label",
+          t("Contributions per week over the last twelve months; the busiest week had {count}.", { count: busiest })
+        );
+        if (readout) readout.textContent = resting();
+        if (range) {
+          var end = new Date(start.getTime() + (counts.length - 1) * dayMs);
+          range.textContent = monthFormat.format(start) + " – " + monthFormat.format(end);
+        }
+      },
+    };
   }
 
   function renderLanguages(root, languages) {
@@ -356,13 +389,13 @@
       line.hidden = true;
       return;
     }
-    line.textContent = "Most code in ";
+    line.textContent = t("Most code in") + " ";
     top.forEach(function (language, index) {
       if (index) line.appendChild(document.createTextNode(" · "));
       var name = document.createElement("b");
       name.textContent = language.name;
       line.appendChild(name);
-      line.appendChild(document.createTextNode(" " + language.percent.toFixed(1) + "%"));
+      line.appendChild(document.createTextNode(" " + eschgi.formatNumber(language.percent, 1) + "%"));
     });
   }
 
@@ -381,13 +414,31 @@
         buildSphere(stage, legend, doc);
       })
       .catch(function () {
-        if (legend) legend.innerHTML = '<li>The lists live on the <a href="./#expertise">front page</a>.</li>';
+        if (!legend) return;
+        var row = document.createElement("li");
+        function say() {
+          row.innerHTML = t('The lists live on the <a href="./#expertise">front page</a>.');
+        }
+        say();
+        legend.appendChild(row);
+        document.addEventListener("eschgi:language", say);
       });
   }
 
   function buildSphere(stage, legend, doc) {
     var groups = Array.prototype.slice.call(doc.querySelectorAll("[data-stack-group]"));
     if (!groups.length) return;
+
+    // The legend names the groups as the front page heads them, in whichever language it is in.
+    var names = [];
+    if (legend) {
+      document.addEventListener("eschgi:language", function () {
+        names.forEach(function (entry) {
+          var title = doc.querySelector('[data-stack-group="' + entry.key + '"] h3');
+          if (title) entry.node.textContent = title.textContent.trim();
+        });
+      });
+    }
 
     var items = [];
     groups.forEach(function (group) {
@@ -405,6 +456,7 @@
         swatch.setAttribute("aria-hidden", "true");
         var name = document.createElement("span");
         name.textContent = title ? title.textContent.trim() : key;
+        names.push({ key: key, node: name });
         var size = document.createElement("b");
         size.textContent = String(entries.length);
         row.appendChild(swatch);
