@@ -3478,3 +3478,214 @@ body.blackhole-on > footer {
 .sphere-lab .sphere-wrap {
   max-width: 32rem;
 }
+
+/* ==========================================================================
+   More of the Lab: Name that language, the sort race and Life.
+   ========================================================================== */
+
+/* ------------------------------------------- Name that language (js/quiz.js) */
+.quiz {
+  margin-top: 2.5rem;
+}
+
+.quiz__score {
+  margin-left: auto;
+  font-variant-numeric: tabular-nums;
+}
+
+.quiz__code {
+  min-height: 10.5rem;
+  margin: 0;
+  padding: 1.25rem 1.25rem 1rem;
+  overflow-x: auto;
+  color: var(--slate-200);
+  font-size: 0.875rem;
+  line-height: 1.65;
+}
+
+/* One colour each for keywords, strings and numbers, whatever the language. */
+.q-key {
+  color: var(--violet);
+}
+
+.q-str {
+  color: var(--accent);
+}
+
+.q-num {
+  color: #fbbf24;
+}
+
+.quiz__answers {
+  display: grid;
+  gap: 0.75rem;
+  padding: 0 1.25rem 1.25rem;
+}
+
+.quiz__choices {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.5rem;
+}
+
+@media (min-width: 720px) {
+  .quiz__choices {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.quiz__choice {
+  justify-content: flex-start;
+  gap: 0.625rem;
+}
+
+.quiz__key {
+  display: inline-grid;
+  flex: none;
+  place-items: center;
+  width: 1.25rem;
+  height: 1.25rem;
+  border: 1px solid var(--line-2);
+  border-radius: 4px;
+  color: var(--muted);
+  font-size: 0.6875rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.quiz__choice:disabled {
+  opacity: 1;
+}
+
+.quiz__choice:disabled:not(.is-right):not(.is-wrong) {
+  opacity: 0.45;
+}
+
+.quiz__choice.is-right {
+  border-color: var(--accent);
+  background: rgb(163 230 53 / 0.12);
+}
+
+.quiz__choice.is-wrong {
+  border-color: #ef4444;
+  background: rgb(239 68 68 / 0.12);
+}
+
+.quiz__status {
+  min-height: 3em;
+  color: var(--muted);
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.quiz__next {
+  justify-self: start;
+}
+
+/* --------------------------------------------- the sort race (js/sortrace.js) */
+.race,
+.life {
+  display: grid;
+  gap: 0.25rem;
+  margin-top: 2.5rem;
+}
+
+.race__lanes {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.75rem;
+}
+
+@media (min-width: 720px) {
+  .race__lanes {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.race__lane {
+  padding: 0.875rem 1rem 0.75rem;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface);
+  transition: border-color 200ms linear;
+}
+
+.race__lane canvas {
+  display: block;
+  width: 100%;
+  height: 6.5rem;
+}
+
+.race__lane figcaption {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  margin-top: 0.625rem;
+  color: var(--muted);
+  font-size: 0.8125rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.race__lane b {
+  color: var(--text);
+  font-weight: 500;
+}
+
+.race__place {
+  margin-left: auto;
+  color: var(--text);
+  font-weight: 600;
+}
+
+.race__lane.is-winner {
+  border-color: var(--accent);
+}
+
+.race__lane.is-winner .race__place {
+  color: var(--accent);
+}
+
+.race__shapes {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+@media (max-width: 519px) {
+  .race__shapes {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* ------------------------------------------------------------ Life (js/life.js) */
+.life__stage {
+  padding: 0.75rem;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--bg);
+}
+
+.life__board {
+  display: block;
+  margin: 0 auto;
+  cursor: crosshair;
+  touch-action: none;
+}
+
+.life__buttons {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0.5rem;
+}
+
+@media (max-width: 519px) {
+  .life__buttons {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* On a phone, long snippet lines wrap rather than run off the edge. */
+@media (max-width: 519px) {
+  .quiz__code {
+    padding: 1rem;
+    font-size: 0.8125rem;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+}

@@ -1072,6 +1072,19 @@
       }
     }
 
+    // The Lab's other toys: scroll to them here, or go to the Lab from anywhere else.
+    function labSection(id, words) {
+      return function () {
+        if (document.getElementById(id)) {
+          print(words);
+          goTo(id);
+        } else {
+          print("That lives in the Lab. On my way…");
+          window.location.href = "lab.html#" + id;
+        }
+      };
+    }
+
     var aboutCommand = withHome(about);
     var workCommand = withHome(work);
     var buildingCommand = withHome(building);
@@ -1197,6 +1210,9 @@
         line("  " + key("stats") + "      GitHub numbers");
         line("  " + key("contact") + "    where to find me");
         line("  " + key("bugbash") + "    play Bug Bash");
+        line("  " + key("quiz") + "       name that language");
+        line("  " + key("race") + "       the sort race");
+        line("  " + key("life") + "       Conway's Game of Life");
         line("  " + key("ls") + " · " + key("cat") + "   browse the \"files\"");
         line("  " + key("echo") + " · " + key("date") + " · " + key("history") + " · " + key("clear"));
         line('  <span class="dim">… and a few that are not listed. Tab completes, ↑/↓ walk the history.</span>');
@@ -1217,6 +1233,10 @@
       contact: contactCommand,
       socials: contactCommand,
       bugbash: bugbash,
+      quiz: labSection("quiz", "Ten snippets, four guesses each. Good luck."),
+      race: labSection("race", "Pick the numbers, then start the race."),
+      sort: labSection("race", "Pick the numbers, then start the race."),
+      life: labSection("life", "Four rules, endless patterns."),
       bugs: bugbash,
       play: bugbash,
       game: bugbash,
