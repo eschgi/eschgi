@@ -735,14 +735,26 @@ h3 {
   font-variant-numeric: tabular-nums;
 }
 
-/* The backtest game (js/backtest.js), drawn in the plot's own pixels once someone plays. */
-.backtest__grid {
-  stroke: #1f1f24;
+/* The backtest game (js/backtest.js), drawn in the plot's own pixels: a candle a day, the 30 days
+   of history dimmed, the strategy's line on top. */
+.backtest__history {
+  fill: #ffffff;
+  opacity: 0.025;
 }
 
-.backtest__base {
-  stroke: #2c2c32;
-  stroke-dasharray: 3 4;
+.backtest__history-label {
+  fill: #6b6b74;
+  font: 500 10px var(--font-sans);
+  letter-spacing: 0.04em;
+}
+
+.backtest__start {
+  stroke: #3f3f46;
+  stroke-dasharray: 3 3;
+}
+
+.backtest__grid {
+  stroke: #1f1f24;
 }
 
 .backtest__band {
@@ -750,7 +762,18 @@ h3 {
   opacity: 0.07;
 }
 
-.backtest__hold,
+.backtest__up {
+  fill: #2cb67d;
+}
+
+.backtest__down {
+  fill: #e5484d;
+}
+
+.backtest__past {
+  opacity: 0.5;
+}
+
 .backtest__random,
 .backtest__you {
   fill: none;
@@ -758,13 +781,8 @@ h3 {
   stroke-linejoin: round;
 }
 
-.backtest__hold {
-  stroke: #8b8b94;
-  stroke-dasharray: 6 5;
-}
-
 .backtest__random {
-  stroke: #5b5b63;
+  stroke: #8b8b94;
   stroke-dasharray: 1 4;
   stroke-linecap: round;
 }
@@ -787,8 +805,26 @@ h3 {
   fill: #d4d4d8;
 }
 
-.backtest__cursor {
-  stroke: #3f3f46;
+/* With JavaScript, holding everything is the market itself: its key in the legend is a candle. */
+.chart__key--candle {
+  position: relative;
+  width: 0.375rem;
+  height: 0.625rem;
+  margin: 0 0.3125rem;
+  border-top: 0;
+  border-radius: 1px;
+  background: #2cb67d;
+}
+
+.chart__key--candle::before {
+  content: "";
+  position: absolute;
+  top: -0.1875rem;
+  bottom: -0.1875rem;
+  left: 50%;
+  width: 1px;
+  background: #2cb67d;
+  transform: translateX(-50%);
 }
 
 /* foodProcess's packing scale (js/scale.js): a picture until someone plays it. The fruit and the
@@ -817,29 +853,22 @@ h3 {
   }
 }
 
-/* The tolerance light: dim until lit, red under the target, green on it, amber over. */
-.scale__led--red {
-  fill: #3b1717;
+/* The tolerance light, as on the real scale: dark until lit; red lights under the target and
+   orange ones over the tolerance, fewer the closer the weight is; all green on target. */
+.scale__led {
+  fill: #26282c;
 }
 
-.scale__led--green {
-  fill: #213410;
-}
-
-.scale__led--amber {
-  fill: #3b2b10;
-}
-
-.scale__led--red.is-on {
+.scale__led.is-under {
   fill: #ef4444;
 }
 
-.scale__led--green.is-on {
-  fill: var(--accent);
+.scale__led.is-ok {
+  fill: #4ade80;
 }
 
-.scale__led--amber.is-on {
-  fill: var(--warning);
+.scale__led.is-over {
+  fill: #f97316;
 }
 
 /* The scale's screen, laid out like the real one: product and operator, Net in kg, a big check
@@ -909,11 +938,11 @@ h3 {
 }
 
 .scale__tft-glyph.is-over {
-  stroke: var(--warning);
+  stroke: #f97316;
 }
 
 .scale__tft-bar.is-over {
-  fill: var(--warning);
+  fill: #f97316;
 }
 
 .scale__tft-tiny {
@@ -1053,8 +1082,8 @@ h3 {
   gap: 0.5rem;
 }
 
-.play__row--thirds {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+.play__row--trade {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.4fr);
 }
 
 .play__button {

@@ -1,6 +1,6 @@
 // eschgi.com — the packing scale beside foodProcess: an illustration that turns into a mini game.
-// A hand-packing station: a platform scale with a column display, its tolerance light (red under,
-// green on target, amber over) and an RFID reader for the operator's badge. Fill five punnets to
+// A hand-packing station: a platform scale with a column display, its tolerance light (red under
+// the target, all green on it, orange over) and an RFID reader for the operator's badge. Fill five punnets to
 // their target weight; every gram above it is giveaway, the extra product above the weight on
 // the label, and reducing giveaway is what foodProcess is for.
 //
@@ -16,7 +16,7 @@
   var SVG_NS = "http://www.w3.org/2000/svg";
   var BEST_KEY = "eschgi.scale.best";
   var PUNNETS_PER_ORDER = 5;
-  var OK_SHARE = 0.05; // up to 5 % over the target is green; above that, amber
+  var OK_SHARE = 0.05; // from the target to 5 % over it the weight is OK; above that, too high
   var FULL_SHARE = 1.8; // a punnet takes at most 180 % of its target
   var PAN = { x: 300, y: 244, s: 1 }; // where a punnet stands on the scale
   var STACK = { x: 52, y: 300, s: 0.6 }; // the empty punnets, on the bench to the left
@@ -372,7 +372,7 @@
     return { node: node, weight: pieceWeight, slot: slot };
   }
 
-  // Fills a punnet at once to just above its target, for the picture before anyone plays.
+  // Fills a punnet at once to exactly its target, for the picture before anyone plays.
   function fillAtOnce(target) {
     var pieces = [];
     var total = 0;
@@ -381,7 +381,7 @@
       pieces.push(next);
       total += next;
     }
-    var wanted = product.target + 0.6 + Math.random() * product.target * 0.006;
+    var wanted = product.target;
     var scaled = 0;
     pieces.forEach(function (value, index) {
       // The last piece takes up the rounding, so the reading is exactly the weight wanted.
@@ -395,14 +395,15 @@
     return Math.round(scaled * 10) / 10;
   }
 
-  function printLabel(target, net, instant) {
+  // The label carries the declared weight, as on a real punnet: the target, not the reading.
+  function printLabel(target, instant) {
     var shape = product.punnet;
     var label = el("g", { class: "scale__label" });
     el("rect", { x: -32, y: -15, width: 64, height: 30, rx: 2 }, label);
     var name = el("text", { class: "scale__label-name", x: -27, y: -6 }, label);
     name.textContent = product.name.toUpperCase();
     var netWeight = el("text", { class: "scale__label-weight", x: -27, y: 4.5 }, label);
-    netWeight.textContent = grams(net) + " g";
+    netWeight.textContent = product.target + " g";
     var bars = "";
     for (var x = -27; x < 26; x += 1 + Math.round(Math.random() * 2)) {
       var width = Math.random() < 0.4 ? 1.4 : 0.7;
@@ -536,9 +537,18 @@
   }
 
   // ---------------------------------------------------------------- the display
-  // The tolerance light fills from the bottom: five red segments up to the target, two green
-  // up to 5 % over, five amber beyond.
-  var LED_STEPS = [-1, -0.16, -0.12, -0.08, -0.04, 0, 0.025, 0.05, 0.08, 0.11, 0.14, 0.17];
+  // The tolerance light, as on the real scale. Under the target, red lights show how far off the
+  // weight is, counting down from the middle, and fewer of them light the closer it gets; over the
+  // tolerance, orange lights do the same upwards. On target, the whole light turns green.
+  var LIGHT_STEPS = [0, 0.02, 0.05, 0.1, 0.2]; // one light more past each of these shares of the target
+  var UNDER_LIGHTS = [4, 3, 2, 1, 0]; // segments, from the middle down
+  var OVER_LIGHTS = [7, 8, 9, 10, 11]; // segments, from the middle up
+
+  function lightsFor(distance) {
+    return LIGHT_STEPS.filter(function (step) {
+      return distance > step;
+    }).length;
+  }
   var GLYPHS = {
     "": "M235 75h12",
     under: "M232 75h18",
@@ -559,14 +569,25 @@
     if (reading === 0) reading = 0; // turns -0 into 0
     if (force || reading !== shownReading) {
       shownReading = reading;
-      // Net in kilograms, as the real scale shows it: 251 g reads 0.251.
+      // Net in kilograms, as the real scale shows it: 253 g reads 0.253.
       screen.weight.textContent = (reading < 0 ? "-" : "") + (Math.abs(reading) / 1000).toFixed(3);
       var state = stateOf(reading);
       var deviation = (reading - product.target) / product.target;
+      var colours = {};
+      if (state === "under") {
+        UNDER_LIGHTS.slice(0, lightsFor(-deviation)).forEach(function (level) {
+          colours[level] = "under";
+        });
+      } else if (state === "over") {
+        OVER_LIGHTS.slice(0, lightsFor(deviation - OK_SHARE)).forEach(function (level) {
+          colours[level] = "over";
+        });
+      }
       leds.forEach(function (led, level) {
-        // Level 7 is the first amber one: it lights only once the reading is past the green band.
-        var lit = reading >= 1 && (level === 7 ? deviation > OK_SHARE : deviation >= LED_STEPS[level]);
-        setClass(led, "is-on", lit);
+        var colour = state === "ok" ? "ok" : colours[level] || "";
+        ["under", "ok", "over"].forEach(function (name) {
+          setClass(led, "is-" + name, colour === name);
+        });
       });
       ["under", "ok", "over"].forEach(function (name) {
         setClass(screen.glyph, "is-" + name, state === name);
@@ -723,7 +744,7 @@
       var extra = net - product.target;
       order.packed += 1;
       order.giveaway += extra;
-      printLabel(current, net);
+      printLabel(current);
       say("Packed " + net + " g: " + extra + " g giveaway (" + ((extra / product.target) * 100).toFixed(1) + " %).");
       leave(current, "packed", 380);
     } else {
@@ -951,13 +972,14 @@
     drawStack();
 
     parked = createPunnet();
-    printLabel(parked, fillAtOnce(parked), true);
+    fillAtOnce(parked);
+    printLabel(parked, true);
     place(parked.node, PARKED);
 
     punnet = createPunnet();
     place(punnet.node, PAN);
     weight = fillAtOnce(punnet);
-    printLabel(punnet, weight, true);
+    printLabel(punnet, true);
     spring.offset = 0;
     spring.velocity = 0;
     render(true);

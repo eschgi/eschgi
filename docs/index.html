@@ -177,18 +177,18 @@
               <rect x="166.5" y="10.5" width="267" height="133" rx="8.5" fill="url(#sc-glass)" />
               <path d="M314 11c36 4 78 19 118 50M332 11c32 4 66 16 100 40M350 11c27 3 55 13 82 30M368 11c21 3 42 10 64 20" fill="none" stroke="#c9ad78" stroke-opacity="0.3" stroke-width="0.8" />
               <rect x="179" y="27" width="18" height="107" rx="3" fill="#0d0e10" />
-              <rect class="scale__led scale__led--amber" data-scale-led="11" x="182" y="30.0" width="12" height="7" rx="1.2" />
-              <rect class="scale__led scale__led--amber" data-scale-led="10" x="182" y="38.6" width="12" height="7" rx="1.2" />
-              <rect class="scale__led scale__led--amber" data-scale-led="9" x="182" y="47.2" width="12" height="7" rx="1.2" />
-              <rect class="scale__led scale__led--amber" data-scale-led="8" x="182" y="55.8" width="12" height="7" rx="1.2" />
-              <rect class="scale__led scale__led--amber" data-scale-led="7" x="182" y="64.4" width="12" height="7" rx="1.2" />
-              <rect class="scale__led scale__led--green" data-scale-led="6" x="182" y="73.0" width="12" height="7" rx="1.2" />
-              <rect class="scale__led scale__led--green" data-scale-led="5" x="182" y="81.6" width="12" height="7" rx="1.2" />
-              <rect class="scale__led scale__led--red" data-scale-led="4" x="182" y="90.2" width="12" height="7" rx="1.2" />
-              <rect class="scale__led scale__led--red" data-scale-led="3" x="182" y="98.8" width="12" height="7" rx="1.2" />
-              <rect class="scale__led scale__led--red" data-scale-led="2" x="182" y="107.4" width="12" height="7" rx="1.2" />
-              <rect class="scale__led scale__led--red" data-scale-led="1" x="182" y="116.0" width="12" height="7" rx="1.2" />
-              <rect class="scale__led scale__led--red" data-scale-led="0" x="182" y="124.6" width="12" height="7" rx="1.2" />
+              <rect class="scale__led" data-scale-led="11" x="182" y="30.0" width="12" height="7" rx="1.2" />
+              <rect class="scale__led" data-scale-led="10" x="182" y="38.6" width="12" height="7" rx="1.2" />
+              <rect class="scale__led" data-scale-led="9" x="182" y="47.2" width="12" height="7" rx="1.2" />
+              <rect class="scale__led" data-scale-led="8" x="182" y="55.8" width="12" height="7" rx="1.2" />
+              <rect class="scale__led" data-scale-led="7" x="182" y="64.4" width="12" height="7" rx="1.2" />
+              <rect class="scale__led" data-scale-led="6" x="182" y="73.0" width="12" height="7" rx="1.2" />
+              <rect class="scale__led" data-scale-led="5" x="182" y="81.6" width="12" height="7" rx="1.2" />
+              <rect class="scale__led" data-scale-led="4" x="182" y="90.2" width="12" height="7" rx="1.2" />
+              <rect class="scale__led" data-scale-led="3" x="182" y="98.8" width="12" height="7" rx="1.2" />
+              <rect class="scale__led" data-scale-led="2" x="182" y="107.4" width="12" height="7" rx="1.2" />
+              <rect class="scale__led" data-scale-led="1" x="182" y="116.0" width="12" height="7" rx="1.2" />
+              <rect class="scale__led" data-scale-led="0" x="182" y="124.6" width="12" height="7" rx="1.2" />
               <rect x="212" y="22" width="146" height="110" rx="4" fill="#0b0c0e" />
               <rect x="217" y="27" width="136" height="100" rx="1.5" fill="#f3f5f6" />
               <text class="scale__tft-small scale__tft-small--muted" data-scale-operator x="221" y="36">Station 1</text>
@@ -256,7 +256,7 @@
           </dl>
           <p class="case__stack"><b>Built with</b> .NET 11 · ASP.NET Core · PostgreSQL · gRPC · React · Flutter · Tauri</p>
         </div>
-        <!-- A backtest, played by js/backtest.js: this illustration until someone plays. -->
+        <!-- A backtest, drawn and played by js/backtest.js; this illustration shows when JavaScript is off. -->
         <figure class="case__visual chart" data-backtest>
           <div class="chart__head">
             <span data-backtest-title>Backtest: a strategy against its opponents</span>
@@ -264,7 +264,7 @@
           </div>
           <div class="chart__legend" aria-hidden="true">
             <span><i class="chart__key chart__key--strategy"></i><span data-backtest-name>Strategy</span> <b data-backtest-value="you"></b></span>
-            <span><i class="chart__key chart__key--hold"></i>Hold everything <b data-backtest-value="hold"></b></span>
+            <span><i class="chart__key chart__key--hold" data-backtest-hold-key></i>Hold everything <b data-backtest-value="hold"></b></span>
             <span><i class="chart__key chart__key--random"></i>Random control <b data-backtest-value="random"></b></span>
           </div>
           <svg class="chart__plot" data-backtest-plot viewBox="0 0 600 260" preserveAspectRatio="none" aria-hidden="true">
@@ -289,12 +289,12 @@
             <div class="play__row" data-backtest-start-row>
               <button type="button" class="play__button play__button--primary" data-backtest-start>Start a backtest</button>
             </div>
-            <div class="play__row play__row--actions play__row--thirds" data-backtest-actions hidden>
-              <button type="button" class="play__button play__button--primary" data-backtest-buy>Buy</button>
+            <div class="play__row play__row--actions play__row--trade" data-backtest-actions hidden>
+              <button type="button" class="play__button" data-backtest-buy>Buy</button>
               <button type="button" class="play__button" data-backtest-sell>Sell</button>
-              <button type="button" class="play__button" data-backtest-fast>Faster <small>hold</small></button>
+              <button type="button" class="play__button play__button--primary" data-backtest-next>Next day <small>hold</small></button>
             </div>
-            <p class="play__status" data-backtest-status aria-live="polite">Trade a demo market for 160 days. Beat holding everything and a random control, and your strategy would get money. Each trade costs 0.1 %.</p>
+            <p class="play__status" data-backtest-status aria-live="polite">Trade a demo market for 60 days. Make money and beat holding everything and a random control, and your strategy would get money. Each trade costs 0.1 %.</p>
           </div>
           <figcaption class="chart__foot"><span>A mini game with demo data, not the software itself.</span></figcaption>
         </figure>
