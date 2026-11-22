@@ -817,29 +817,22 @@ h3 {
   }
 }
 
-/* The tolerance light: dim until lit, red under the target, green on it, amber over. */
-.scale__led--red {
-  fill: #3b1717;
+/* The tolerance light, as on the real scale: dark until lit; red lights under the target and
+   orange ones over the tolerance, fewer the closer the weight is; all green on target. */
+.scale__led {
+  fill: #26282c;
 }
 
-.scale__led--green {
-  fill: #213410;
-}
-
-.scale__led--amber {
-  fill: #3b2b10;
-}
-
-.scale__led--red.is-on {
+.scale__led.is-under {
   fill: #ef4444;
 }
 
-.scale__led--green.is-on {
-  fill: var(--accent);
+.scale__led.is-ok {
+  fill: #4ade80;
 }
 
-.scale__led--amber.is-on {
-  fill: var(--warning);
+.scale__led.is-over {
+  fill: #f97316;
 }
 
 /* The scale's screen, laid out like the real one: product and operator, Net in kg, a big check
@@ -909,11 +902,11 @@ h3 {
 }
 
 .scale__tft-glyph.is-over {
-  stroke: var(--warning);
+  stroke: #f97316;
 }
 
 .scale__tft-bar.is-over {
-  fill: var(--warning);
+  fill: #f97316;
 }
 
 .scale__tft-tiny {
