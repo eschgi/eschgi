@@ -723,6 +723,12 @@ h3 {
   border-radius: 16px;
 }
 
+/* Below a game's controls, the caption sits apart, as it does under the scale. */
+.play__controls + .chart__foot {
+  padding-top: 0.875rem;
+  border-top: 1px solid var(--line);
+}
+
 .chart__legend b {
   color: var(--body);
   font-weight: 500;

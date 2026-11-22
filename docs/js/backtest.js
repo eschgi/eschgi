@@ -48,7 +48,7 @@
   if (!plot || !startButton || !buyButton || !sellButton || !fastButton) return;
 
   var INTRO =
-    "Trade a demo market for 160 days. Your strategy gets money only if it beats both opponents: holding everything, and a random control. Each trade costs 0.1 %.";
+    "Trade a demo market for 160 days. Beat holding everything and a random control, and your strategy would get money. Each trade costs 0.1 %.";
 
   var marketKey = "crypto";
   var mode = "idle"; // idle, running, done
