@@ -29,6 +29,7 @@
   <script>document.documentElement.classList.add("js");</script>
   <script src="js/site.js" defer></script>
   <script src="js/scale.js" defer></script>
+  <script src="js/backtest.js" defer></script>
 
   <script type="application/ld+json">
     {
@@ -218,26 +219,26 @@
               <g data-scale-stage></g>
             </svg>
           </div>
-          <div class="scale__controls needs-js">
-            <div class="scale__products" role="group" aria-label="Fruit">
-              <button type="button" class="scale__product" data-scale-product="blueberries" aria-pressed="false"><b>Blueberries</b><small>125 g</small></button>
-              <button type="button" class="scale__product" data-scale-product="strawberries" aria-pressed="true"><b>Strawberries</b><small>250 g</small></button>
-              <button type="button" class="scale__product" data-scale-product="tomatoes" aria-pressed="false"><b>Tomatoes</b><small>500 g</small></button>
+          <div class="play__controls needs-js">
+            <div class="play__choices" role="group" aria-label="Fruit">
+              <button type="button" class="play__choice" data-scale-product="blueberries" aria-pressed="false"><b>Blueberries</b><small>125 g</small></button>
+              <button type="button" class="play__choice" data-scale-product="strawberries" aria-pressed="true"><b>Strawberries</b><small>250 g</small></button>
+              <button type="button" class="play__choice" data-scale-product="tomatoes" aria-pressed="false"><b>Tomatoes</b><small>500 g</small></button>
             </div>
-            <dl class="scale__kpis" data-scale-summary hidden>
+            <dl class="play__kpis" data-scale-summary hidden>
               <div><dt>giveaway</dt><dd data-scale-kpi="giveaway">–</dd></div>
               <div><dt>punnets a minute</dt><dd data-scale-kpi="rate">–</dd></div>
               <div><dt>rejected</dt><dd data-scale-kpi="rejected">–</dd></div>
             </dl>
-            <div class="scale__row" data-scale-start-row>
-              <button type="button" class="scale__button scale__button--primary" data-scale-start>Start packing</button>
+            <div class="play__row" data-scale-start-row>
+              <button type="button" class="play__button play__button--primary" data-scale-start>Start packing</button>
             </div>
-            <div class="scale__row scale__row--actions" data-scale-actions hidden>
-              <button type="button" class="scale__button scale__button--primary" data-scale-fill>Fill <small>hold</small></button>
-              <button type="button" class="scale__button" data-scale-remove>Take one out</button>
-              <button type="button" class="scale__button" data-scale-pack>Pack</button>
+            <div class="play__row play__row--actions" data-scale-actions hidden>
+              <button type="button" class="play__button play__button--primary" data-scale-fill>Fill <small>hold</small></button>
+              <button type="button" class="play__button" data-scale-remove>Take one out</button>
+              <button type="button" class="play__button" data-scale-pack>Pack</button>
             </div>
-            <p class="scale__status" data-scale-status aria-live="polite">Fill five punnets to at least their target weight, with as little giveaway as you can: every gram above the target is product given away for free.</p>
+            <p class="play__status" data-scale-status aria-live="polite">Fill five punnets to at least their target weight, with as little giveaway as you can: every gram above the target is product given away for free.</p>
           </div>
           <figcaption class="scale__foot"><span>A mini game, not the product. On a real line every scale reports to foodProcess, which helps bring the giveaway down.</span></figcaption>
         </figure>
@@ -255,16 +256,18 @@
           </dl>
           <p class="case__stack"><b>Built with</b> .NET 11 · ASP.NET Core · PostgreSQL · gRPC · React · Flutter · Tauri</p>
         </div>
-        <figure class="case__visual chart">
+        <!-- A backtest, played by js/backtest.js: this illustration until someone plays. -->
+        <figure class="case__visual chart" data-backtest>
           <div class="chart__head">
-            <span>Backtest: a strategy against its opponents</span>
-            <span class="chart__legend" aria-hidden="true">
-              <span><i class="chart__key chart__key--strategy"></i>Strategy</span>
-              <span><i class="chart__key chart__key--hold"></i>Hold everything</span>
-              <span><i class="chart__key chart__key--random"></i>Random control</span>
-            </span>
+            <span data-backtest-title>Backtest: a strategy against its opponents</span>
+            <span class="needs-js" data-backtest-progress>Goal: beat both opponents</span>
           </div>
-          <svg class="chart__plot" viewBox="0 0 600 260" preserveAspectRatio="none" aria-hidden="true">
+          <div class="chart__legend" aria-hidden="true">
+            <span><i class="chart__key chart__key--strategy"></i><span data-backtest-name>Strategy</span> <b data-backtest-value="you"></b></span>
+            <span><i class="chart__key chart__key--hold"></i>Hold everything <b data-backtest-value="hold"></b></span>
+            <span><i class="chart__key chart__key--random"></i>Random control <b data-backtest-value="random"></b></span>
+          </div>
+          <svg class="chart__plot" data-backtest-plot viewBox="0 0 600 260" preserveAspectRatio="none" aria-hidden="true">
             <defs><linearGradient id="chart-fill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a3e635" stop-opacity="0.18" /><stop offset="1" stop-color="#a3e635" stop-opacity="0" /></linearGradient></defs>
             <path d="M0 65H600M0 130H600M0 195H600" stroke="#1f1f24" stroke-width="1" />
             <path d="M0.0 230.3 L5.5 228.9 L11.0 226.3 L16.5 226.5 L22.0 228.3 L27.5 227.7 L33.0 226.1 L38.5 223.3 L44.0 224.9 L49.5 226.6 L55.0 224.6 L60.6 222.9 L66.1 219.2 L71.6 216.4 L77.1 215.9 L82.6 215.6 L88.1 209.5 L93.6 209.3 L99.1 210.2 L104.6 211.8 L110.1 210.8 L115.6 209.6 L121.1 209.5 L126.6 208.8 L132.1 207.4 L137.6 205.0 L143.1 201.7 L148.6 200.4 L154.1 203.6 L159.6 201.1 L165.1 203.5 L170.6 203.0 L176.1 205.5 L181.7 204.6 L187.2 205.5 L192.7 204.2 L198.2 195.9 L203.7 195.1 L209.2 192.1 L214.7 194.4 L220.2 194.2 L225.7 191.7 L231.2 190.9 L236.7 189.1 L242.2 187.9 L247.7 189.4 L253.2 187.1 L258.7 188.1 L264.2 182.5 L269.7 182.8 L275.2 180.0 L280.7 179.0 L286.2 175.4 L291.7 176.0 L297.2 172.3 L302.8 171.6 L308.3 167.0 L313.8 164.1 L319.3 162.6 L324.8 163.7 L330.3 160.4 L335.8 157.9 L341.3 151.8 L346.8 151.8 L352.3 148.9 L357.8 146.1 L363.3 144.0 L368.8 142.1 L374.3 140.2 L379.8 140.9 L385.3 143.0 L390.8 143.0 L396.3 139.8 L401.8 133.6 L407.3 129.0 L412.8 124.1 L418.3 120.0 L423.9 116.1 L429.4 114.0 L434.9 109.7 L440.4 101.6 L445.9 101.4 L451.4 102.5 L456.9 93.5 L462.4 90.9 L467.9 85.4 L473.4 80.2 L478.9 83.4 L484.4 71.6 L489.9 62.1 L495.4 59.6 L500.9 54.4 L506.4 52.0 L511.9 54.3 L517.4 53.1 L522.9 49.5 L528.4 42.4 L533.9 37.1 L539.4 34.9 L545.0 26.3 L550.5 28.2 L556.0 22.2 L561.5 14.5 L567.0 14.0 L572.5 21.4 L578.0 24.1 L583.5 20.9 L589.0 16.2 L594.5 6.0 L600.0 9.3 L600 260 L0 260 Z" fill="url(#chart-fill)" />
@@ -272,7 +275,28 @@
             <path d="M0.0 232.1 L5.5 235.3 L11.0 232.8 L16.5 239.5 L22.0 239.6 L27.5 245.8 L33.0 242.4 L38.5 241.4 L44.0 237.1 L49.5 238.2 L55.0 236.6 L60.6 237.1 L66.1 238.9 L71.6 238.1 L77.1 241.4 L82.6 242.0 L88.1 239.6 L93.6 239.1 L99.1 239.9 L104.6 233.1 L110.1 232.5 L115.6 233.9 L121.1 233.0 L126.6 234.2 L132.1 235.0 L137.6 235.6 L143.1 229.0 L148.6 228.5 L154.1 227.5 L159.6 224.9 L165.1 217.7 L170.6 218.0 L176.1 219.7 L181.7 210.6 L187.2 215.6 L192.7 216.4 L198.2 213.5 L203.7 204.7 L209.2 207.8 L214.7 216.6 L220.2 213.8 L225.7 215.2 L231.2 216.1 L236.7 213.9 L242.2 212.6 L247.7 211.0 L253.2 212.1 L258.7 206.9 L264.2 200.6 L269.7 199.9 L275.2 201.2 L280.7 197.7 L286.2 195.2 L291.7 198.9 L297.2 200.3 L302.8 195.5 L308.3 195.3 L313.8 196.1 L319.3 194.7 L324.8 194.3 L330.3 193.7 L335.8 201.3 L341.3 193.7 L346.8 192.3 L352.3 195.5 L357.8 190.8 L363.3 188.9 L368.8 188.2 L374.3 183.1 L379.8 172.2 L385.3 168.9 L390.8 160.5 L396.3 148.7 L401.8 153.5 L407.3 155.6 L412.8 150.8 L418.3 159.3 L423.9 160.0 L429.4 152.6 L434.9 146.3 L440.4 142.3 L445.9 152.2 L451.4 138.9 L456.9 134.9 L462.4 129.6 L467.9 125.8 L473.4 135.5 L478.9 143.1 L484.4 149.2 L489.9 138.0 L495.4 142.0 L500.9 142.6 L506.4 143.3 L511.9 139.3 L517.4 135.6 L522.9 133.3 L528.4 139.9 L533.9 157.1 L539.4 155.5 L545.0 153.4 L550.5 146.1 L556.0 145.9 L561.5 148.6 L567.0 145.6 L572.5 153.5 L578.0 158.3 L583.5 162.8 L589.0 160.7 L594.5 149.2 L600.0 144.3" fill="none" stroke="#8b8b94" stroke-width="1.6" stroke-dasharray="6 5" vector-effect="non-scaling-stroke" />
             <path d="M0.0 230.3 L5.5 228.9 L11.0 226.3 L16.5 226.5 L22.0 228.3 L27.5 227.7 L33.0 226.1 L38.5 223.3 L44.0 224.9 L49.5 226.6 L55.0 224.6 L60.6 222.9 L66.1 219.2 L71.6 216.4 L77.1 215.9 L82.6 215.6 L88.1 209.5 L93.6 209.3 L99.1 210.2 L104.6 211.8 L110.1 210.8 L115.6 209.6 L121.1 209.5 L126.6 208.8 L132.1 207.4 L137.6 205.0 L143.1 201.7 L148.6 200.4 L154.1 203.6 L159.6 201.1 L165.1 203.5 L170.6 203.0 L176.1 205.5 L181.7 204.6 L187.2 205.5 L192.7 204.2 L198.2 195.9 L203.7 195.1 L209.2 192.1 L214.7 194.4 L220.2 194.2 L225.7 191.7 L231.2 190.9 L236.7 189.1 L242.2 187.9 L247.7 189.4 L253.2 187.1 L258.7 188.1 L264.2 182.5 L269.7 182.8 L275.2 180.0 L280.7 179.0 L286.2 175.4 L291.7 176.0 L297.2 172.3 L302.8 171.6 L308.3 167.0 L313.8 164.1 L319.3 162.6 L324.8 163.7 L330.3 160.4 L335.8 157.9 L341.3 151.8 L346.8 151.8 L352.3 148.9 L357.8 146.1 L363.3 144.0 L368.8 142.1 L374.3 140.2 L379.8 140.9 L385.3 143.0 L390.8 143.0 L396.3 139.8 L401.8 133.6 L407.3 129.0 L412.8 124.1 L418.3 120.0 L423.9 116.1 L429.4 114.0 L434.9 109.7 L440.4 101.6 L445.9 101.4 L451.4 102.5 L456.9 93.5 L462.4 90.9 L467.9 85.4 L473.4 80.2 L478.9 83.4 L484.4 71.6 L489.9 62.1 L495.4 59.6 L500.9 54.4 L506.4 52.0 L511.9 54.3 L517.4 53.1 L522.9 49.5 L528.4 42.4 L533.9 37.1 L539.4 34.9 L545.0 26.3 L550.5 28.2 L556.0 22.2 L561.5 14.5 L567.0 14.0 L572.5 21.4 L578.0 24.1 L583.5 20.9 L589.0 16.2 L594.5 6.0 L600.0 9.3" fill="none" stroke="#a3e635" stroke-width="2" vector-effect="non-scaling-stroke" />
           </svg>
-          <figcaption class="chart__foot"><span>Illustration with demo data: every strategy meets two opponents before it gets money.</span></figcaption>
+          <div class="play__controls needs-js">
+            <div class="play__choices" role="group" aria-label="Market">
+              <button type="button" class="play__choice" data-backtest-market="crypto" aria-pressed="true"><b>Crypto</b><small>volatile</small></button>
+              <button type="button" class="play__choice" data-backtest-market="stock" aria-pressed="false"><b>Stock</b><small>trending</small></button>
+              <button type="button" class="play__choice" data-backtest-market="forex" aria-pressed="false"><b>Forex</b><small>ranging</small></button>
+            </div>
+            <dl class="play__kpis" data-backtest-summary hidden>
+              <div><dt>your return</dt><dd data-backtest-kpi="you">–</dd></div>
+              <div><dt>hold everything</dt><dd data-backtest-kpi="hold">–</dd></div>
+              <div><dt>random control</dt><dd data-backtest-kpi="random">–</dd></div>
+            </dl>
+            <div class="play__row" data-backtest-start-row>
+              <button type="button" class="play__button play__button--primary" data-backtest-start>Start a backtest</button>
+            </div>
+            <div class="play__row play__row--actions play__row--thirds" data-backtest-actions hidden>
+              <button type="button" class="play__button play__button--primary" data-backtest-buy>Buy</button>
+              <button type="button" class="play__button" data-backtest-sell>Sell</button>
+              <button type="button" class="play__button" data-backtest-fast>Faster <small>hold</small></button>
+            </div>
+            <p class="play__status" data-backtest-status aria-live="polite">Trade a demo market for 160 days. Your strategy gets money only if it beats both opponents: holding everything, and a random control. Each trade costs 0.1 %.</p>
+          </div>
+          <figcaption class="chart__foot"><span>Demo data, not the software: every strategy meets two opponents before it gets money.</span></figcaption>
         </figure>
       </article>
 

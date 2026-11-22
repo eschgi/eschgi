@@ -689,13 +689,13 @@
 
   function haltPour() {
     pouring = false;
-    setClass(fillButton, "is-pouring", false);
+    setClass(fillButton, "is-held", false);
   }
 
   function startPour() {
     if (mode !== "playing" || pouring) return;
     pouring = true;
-    setClass(fillButton, "is-pouring", true);
+    setClass(fillButton, "is-held", true);
     var now = performance.now();
     dropPiece(now);
     nextDropAt = now + Math.max(240, product.every); // a tap drops exactly one piece
