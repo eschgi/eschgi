@@ -644,8 +644,8 @@ h3 {
 
 .chart__head,
 .chart__foot,
-.flow__head,
-.flow__foot {
+.scale__head,
+.scale__foot {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
@@ -720,112 +720,273 @@ h3 {
   border-radius: 16px;
 }
 
-/* What foodProcess keeps track of: an illustration, never a screenshot of the product.
-   The rail runs down on a phone and across from 640px; the node of the live step is lime. */
-.flow {
-  padding: 1.5rem;
+/* foodProcess's packing scale (js/scale.js): a picture until someone plays it. The fruit and the
+   lamps are the only colours beside the lime; the controls keep to the page's quiet style. */
+.scale {
+  padding: 1.25rem;
 }
 
-.flow__steps {
+.scale__scene {
+  margin: 0.75rem -0.5rem 0;
+}
+
+.scale__svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 600 / 250;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* scale.js switches to a closer crop of the scene below 520px. */
+@media (max-width: 519px) {
+  .scale__svg {
+    aspect-ratio: 432 / 260;
+  }
+}
+
+.scale__seg {
+  fill: #172010;
+}
+
+.scale__seg.is-on,
+.scale__unit,
+.scale__fallback {
+  fill: var(--accent);
+}
+
+.scale__unit {
+  font: 600 19px var(--font-sans);
+}
+
+.scale__fallback {
+  font: 600 32px var(--font-mono);
+}
+
+.scale__tiny {
+  fill: #6b6b74;
+  font: 600 6.5px var(--font-sans);
+  letter-spacing: 0.08em;
+}
+
+.scale__tiny--plate {
+  fill: #4a4a54;
+}
+
+.scale__stable {
+  fill: #1f2a14;
+}
+
+.scale__stable.is-on {
+  fill: var(--accent);
+}
+
+.scale__lamp {
+  fill: #222227;
+  stroke: #393940;
+}
+
+.scale__lamp.is-on[data-scale-lamp="under"] {
+  fill: var(--negative);
+}
+
+.scale__lamp.is-on[data-scale-lamp="ok"] {
+  fill: var(--accent);
+}
+
+.scale__lamp.is-on[data-scale-lamp="over"] {
+  fill: var(--warning);
+}
+
+.scale__punnet-back {
+  fill: rgb(255 255 255 / 0.03);
+  stroke: rgb(255 255 255 / 0.12);
+}
+
+.scale__punnet-front {
+  fill: rgb(210 222 255 / 0.055);
+  stroke: rgb(255 255 255 / 0.32);
+  stroke-width: 1.2;
+  stroke-linejoin: round;
+}
+
+.scale__punnet-ribs {
+  fill: none;
+  stroke: rgb(255 255 255 / 0.07);
+}
+
+.scale__punnet-rim {
+  fill: rgb(255 255 255 / 0.1);
+  stroke: rgb(255 255 255 / 0.34);
+}
+
+.scale__label rect {
+  fill: #f3f3ef;
+}
+
+.scale__label-name {
+  fill: #52525b;
+  font: 700 5.4px var(--font-sans);
+  letter-spacing: 0.06em;
+}
+
+.scale__label-weight {
+  fill: #111114;
+  font: 700 9px var(--font-sans);
+}
+
+.scale__label-code {
+  fill: #111114;
+}
+
+.scale__controls {
   display: grid;
-  gap: 1rem;
-  margin-top: 1.5rem;
+  gap: 0.75rem;
+  margin-top: 1rem;
 }
 
-.flow__steps li {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  gap: 0.125rem;
-  padding-left: 1.625rem;
-  line-height: 1.4;
+.scale__products {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.25rem;
+  padding: 0.25rem;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--bg);
 }
 
-.flow__steps li::before,
-.flow__steps li:not(:last-child)::after {
-  content: "";
-  position: absolute;
+.scale__product {
+  display: grid;
+  justify-items: center;
+  gap: 0.0625rem;
+  padding: 0.4375rem 0.25rem;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 0.75rem;
+  line-height: 1.3;
+  cursor: pointer;
 }
 
-/* The node, centred on the first line of text. */
-.flow__steps li::before {
-  z-index: 1;
-  top: 0.3rem;
-  left: 0;
-  width: 0.625rem;
-  height: 0.625rem;
-  border: 1px solid var(--muted);
-  border-radius: 50%;
-  background: var(--surface);
-}
-
-/* The rail, from this node to the next. */
-.flow__steps li:not(:last-child)::after {
-  top: 0.6125rem;
-  left: 0.3125rem;
-  height: calc(100% + 1rem);
-  border-left: 1px solid var(--line-2);
-}
-
-.flow__steps .is-live::before {
-  border-color: var(--accent);
-  background: var(--accent);
-}
-
-.flow__steps b {
-  color: var(--text);
-  font-size: 0.875rem;
+.scale__product b {
+  color: var(--body);
+  font-size: 0.8125rem;
   font-weight: 500;
 }
 
-.flow__steps span {
-  color: var(--muted);
-  font-size: 0.75rem;
+.scale__product:hover b,
+.scale__product[aria-pressed="true"] b {
+  color: var(--text);
 }
 
-.flow__lines {
-  display: grid;
-  gap: 0.625rem;
-  margin: 1.5rem 0 1.25rem;
-  padding-top: 1.25rem;
-  border-top: 1px solid var(--line);
+.scale__product[aria-pressed="true"] {
+  background: #1d1d22;
+  box-shadow: inset 0 0 0 1px var(--line-2);
 }
 
-.flow__line {
+.scale__row {
   display: grid;
-  grid-template-columns: 3.25rem minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.scale__row--actions {
+  grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr) minmax(0, 0.8fr);
+  gap: 0.5rem;
+}
+
+.scale__button {
+  display: inline-flex;
   align-items: center;
+  justify-content: center;
+  gap: 0.375rem;
+  min-height: 2.75rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--line-2);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text);
+  font-size: 0.875rem;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+  transition: background-color 120ms linear, border-color 120ms linear;
+}
+
+.scale__button:hover:not(:disabled) {
+  border-color: #3f3f46;
+  background: #18181c;
+}
+
+.scale__button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.scale__button small {
+  font-size: 0.75rem;
+  font-weight: 400;
+  opacity: 0.7;
+}
+
+.scale__button--primary {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: var(--on-accent);
+}
+
+.scale__button--primary:hover:not(:disabled) {
+  border-color: var(--accent-300);
+  background: var(--accent-300);
+}
+
+.scale__button--primary.is-pouring,
+.scale__button--primary:active:not(:disabled) {
+  border-color: var(--accent-500);
+  background: var(--accent-500);
+}
+
+.scale__kpis {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 0.75rem;
+}
+
+.scale__kpis > div {
+  display: flex;
+  flex-direction: column;
+}
+
+.scale__kpis dd {
+  order: -1;
+  color: var(--text);
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+
+.scale__kpis dt {
   color: var(--muted);
   font-size: 0.75rem;
 }
 
-.flow__line i {
-  height: 4px;
-  border-radius: 2px;
-  background: linear-gradient(#5b5b63, #5b5b63) 0 0 / var(--progress, 50%) 100% no-repeat, var(--line);
+/* Two lines tall, so the controls don't jump as the messages change. */
+.scale__status {
+  min-height: 3em;
+  color: var(--muted);
+  font-size: 0.8125rem;
+  line-height: 1.5;
 }
 
-@media (min-width: 640px) {
-  .flow__steps {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-  }
-
-  .flow__steps li {
-    padding: 1.375rem 0 0;
-  }
-
-  .flow__steps li::before {
-    top: 0;
-  }
-
-  .flow__steps li:not(:last-child)::after {
-    top: 0.3125rem;
-    width: calc(100% + 1rem);
-    height: 0;
-    border-top: 1px solid var(--line-2);
-    border-left: 0;
-  }
+.scale__foot {
+  padding-top: 0.875rem;
+  border-top: 1px solid var(--line);
 }
 
 /* ---------------------------------------------------------- how I work */

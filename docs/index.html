@@ -28,6 +28,7 @@
   <link rel="stylesheet" href="styles.css" />
   <script>document.documentElement.classList.add("js");</script>
   <script src="js/site.js" defer></script>
+  <script src="js/scale.js" defer></script>
 
   <script type="application/ld+json">
     {
@@ -119,33 +120,101 @@
         <div class="case__text">
           <p class="case__tag"><b>At work</b> · TopControl</p>
           <h3 id="case-foodprocess">foodProcess</h3>
-          <p>Production software for food packing: orders come from the ERP and go straight to the packing lines, the lines are monitored and controlled in real time, and every batch is recorded from goods receipt to dispatch.</p>
+          <p>Production software for food packing. It connects to the scales that weigh punnets of grapes, strawberries, blueberries and more, sends orders from the ERP to the packing lines, monitors and controls the lines in real time, and records every batch from goods receipt to dispatch.</p>
           <dl class="case__facts">
+            <div><dt>weighing the punnets</dt><dd>Scales</dd></div>
             <div><dt>orders sent to the lines</dt><dd>ERP</dd></div>
-            <div><dt>line monitoring and control</dt><dd>Live</dd></div>
             <div><dt>giveaway, productivity</dt><dd>KPIs</dd></div>
           </dl>
           <div class="text-links text-links--small">
             <a href="https://www.topcontrol.it/product/foodProcess" target="_blank" rel="noopener noreferrer" data-cli-source="product">Product page <span aria-hidden="true">↗</span></a>
           </div>
         </div>
-        <figure class="case__visual flow">
-          <div class="flow__head">
-            <span>From order to dispatch</span>
-            <span>Every batch traced</span>
+        <!-- A packing scale, drawn and played by js/scale.js: a picture until someone plays. -->
+        <figure class="case__visual scale" data-scale>
+          <div class="scale__head">
+            <span>Try the scale</span>
+            <span data-scale-progress>Five punnets a round</span>
           </div>
-          <ol class="flow__steps">
-            <li><b>Order</b><span>from the ERP</span></li>
-            <li><b>Goods receipt</b><span>batch recorded</span></li>
-            <li class="is-live"><b>Packing</b><span>lines live</span></li>
-            <li><b>Dispatch</b><span>traced to the batch</span></li>
-          </ol>
-          <div class="flow__lines" aria-hidden="true">
-            <div class="flow__line"><span>Line 1</span><i style="--progress: 72%"></i></div>
-            <div class="flow__line"><span>Line 2</span><i style="--progress: 41%"></i></div>
-            <div class="flow__line"><span>Line 3</span><i style="--progress: 88%"></i></div>
+          <div class="scale__scene">
+            <svg class="scale__svg" viewBox="0 82 600 250" aria-hidden="true" focusable="false">
+              <defs>
+                <radialGradient id="sc-spot" gradientUnits="userSpaceOnUse" cx="300" cy="232" r="210"><stop offset="0" stop-color="#ffffff" stop-opacity="0.05" /><stop offset="1" stop-color="#ffffff" stop-opacity="0" /></radialGradient>
+                <linearGradient id="sc-pan" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#70707a" /><stop offset="0.3" stop-color="#4a4a53" /><stop offset="1" stop-color="#2a2a30" /></linearGradient>
+                <linearGradient id="sc-body" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a2a30" /><stop offset="1" stop-color="#17171b" /></linearGradient>
+                <linearGradient id="sc-belt" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#303037" /><stop offset="1" stop-color="#17171b" /></linearGradient>
+                <radialGradient id="sc-lamp" cx="0.38" cy="0.32" r="0.7"><stop offset="0" stop-color="#ffffff" stop-opacity="0.5" /><stop offset="1" stop-color="#ffffff" stop-opacity="0" /></radialGradient>
+                <radialGradient id="sc-blueberry" cx="0.36" cy="0.32" r="0.78"><stop offset="0" stop-color="#8191dc" /><stop offset="0.45" stop-color="#404d96" /><stop offset="1" stop-color="#1f2550" /></radialGradient>
+                <radialGradient id="sc-bloom" cx="0.4" cy="0.35" r="0.7"><stop offset="0" stop-color="#ffffff" stop-opacity="0.22" /><stop offset="1" stop-color="#ffffff" stop-opacity="0" /></radialGradient>
+                <radialGradient id="sc-strawberry" cx="0.38" cy="0.34" r="0.8"><stop offset="0" stop-color="#ff7a74" /><stop offset="0.5" stop-color="#e0262f" /><stop offset="1" stop-color="#98101a" /></radialGradient>
+                <radialGradient id="sc-grape-white" cx="0.35" cy="0.3" r="0.8"><stop offset="0" stop-color="#e6f3a6" /><stop offset="0.55" stop-color="#a8c853" /><stop offset="1" stop-color="#6b8d2c" /></radialGradient>
+                <radialGradient id="sc-grape-red" cx="0.35" cy="0.3" r="0.8"><stop offset="0" stop-color="#d77a9a" /><stop offset="0.5" stop-color="#8e2a55" /><stop offset="1" stop-color="#4c1131" /></radialGradient>
+              </defs>
+              <rect x="0" y="60" width="600" height="280" fill="url(#sc-spot)" />
+
+              <!-- The infeed and outfeed belts: punnets arrive from the left and leave to the right. -->
+              <rect x="44" y="230" width="5" height="88" fill="#17171b" />
+              <rect x="551" y="230" width="5" height="88" fill="#17171b" />
+              <rect x="-12" y="219" width="104" height="11" rx="5.5" fill="url(#sc-belt)" stroke="#34343b" />
+              <rect x="508" y="219" width="104" height="11" rx="5.5" fill="url(#sc-belt)" stroke="#34343b" />
+              <g fill="#3b3b43">
+                <circle cx="20" cy="224.5" r="2.6" /><circle cx="52" cy="224.5" r="2.6" /><circle cx="84" cy="224.5" r="2.6" />
+                <circle cx="516" cy="224.5" r="2.6" /><circle cx="548" cy="224.5" r="2.6" /><circle cx="580" cy="224.5" r="2.6" />
+              </g>
+
+              <!-- The scale: feet, body, the pan on its load cell. -->
+              <ellipse cx="300" cy="320" rx="196" ry="6" fill="#000000" opacity="0.5" />
+              <rect x="140" y="312" width="22" height="7" rx="2" fill="#111114" />
+              <rect x="438" y="312" width="22" height="7" rx="2" fill="#111114" />
+              <rect x="128" y="236" width="344" height="78" rx="12" fill="url(#sc-body)" stroke="#2f2f36" />
+              <path d="M140 237.5H460" stroke="#ffffff" stroke-opacity="0.07" />
+              <rect x="284" y="229" width="32" height="8" fill="#121215" />
+              <rect x="96" y="218" width="408" height="12" rx="3" fill="url(#sc-pan)" />
+              <path d="M100 218.6H500" stroke="#ffffff" stroke-opacity="0.3" />
+
+              <!-- The display: four seven-segment digits, the unit and the STABLE light. -->
+              <rect x="150" y="248" width="222" height="54" rx="6" fill="#0a0d07" stroke="#2a3120" />
+              <g data-scale-digits transform="matrix(1 0 -0.1 1 27.5 0)"></g>
+              <text class="scale__fallback" data-scale-fallback x="294" y="293" text-anchor="end">0.0</text>
+              <text class="scale__unit" x="304" y="293">g</text>
+              <circle class="scale__stable" data-scale-stable cx="330" cy="262" r="2.4" />
+              <text class="scale__tiny" x="335.5" y="264.4">STABLE</text>
+              <text class="scale__tiny" x="324" y="293">NET</text>
+
+              <!-- The checkweigher's lamps: under, OK, over. -->
+              <circle class="scale__lamp" data-scale-lamp="under" cx="398" cy="266" r="7.5" />
+              <circle class="scale__lamp" data-scale-lamp="ok" cx="424" cy="266" r="7.5" />
+              <circle class="scale__lamp" data-scale-lamp="over" cx="450" cy="266" r="7.5" />
+              <g fill="url(#sc-lamp)"><circle cx="398" cy="266" r="7.5" /><circle cx="424" cy="266" r="7.5" /><circle cx="450" cy="266" r="7.5" /></g>
+              <g class="scale__tiny" text-anchor="middle"><text x="398" y="286">UNDER</text><text x="424" y="286">OK</text><text x="450" y="286">OVER</text></g>
+              <text class="scale__tiny scale__tiny--plate" x="424" y="303" text-anchor="middle">MAX 1000 g · d = 0.1 g</text>
+
+              <!-- The punnet and its fruit. -->
+              <g data-scale-stage></g>
+            </svg>
           </div>
-          <figcaption class="flow__foot"><span>Illustration, not a screenshot: what foodProcess keeps track of.</span></figcaption>
+          <div class="scale__controls needs-js">
+            <div class="scale__products" role="group" aria-label="Fruit">
+              <button type="button" class="scale__product" data-scale-product="blueberries" aria-pressed="false"><b>Blueberries</b><small>125 g</small></button>
+              <button type="button" class="scale__product" data-scale-product="strawberries" aria-pressed="true"><b>Strawberries</b><small>250 g</small></button>
+              <button type="button" class="scale__product" data-scale-product="grapes" aria-pressed="false"><b>Grapes</b><small>500 g</small></button>
+            </div>
+            <dl class="scale__kpis" data-scale-summary hidden>
+              <div><dt>giveaway</dt><dd data-scale-kpi="giveaway">–</dd></div>
+              <div><dt>punnets a minute</dt><dd data-scale-kpi="rate">–</dd></div>
+              <div><dt>rejected</dt><dd data-scale-kpi="rejected">–</dd></div>
+            </dl>
+            <div class="scale__row" data-scale-start-row>
+              <button type="button" class="scale__button scale__button--primary" data-scale-start>Start packing</button>
+            </div>
+            <div class="scale__row scale__row--actions" data-scale-actions hidden>
+              <button type="button" class="scale__button scale__button--primary" data-scale-fill>Fill <small>hold</small></button>
+              <button type="button" class="scale__button" data-scale-remove>Take one out</button>
+              <button type="button" class="scale__button" data-scale-pack>Pack</button>
+            </div>
+            <p class="scale__status" data-scale-status aria-live="polite">Fill five punnets to their target weight. Anything above it is giveaway: fruit given away for free.</p>
+          </div>
+          <figcaption class="scale__foot"><span>A mini game, not the product. On a real line the scales report to foodProcess, which counts the giveaway.</span></figcaption>
         </figure>
       </article>
 
