@@ -14,7 +14,7 @@
   <meta property="og:url" content="https://eschgi.com/" />
   <meta property="og:site_name" content="eschgi.com" />
   <meta property="og:title" content="Stefan Eschgfäller — Software Engineer" />
-  <meta property="og:description" content="Reliable software, end to end. Almost two decades of C#, C++ and Python; currently building self-hosted trading software and Share, an open-source photo drop." />
+  <meta property="og:description" content="Reliable software, end to end. Almost two decades of C#, C++ and Python. At work, foodProcess: production software for food packing that reduces giveaway. In my free time, self-hosted trading software and Share, an open-source photo drop." />
   <meta property="og:image" content="https://eschgi.com/assets/og-cover.png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
@@ -28,6 +28,8 @@
   <link rel="stylesheet" href="styles.css" />
   <script>document.documentElement.classList.add("js");</script>
   <script src="js/site.js" defer></script>
+  <script src="js/scale.js" defer></script>
+  <script src="js/backtest.js" defer></script>
 
   <script type="application/ld+json">
     {
@@ -100,7 +102,7 @@
       <dl class="facts reveal">
         <div><dt>of production software</dt><dd>~20 years</dd></div>
         <div><dt>primary languages</dt><dd>C# · C++ · Python</dd></div>
-        <div><dt>self-hosted, built end to end</dt><dd>2 products</dd></div>
+        <div><dt>one at work, two in my free time</dt><dd>3 products</dd></div>
         <div><dt>GitHub contributions, last 12 months</dt><dd data-fact="contributions">2,954</dd></div>
       </dl>
     </div>
@@ -110,14 +112,141 @@
       <div class="section-top reveal">
         <div>
           <p class="label">Selected work</p>
-          <h2 id="work-title">Two products, built end to end.</h2>
+          <h2 id="work-title">At work, and in my free time.</h2>
         </div>
-        <p class="section-note">Self-hosted trading software, kept private, and an open-source app for sharing photos — both built from the database schema to the user interface.</p>
+        <p class="section-note">foodProcess is what I build at work. The self-hosted trading software, kept private, and Share, an open-source app for sharing photos, are my own projects, built in my free time.</p>
       </div>
 
-      <article class="case reveal" aria-labelledby="case-trading" data-cli="trading">
+      <article class="case reveal" aria-labelledby="case-foodprocess" data-cli="foodprocess">
         <div class="case__text">
-          <p class="case__tag"><b>Private project</b> · in development</p>
+          <p class="case__tag"><b>At work</b> · TopControl</p>
+          <h3 id="case-foodprocess">foodProcess</h3>
+          <p>Production software for food packing. Its main goal is to reduce giveaway: the extra product packed above the weight on the label. It connects to the scales that weigh punnets of strawberries, blueberries, tomatoes and more, sends orders from the ERP to the packing lines, monitors and controls the lines in real time, and records every batch from goods receipt to dispatch.</p>
+          <dl class="case__facts">
+            <div><dt>the main goal: less of it</dt><dd>Giveaway</dd></div>
+            <div><dt>weighing every punnet</dt><dd>Scales</dd></div>
+            <div><dt>per order, line and user</dt><dd>KPIs</dd></div>
+          </dl>
+          <div class="text-links text-links--small">
+            <a href="https://www.topcontrol.it/product/foodProcess" target="_blank" rel="noopener noreferrer" data-cli-source="product">Product page <span aria-hidden="true">↗</span></a>
+          </div>
+        </div>
+        <!-- A hand-packing scale, drawn after the real one and played by js/scale.js: a picture until someone plays. -->
+        <figure class="case__visual scale" data-scale>
+          <div class="scale__head">
+            <span>Try the scale</span>
+            <span data-scale-progress>Goal: least giveaway</span>
+          </div>
+          <div class="scale__scene">
+            <svg class="scale__svg" viewBox="0 0 600 312" aria-hidden="true" focusable="false">
+              <defs>
+                <radialGradient id="sc-spot" gradientUnits="userSpaceOnUse" cx="300" cy="160" r="280"><stop offset="0" stop-color="#ffffff" stop-opacity="0.055" /><stop offset="1" stop-color="#ffffff" stop-opacity="0" /></radialGradient>
+                <linearGradient id="sc-bench" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2b2c31" /><stop offset="1" stop-color="#18191c" /></linearGradient>
+                <linearGradient id="sc-steel-top" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#c4c8cd" /><stop offset="1" stop-color="#a6abb2" /></linearGradient>
+                <linearGradient id="sc-steel-front" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#c7cbd0" /><stop offset="0.55" stop-color="#a3a8af" /><stop offset="1" stop-color="#83888f" /></linearGradient>
+                <linearGradient id="sc-steel-column" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#6f747a" /><stop offset="0.38" stop-color="#c3c7cb" /><stop offset="1" stop-color="#686d73" /></linearGradient>
+                <linearGradient id="sc-glass" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a2d31" /><stop offset="1" stop-color="#18191c" /></linearGradient>
+                <radialGradient id="sc-blueberry" cx="0.36" cy="0.32" r="0.78"><stop offset="0" stop-color="#8191dc" /><stop offset="0.45" stop-color="#404d96" /><stop offset="1" stop-color="#1f2550" /></radialGradient>
+                <radialGradient id="sc-bloom" cx="0.4" cy="0.35" r="0.7"><stop offset="0" stop-color="#ffffff" stop-opacity="0.22" /><stop offset="1" stop-color="#ffffff" stop-opacity="0" /></radialGradient>
+                <radialGradient id="sc-strawberry" cx="0.38" cy="0.34" r="0.8"><stop offset="0" stop-color="#ff7a74" /><stop offset="0.5" stop-color="#e0262f" /><stop offset="1" stop-color="#98101a" /></radialGradient>
+                <radialGradient id="sc-tomato" cx="0.38" cy="0.32" r="0.8"><stop offset="0" stop-color="#ff8a66" /><stop offset="0.5" stop-color="#e5361f" /><stop offset="1" stop-color="#9e170b" /></radialGradient>
+              </defs>
+              <rect x="-20" y="-20" width="640" height="352" fill="url(#sc-spot)" />
+
+              <!-- The packing bench: empty punnets wait on the left, packed ones go to the right. -->
+              <rect x="-20" y="300" width="640" height="14" fill="url(#sc-bench)" />
+              <path d="M-20 300.5H620" stroke="#3c3d43" />
+              <g data-scale-stack></g>
+
+              <!-- The platform, seen a little from above: stainless top and front on a dark plinth. -->
+              <ellipse cx="300" cy="301" rx="180" ry="4.5" fill="#000000" opacity="0.5" />
+              <path d="M144 288H456V298H335Q300 292 265 298H144Z" fill="#16171a" />
+              <rect x="150" y="297" width="18" height="3" fill="#0c0c0e" />
+              <rect x="432" y="297" width="18" height="3" fill="#0c0c0e" />
+              <rect x="134" y="252" width="332" height="37" rx="3" fill="url(#sc-steel-front)" />
+              <path d="M138 260H462M138 269H462M138 278H462" stroke="#ffffff" stroke-opacity="0.06" />
+              <path d="M138 285.5H462" stroke="#000000" stroke-opacity="0.18" />
+              <path d="M160 220H440L466 252H134Z" fill="url(#sc-steel-top)" />
+              <path d="M154 228H446M148 236H452M142 244H458" stroke="#ffffff" stroke-opacity="0.08" />
+              <path d="M134 252.5H466" stroke="#ffffff" stroke-opacity="0.5" />
+
+              <!-- The column, standing centred at the back of the platform, and the display head on it. -->
+              <rect x="286" y="136" width="28" height="90" fill="url(#sc-steel-column)" />
+              <path d="M286 226h28" stroke="#000000" stroke-opacity="0.3" />
+              <rect x="164" y="8" width="272" height="138" rx="10" fill="#c9cdd2" />
+              <rect x="166.5" y="10.5" width="267" height="133" rx="8.5" fill="url(#sc-glass)" />
+              <path d="M314 11c36 4 78 19 118 50M332 11c32 4 66 16 100 40M350 11c27 3 55 13 82 30M368 11c21 3 42 10 64 20" fill="none" stroke="#c9ad78" stroke-opacity="0.3" stroke-width="0.8" />
+              <rect x="179" y="27" width="18" height="107" rx="3" fill="#0d0e10" />
+              <rect class="scale__led scale__led--amber" data-scale-led="11" x="182" y="30.0" width="12" height="7" rx="1.2" />
+              <rect class="scale__led scale__led--amber" data-scale-led="10" x="182" y="38.6" width="12" height="7" rx="1.2" />
+              <rect class="scale__led scale__led--amber" data-scale-led="9" x="182" y="47.2" width="12" height="7" rx="1.2" />
+              <rect class="scale__led scale__led--amber" data-scale-led="8" x="182" y="55.8" width="12" height="7" rx="1.2" />
+              <rect class="scale__led scale__led--amber" data-scale-led="7" x="182" y="64.4" width="12" height="7" rx="1.2" />
+              <rect class="scale__led scale__led--green" data-scale-led="6" x="182" y="73.0" width="12" height="7" rx="1.2" />
+              <rect class="scale__led scale__led--green" data-scale-led="5" x="182" y="81.6" width="12" height="7" rx="1.2" />
+              <rect class="scale__led scale__led--red" data-scale-led="4" x="182" y="90.2" width="12" height="7" rx="1.2" />
+              <rect class="scale__led scale__led--red" data-scale-led="3" x="182" y="98.8" width="12" height="7" rx="1.2" />
+              <rect class="scale__led scale__led--red" data-scale-led="2" x="182" y="107.4" width="12" height="7" rx="1.2" />
+              <rect class="scale__led scale__led--red" data-scale-led="1" x="182" y="116.0" width="12" height="7" rx="1.2" />
+              <rect class="scale__led scale__led--red" data-scale-led="0" x="182" y="124.6" width="12" height="7" rx="1.2" />
+              <rect x="212" y="22" width="146" height="110" rx="4" fill="#0b0c0e" />
+              <rect x="217" y="27" width="136" height="100" rx="1.5" fill="#f3f5f6" />
+              <text class="scale__tft-small scale__tft-small--muted" data-scale-operator x="221" y="36">Station 1</text>
+              <text class="scale__tft-product" data-scale-product-name x="221" y="45.5">Strawberries 250 g</text>
+              <rect x="285" y="29.5" width="66" height="20" rx="1.5" fill="#0f8b8d" />
+              <text class="scale__tft-label" x="288.5" y="36.5">Net</text>
+              <text class="scale__tft-weight" x="348.5" y="46.5" text-anchor="end"><tspan data-scale-weight>0.000</tspan><tspan class="scale__tft-unit" dx="1.5">kg</tspan></text>
+              <path d="M219 52.5H351" stroke="#dfe3e6" />
+              <rect class="scale__tft-icon" x="223" y="57" width="36" height="36" rx="3" />
+              <path class="scale__tft-glyph" data-scale-glyph d="M235 75h12" />
+              <rect x="265" y="63" width="82" height="24" rx="2" fill="#ffffff" stroke="#2b2f33" stroke-width="1.4" />
+              <rect class="scale__tft-bar" data-scale-bar x="266.7" y="64.7" width="0" height="20.6" rx="1" />
+              <path d="M332.2 60.5v29" stroke="#2b2f33" stroke-dasharray="2 1.5" />
+              <path d="M219 101.5H351" stroke="#dfe3e6" />
+              <text class="scale__tft-tiny" data-scale-zero x="222" y="117">›0‹</text>
+              <text class="scale__tft-tiny" data-scale-stable x="234" y="117">STABLE</text>
+              <path d="M262 111.5h3v3h-3zM266 111.5h3v3h-3zM270 111.5h3v3h-3zM262 115.5h3v3h-3zM266 115.5h3v3h-3zM270 115.5h3v3h-3z" fill="#a3a9b0" />
+              <path d="M278 118.5v-3M281 118.5v-6.5M284 118.5v-4.5" stroke="#a3a9b0" stroke-width="1.6" />
+              <circle cx="312.5" cy="115.2" r="1.9" fill="#22c55e" />
+              <text class="scale__tft-tiny" x="348" y="117" text-anchor="end">foodProcess</text>
+              <g class="scale__rfid" data-scale-rfid>
+                <rect x="372" y="54" width="46" height="46" rx="7" />
+                <circle cx="395" cy="77" r="2.2" />
+                <path d="M389 71a8.5 8.5 0 0 0 0 12M401 71a8.5 8.5 0 0 1 0 12M385 67a14 14 0 0 0 0 20M405 67a14 14 0 0 1 0 20" />
+              </g>
+
+              <!-- The punnets and their produce, drawn by scale.js. -->
+              <g data-scale-stage></g>
+            </svg>
+          </div>
+          <div class="play__controls needs-js">
+            <div class="play__choices" role="group" aria-label="Fruit">
+              <button type="button" class="play__choice" data-scale-product="blueberries" aria-pressed="false"><b>Blueberries</b><small>125 g</small></button>
+              <button type="button" class="play__choice" data-scale-product="strawberries" aria-pressed="true"><b>Strawberries</b><small>250 g</small></button>
+              <button type="button" class="play__choice" data-scale-product="tomatoes" aria-pressed="false"><b>Tomatoes</b><small>500 g</small></button>
+            </div>
+            <dl class="play__kpis" data-scale-summary hidden>
+              <div><dt>giveaway</dt><dd data-scale-kpi="giveaway">–</dd></div>
+              <div><dt>punnets a minute</dt><dd data-scale-kpi="rate">–</dd></div>
+              <div><dt>rejected</dt><dd data-scale-kpi="rejected">–</dd></div>
+            </dl>
+            <div class="play__row" data-scale-start-row>
+              <button type="button" class="play__button play__button--primary" data-scale-start>Start packing</button>
+            </div>
+            <div class="play__row play__row--actions" data-scale-actions hidden>
+              <button type="button" class="play__button play__button--primary" data-scale-fill>Fill <small>hold</small></button>
+              <button type="button" class="play__button" data-scale-remove>Take one out</button>
+              <button type="button" class="play__button" data-scale-pack>Pack</button>
+            </div>
+            <p class="play__status" data-scale-status aria-live="polite">Fill five punnets to at least their target weight. Every gram above it is giveaway, so keep it as low as you can.</p>
+          </div>
+          <figcaption class="scale__foot"><span>A mini game, not the product. On a real line every scale reports to foodProcess, which helps bring the giveaway down.</span></figcaption>
+        </figure>
+      </article>
+
+      <article class="case case--flip reveal" aria-labelledby="case-trading" data-cli="trading">
+        <div class="case__text">
+          <p class="case__tag"><b>In my free time</b> · private, in development</p>
           <h3 id="case-trading">Self-hosted trading software</h3>
           <p>Automated trading agents for crypto, stocks and forex that run on a server of your own — each with its own capital and strategy, and each explaining what it does and why. Strategies are backtested against holding everything and against a random control before they get money.</p>
           <dl class="case__facts">
@@ -127,16 +256,18 @@
           </dl>
           <p class="case__stack"><b>Built with</b> .NET 11 · ASP.NET Core · PostgreSQL · gRPC · React · Flutter · Tauri</p>
         </div>
-        <figure class="case__visual chart">
+        <!-- A backtest, played by js/backtest.js: this illustration until someone plays. -->
+        <figure class="case__visual chart" data-backtest>
           <div class="chart__head">
-            <span>Backtest: a strategy against its opponents</span>
-            <span class="chart__legend" aria-hidden="true">
-              <span><i class="chart__key chart__key--strategy"></i>Strategy</span>
-              <span><i class="chart__key chart__key--hold"></i>Hold everything</span>
-              <span><i class="chart__key chart__key--random"></i>Random control</span>
-            </span>
+            <span data-backtest-title>Backtest: a strategy against its opponents</span>
+            <span class="needs-js" data-backtest-progress>Goal: beat both opponents</span>
           </div>
-          <svg class="chart__plot" viewBox="0 0 600 260" preserveAspectRatio="none" aria-hidden="true">
+          <div class="chart__legend" aria-hidden="true">
+            <span><i class="chart__key chart__key--strategy"></i><span data-backtest-name>Strategy</span> <b data-backtest-value="you"></b></span>
+            <span><i class="chart__key chart__key--hold"></i>Hold everything <b data-backtest-value="hold"></b></span>
+            <span><i class="chart__key chart__key--random"></i>Random control <b data-backtest-value="random"></b></span>
+          </div>
+          <svg class="chart__plot" data-backtest-plot viewBox="0 0 600 260" preserveAspectRatio="none" aria-hidden="true">
             <defs><linearGradient id="chart-fill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a3e635" stop-opacity="0.18" /><stop offset="1" stop-color="#a3e635" stop-opacity="0" /></linearGradient></defs>
             <path d="M0 65H600M0 130H600M0 195H600" stroke="#1f1f24" stroke-width="1" />
             <path d="M0.0 230.3 L5.5 228.9 L11.0 226.3 L16.5 226.5 L22.0 228.3 L27.5 227.7 L33.0 226.1 L38.5 223.3 L44.0 224.9 L49.5 226.6 L55.0 224.6 L60.6 222.9 L66.1 219.2 L71.6 216.4 L77.1 215.9 L82.6 215.6 L88.1 209.5 L93.6 209.3 L99.1 210.2 L104.6 211.8 L110.1 210.8 L115.6 209.6 L121.1 209.5 L126.6 208.8 L132.1 207.4 L137.6 205.0 L143.1 201.7 L148.6 200.4 L154.1 203.6 L159.6 201.1 L165.1 203.5 L170.6 203.0 L176.1 205.5 L181.7 204.6 L187.2 205.5 L192.7 204.2 L198.2 195.9 L203.7 195.1 L209.2 192.1 L214.7 194.4 L220.2 194.2 L225.7 191.7 L231.2 190.9 L236.7 189.1 L242.2 187.9 L247.7 189.4 L253.2 187.1 L258.7 188.1 L264.2 182.5 L269.7 182.8 L275.2 180.0 L280.7 179.0 L286.2 175.4 L291.7 176.0 L297.2 172.3 L302.8 171.6 L308.3 167.0 L313.8 164.1 L319.3 162.6 L324.8 163.7 L330.3 160.4 L335.8 157.9 L341.3 151.8 L346.8 151.8 L352.3 148.9 L357.8 146.1 L363.3 144.0 L368.8 142.1 L374.3 140.2 L379.8 140.9 L385.3 143.0 L390.8 143.0 L396.3 139.8 L401.8 133.6 L407.3 129.0 L412.8 124.1 L418.3 120.0 L423.9 116.1 L429.4 114.0 L434.9 109.7 L440.4 101.6 L445.9 101.4 L451.4 102.5 L456.9 93.5 L462.4 90.9 L467.9 85.4 L473.4 80.2 L478.9 83.4 L484.4 71.6 L489.9 62.1 L495.4 59.6 L500.9 54.4 L506.4 52.0 L511.9 54.3 L517.4 53.1 L522.9 49.5 L528.4 42.4 L533.9 37.1 L539.4 34.9 L545.0 26.3 L550.5 28.2 L556.0 22.2 L561.5 14.5 L567.0 14.0 L572.5 21.4 L578.0 24.1 L583.5 20.9 L589.0 16.2 L594.5 6.0 L600.0 9.3 L600 260 L0 260 Z" fill="url(#chart-fill)" />
@@ -144,13 +275,34 @@
             <path d="M0.0 232.1 L5.5 235.3 L11.0 232.8 L16.5 239.5 L22.0 239.6 L27.5 245.8 L33.0 242.4 L38.5 241.4 L44.0 237.1 L49.5 238.2 L55.0 236.6 L60.6 237.1 L66.1 238.9 L71.6 238.1 L77.1 241.4 L82.6 242.0 L88.1 239.6 L93.6 239.1 L99.1 239.9 L104.6 233.1 L110.1 232.5 L115.6 233.9 L121.1 233.0 L126.6 234.2 L132.1 235.0 L137.6 235.6 L143.1 229.0 L148.6 228.5 L154.1 227.5 L159.6 224.9 L165.1 217.7 L170.6 218.0 L176.1 219.7 L181.7 210.6 L187.2 215.6 L192.7 216.4 L198.2 213.5 L203.7 204.7 L209.2 207.8 L214.7 216.6 L220.2 213.8 L225.7 215.2 L231.2 216.1 L236.7 213.9 L242.2 212.6 L247.7 211.0 L253.2 212.1 L258.7 206.9 L264.2 200.6 L269.7 199.9 L275.2 201.2 L280.7 197.7 L286.2 195.2 L291.7 198.9 L297.2 200.3 L302.8 195.5 L308.3 195.3 L313.8 196.1 L319.3 194.7 L324.8 194.3 L330.3 193.7 L335.8 201.3 L341.3 193.7 L346.8 192.3 L352.3 195.5 L357.8 190.8 L363.3 188.9 L368.8 188.2 L374.3 183.1 L379.8 172.2 L385.3 168.9 L390.8 160.5 L396.3 148.7 L401.8 153.5 L407.3 155.6 L412.8 150.8 L418.3 159.3 L423.9 160.0 L429.4 152.6 L434.9 146.3 L440.4 142.3 L445.9 152.2 L451.4 138.9 L456.9 134.9 L462.4 129.6 L467.9 125.8 L473.4 135.5 L478.9 143.1 L484.4 149.2 L489.9 138.0 L495.4 142.0 L500.9 142.6 L506.4 143.3 L511.9 139.3 L517.4 135.6 L522.9 133.3 L528.4 139.9 L533.9 157.1 L539.4 155.5 L545.0 153.4 L550.5 146.1 L556.0 145.9 L561.5 148.6 L567.0 145.6 L572.5 153.5 L578.0 158.3 L583.5 162.8 L589.0 160.7 L594.5 149.2 L600.0 144.3" fill="none" stroke="#8b8b94" stroke-width="1.6" stroke-dasharray="6 5" vector-effect="non-scaling-stroke" />
             <path d="M0.0 230.3 L5.5 228.9 L11.0 226.3 L16.5 226.5 L22.0 228.3 L27.5 227.7 L33.0 226.1 L38.5 223.3 L44.0 224.9 L49.5 226.6 L55.0 224.6 L60.6 222.9 L66.1 219.2 L71.6 216.4 L77.1 215.9 L82.6 215.6 L88.1 209.5 L93.6 209.3 L99.1 210.2 L104.6 211.8 L110.1 210.8 L115.6 209.6 L121.1 209.5 L126.6 208.8 L132.1 207.4 L137.6 205.0 L143.1 201.7 L148.6 200.4 L154.1 203.6 L159.6 201.1 L165.1 203.5 L170.6 203.0 L176.1 205.5 L181.7 204.6 L187.2 205.5 L192.7 204.2 L198.2 195.9 L203.7 195.1 L209.2 192.1 L214.7 194.4 L220.2 194.2 L225.7 191.7 L231.2 190.9 L236.7 189.1 L242.2 187.9 L247.7 189.4 L253.2 187.1 L258.7 188.1 L264.2 182.5 L269.7 182.8 L275.2 180.0 L280.7 179.0 L286.2 175.4 L291.7 176.0 L297.2 172.3 L302.8 171.6 L308.3 167.0 L313.8 164.1 L319.3 162.6 L324.8 163.7 L330.3 160.4 L335.8 157.9 L341.3 151.8 L346.8 151.8 L352.3 148.9 L357.8 146.1 L363.3 144.0 L368.8 142.1 L374.3 140.2 L379.8 140.9 L385.3 143.0 L390.8 143.0 L396.3 139.8 L401.8 133.6 L407.3 129.0 L412.8 124.1 L418.3 120.0 L423.9 116.1 L429.4 114.0 L434.9 109.7 L440.4 101.6 L445.9 101.4 L451.4 102.5 L456.9 93.5 L462.4 90.9 L467.9 85.4 L473.4 80.2 L478.9 83.4 L484.4 71.6 L489.9 62.1 L495.4 59.6 L500.9 54.4 L506.4 52.0 L511.9 54.3 L517.4 53.1 L522.9 49.5 L528.4 42.4 L533.9 37.1 L539.4 34.9 L545.0 26.3 L550.5 28.2 L556.0 22.2 L561.5 14.5 L567.0 14.0 L572.5 21.4 L578.0 24.1 L583.5 20.9 L589.0 16.2 L594.5 6.0 L600.0 9.3" fill="none" stroke="#a3e635" stroke-width="2" vector-effect="non-scaling-stroke" />
           </svg>
-          <figcaption class="chart__foot"><span>Illustration with demo data: every strategy meets two opponents before it gets money.</span></figcaption>
+          <div class="play__controls needs-js">
+            <div class="play__choices" role="group" aria-label="Market">
+              <button type="button" class="play__choice" data-backtest-market="crypto" aria-pressed="true"><b>Crypto</b><small>volatile</small></button>
+              <button type="button" class="play__choice" data-backtest-market="stock" aria-pressed="false"><b>Stock</b><small>trending</small></button>
+              <button type="button" class="play__choice" data-backtest-market="forex" aria-pressed="false"><b>Forex</b><small>ranging</small></button>
+            </div>
+            <dl class="play__kpis" data-backtest-summary hidden>
+              <div><dt>your return</dt><dd data-backtest-kpi="you">–</dd></div>
+              <div><dt>hold everything</dt><dd data-backtest-kpi="hold">–</dd></div>
+              <div><dt>random control</dt><dd data-backtest-kpi="random">–</dd></div>
+            </dl>
+            <div class="play__row" data-backtest-start-row>
+              <button type="button" class="play__button play__button--primary" data-backtest-start>Start a backtest</button>
+            </div>
+            <div class="play__row play__row--actions play__row--thirds" data-backtest-actions hidden>
+              <button type="button" class="play__button play__button--primary" data-backtest-buy>Buy</button>
+              <button type="button" class="play__button" data-backtest-sell>Sell</button>
+              <button type="button" class="play__button" data-backtest-fast>Faster <small>hold</small></button>
+            </div>
+            <p class="play__status" data-backtest-status aria-live="polite">Trade a demo market for 160 days. Beat holding everything and a random control, and your strategy would get money. Each trade costs 0.1 %.</p>
+          </div>
+          <figcaption class="chart__foot"><span>A mini game with demo data, not the software itself.</span></figcaption>
         </figure>
       </article>
 
-      <article class="case case--flip reveal" aria-labelledby="case-share" data-cli="share">
+      <article class="case reveal" aria-labelledby="case-share" data-cli="share">
         <div class="case__text">
-          <p class="case__tag"><b>Open source</b> · v0.1.0 · built with AI, for myself</p>
+          <p class="case__tag"><b>In my free time</b> · open source · v0.1.0 · built with AI, for myself</p>
           <h3 id="case-share">Share</h3>
           <p>A self-hosted place where family and friends drop photos, videos and documents: sending with a PIN and no account, folders with their own people, and end-to-end encryption per folder.</p>
           <dl class="case__facts">
