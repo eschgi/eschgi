@@ -1989,6 +1989,181 @@ body::before {
   line-height: 1.6;
 }
 
+/* The Share case study under the AI section. Its screenshots keep Share's own warm palette,
+   so it reads as a product of its own; the tint behind them hints at it. */
+.case {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  margin-top: 4rem;
+  padding: 0;
+  overflow: hidden;
+  box-shadow: var(--shadow-lift);
+}
+
+@media (min-width: 1024px) {
+  .case {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.08fr);
+  }
+}
+
+.case__copy {
+  padding: 1.75rem;
+}
+
+@media (min-width: 640px) {
+  .case__copy {
+    padding: 2.25rem;
+  }
+}
+
+.case__title {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+  color: var(--white);
+  font-size: 1.75rem;
+  font-weight: 800;
+  letter-spacing: -0.025em;
+}
+
+.case__logo {
+  display: grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: var(--radius-tile);
+  background: rgb(200 98 58 / 0.18);
+  color: #e8956f;
+}
+
+.case__logo svg {
+  width: 1.375rem;
+  height: 1.375rem;
+}
+
+.case__lead {
+  margin-top: 0.875rem;
+  color: var(--slate-400);
+  line-height: 1.7;
+}
+
+.case__points {
+  display: grid;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+}
+
+.case__points li {
+  display: flex;
+  gap: 0.625rem;
+  color: var(--slate-400);
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+.case__points svg {
+  width: 1rem;
+  height: 1rem;
+  flex: none;
+  margin-top: 0.2rem;
+  color: var(--positive);
+}
+
+.case__points strong {
+  color: var(--white);
+  font-weight: 600;
+}
+
+.case__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+
+/* Side by side when they fit, full width and equal when they wrap. */
+.case__actions .btn {
+  flex: 1 1 11rem;
+}
+
+.pill--warning {
+  border-color: color-mix(in srgb, var(--warning) 40%, var(--ink-600));
+  color: var(--warning);
+}
+
+.case__visual {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1.5rem;
+  border-top: 1px solid var(--ink-600);
+  background: radial-gradient(30rem 24rem at 78% 30%, rgb(200 98 58 / 0.16), transparent 70%), var(--ink-900);
+}
+
+@media (min-width: 1024px) {
+  .case__visual {
+    padding: 2.5rem 2rem;
+    border-top: 0;
+    border-left: 1px solid var(--ink-600);
+  }
+}
+
+/* The two screenshots move as one group: the phone overlaps the browser's lower right. */
+.case__stage {
+  position: relative;
+  width: 100%;
+  max-width: 36rem;
+  padding: 0 13% 15% 0;
+}
+
+.case__browser {
+  overflow: hidden;
+  border: 1px solid var(--ink-600);
+  border-radius: 10px;
+  background: var(--ink-950);
+  box-shadow: var(--shadow-lift);
+}
+
+.case__chrome {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  height: 1.75rem;
+  padding: 0 0.75rem;
+  border-bottom: 1px solid var(--ink-600);
+  background: var(--ink-850);
+  color: var(--slate-400);
+  font-size: 0.6875rem;
+}
+
+.case__chrome .window-dots span {
+  width: 0.5rem;
+  height: 0.5rem;
+}
+
+.case__browser img,
+.case__phone img {
+  width: 100%;
+  height: auto;
+}
+
+.case__phone {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 30%;
+  padding: 5px;
+  border-radius: 24px;
+  background: linear-gradient(145deg, #2a2a30, #0d0d10 45%, #1c1c21);
+  box-shadow: 0 0 0 1px #3a3a42, 0 24px 50px -16px rgb(0 0 0 / 0.9);
+}
+
+.case__phone img {
+  border-radius: 19px;
+}
+
 /* --------------------------------------------------------------- stats */
 .stats {
   margin-top: 3rem;
