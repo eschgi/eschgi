@@ -1,8 +1,8 @@
 // eschgi.com — the packing scale beside foodProcess: an illustration that turns into a mini game.
 // A hand-packing station: a platform scale with a column display, its tolerance light (red under,
 // green on target, amber over) and an RFID reader for the operator's badge. Fill five punnets to
-// their target weight; every gram above it is giveaway, product given away for free, and
-// reducing giveaway is what foodProcess is for.
+// their target weight; every gram above it is giveaway, the extra product above the weight on
+// the label, and reducing giveaway is what foodProcess is for.
 //
 // The scene is SVG in index.html; this script draws the punnets and the fruit and runs the scale.
 // Nothing moves until someone plays, and with reduced motion nothing animates at all: fruit and
@@ -106,7 +106,7 @@
   }
 
   var INTRO =
-    "Fill five punnets to at least their target weight, with as little giveaway as you can: every gram above the target is product given away for free.";
+    "Fill five punnets to at least their target weight. Every gram above it is giveaway, so keep it as low as you can.";
 
   var productKey = "strawberries";
   var product = PRODUCTS[productKey];
