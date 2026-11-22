@@ -1,10 +1,12 @@
 // eschgi.com — the packing scale beside foodProcess: an illustration that turns into a mini game.
-// Fill five punnets to their target weight. Anything above the target is giveaway, fruit given
-// away for free; giveaway and punnets a minute are what foodProcess measures on a real line.
+// A hand-packing station: a platform scale with a column display, its tolerance light (red under,
+// green on target, amber over) and an RFID reader for the operator's badge. Fill five punnets to
+// their target weight; every gram above it is giveaway, product given away for free, and
+// reducing giveaway is what foodProcess is for.
 //
-// The scene is SVG, drawn by this script into the markup in index.html. Nothing moves until
-// someone plays, and with reduced motion nothing animates at all: fruit and punnets just appear
-// and the reading is final at once. A classic deferred script, like the others.
+// The scene is SVG in index.html; this script draws the punnets and the fruit and runs the scale.
+// Nothing moves until someone plays, and with reduced motion nothing animates at all: fruit and
+// punnets just appear and the reading is final at once. A classic deferred script, like the others.
 (function () {
   "use strict";
 
@@ -14,11 +16,13 @@
   var SVG_NS = "http://www.w3.org/2000/svg";
   var BEST_KEY = "eschgi.scale.best";
   var PUNNETS_PER_ORDER = 5;
-  var OVER_SHARE = 0.05; // the OVER lamp lights more than 5 % above the target
+  var OK_SHARE = 0.05; // up to 5 % over the target is green; above that, amber
   var FULL_SHARE = 1.8; // a punnet takes at most 180 % of its target
-  var PAN = { x: 300, y: 218 }; // where a punnet stands on the scale
-  var VIEW_WIDE = "0 82 600 250";
-  var VIEW_NARROW = "84 72 432 260";
+  var PAN = { x: 300, y: 245, s: 1 }; // where a punnet stands on the scale
+  var STACK = { x: 52, y: 300, s: 0.6 }; // the empty punnets, on the bench to the left
+  var PARKED = { x: 542, y: 300, s: 0.52 }; // the last packed punnet, on the bench to the right
+  var VIEW_WIDE = "0 0 600 312";
+  var VIEW_NARROW = "120 0 360 312";
 
   // Weights in grams: a piece weighs `mean` ± `spread`, and a held Fill pours one every `every`
   // milliseconds. `size` is a piece's drawn height at the mean weight, `width` its width as a share
@@ -62,26 +66,39 @@
     },
   };
 
+  function part(name) {
+    return figure.querySelector("[data-scale-" + name + "]");
+  }
+
   var svg = figure.querySelector("svg");
-  var stage = figure.querySelector("[data-scale-stage]");
-  var digitLayer = figure.querySelector("[data-scale-digits]");
-  var stableLight = figure.querySelector("[data-scale-stable]");
-  var lamps = {
-    under: figure.querySelector('[data-scale-lamp="under"]'),
-    ok: figure.querySelector('[data-scale-lamp="ok"]'),
-    over: figure.querySelector('[data-scale-lamp="over"]'),
+  var stage = part("stage");
+  var stackLayer = part("stack");
+  var screen = {
+    weight: part("weight"),
+    stable: part("stable"),
+    zero: part("zero"),
+    icon: part("icon"),
+    glyph: part("glyph"),
+    bar: part("bar"),
+    productName: part("product-name"),
+    target: part("target"),
+    operator: part("operator"),
   };
-  var progressText = figure.querySelector("[data-scale-progress]");
-  var statusText = figure.querySelector("[data-scale-status]");
+  var rfid = part("rfid");
+  var leds = Array.prototype.slice.call(figure.querySelectorAll("[data-scale-led]")).sort(function (a, b) {
+    return Number(a.getAttribute("data-scale-led")) - Number(b.getAttribute("data-scale-led"));
+  });
+  var progressText = part("progress");
+  var statusText = part("status");
   var productButtons = figure.querySelectorAll("[data-scale-product]");
-  var startRow = figure.querySelector("[data-scale-start-row]");
-  var startButton = figure.querySelector("[data-scale-start]");
-  var actionRow = figure.querySelector("[data-scale-actions]");
-  var fillButton = figure.querySelector("[data-scale-fill]");
-  var removeButton = figure.querySelector("[data-scale-remove]");
-  var packButton = figure.querySelector("[data-scale-pack]");
-  var summary = figure.querySelector("[data-scale-summary]");
-  if (!svg || !stage || !digitLayer || !fillButton || !packButton) return;
+  var startRow = part("start-row");
+  var startButton = part("start");
+  var actionRow = part("actions");
+  var fillButton = part("fill");
+  var removeButton = part("remove");
+  var packButton = part("pack");
+  var summary = part("summary");
+  if (!svg || !stage || !stackLayer || !screen.weight || !fillButton || !packButton || leds.length !== 12) return;
 
   var reducedQuery = window.matchMedia ? window.matchMedia("(prefers-reduced-motion: reduce)") : null;
   function still() {
@@ -91,12 +108,13 @@
   }
 
   var INTRO =
-    "Fill five punnets to their target weight. Anything above it is giveaway: fruit given away for free.";
+    "Fill five punnets to at least their target weight, with as little giveaway as you can: every gram above the target is fruit given away for free.";
 
   var productKey = "strawberries";
   var product = PRODUCTS[productKey];
   var mode = "idle"; // idle, moving, playing, packing, done
   var punnet = null; // the punnet on the scale: { node, fruit, pieces, slots, variety }
+  var parked = null; // the last packed punnet, on the bench
   var weight = 0; // grams on the scale, net of the punnet
   var spring = { offset: 0, velocity: 0, damping: 0.3, quietSince: 0 }; // how the reading swings before it settles
   var falling = []; // pieces in the air
@@ -104,11 +122,11 @@
   var pouring = false;
   var nextDropAt = 0;
   var packWhenSettled = false;
+  var announceWhenSettled = false;
   var order = null;
   var frame = 0;
   var lastTime = 0;
   var shownReading = null;
-  var announceWhenSettled = false;
   var scene = 0; // bumped when the fruit changes, so timers of the old scene do nothing
 
   function later(callback, milliseconds) {
@@ -153,8 +171,10 @@
     if (values.o !== undefined) node.setAttribute("opacity", String(round(values.o)));
   }
 
+  // The scale shows whole grams, as a packing scale with a 1 g division does.
   function grams(value) {
-    return (Math.round(value * 10) / 10).toFixed(1);
+    var whole = Math.round(value);
+    return String(whole === 0 ? 0 : whole);
   }
 
   // ---------------------------------------------------------------- the fruit
@@ -175,12 +195,7 @@
     el("circle", { r: round(radius), fill: "url(#sc-bloom)" }, group);
     el(
       "path",
-      {
-        d: star(radius * 0.16, -radius * 0.2, radius * 0.36, radius * 0.15, 5),
-        fill: "#1b1f44",
-        stroke: "#4c58a6",
-        "stroke-width": 0.5,
-      },
+      { d: star(radius * 0.16, -radius * 0.2, radius * 0.36, radius * 0.15, 5), fill: "#1b1f44", stroke: "#4c58a6", "stroke-width": 0.5 },
       group
     );
     return group;
@@ -242,7 +257,13 @@
     });
     el(
       "path",
-      { d: "M0 " + round(-h * 0.42) + "q" + round(w * 0.02) + " " + round(-h * 0.08) + " " + round(w * 0.06) + " " + round(-h * 0.13), stroke: "#3d8526", "stroke-width": 1.6, "stroke-linecap": "round", fill: "none" },
+      {
+        d: "M0 " + round(-h * 0.42) + "q" + round(w * 0.02) + " " + round(-h * 0.08) + " " + round(w * 0.06) + " " + round(-h * 0.13),
+        stroke: "#3d8526",
+        "stroke-width": 1.6,
+        "stroke-linecap": "round",
+        fill: "none",
+      },
       group
     );
     return group;
@@ -266,7 +287,13 @@
     var group = el("g", {});
     el(
       "path",
-      { d: "M0 " + round(-size * 0.38) + "q" + round(size * 0.02) + " " + round(-size * 0.1) + " " + round(size * 0.1) + " " + round(-size * 0.16), stroke: "#8a7a44", "stroke-width": 1.8, "stroke-linecap": "round", fill: "none" },
+      {
+        d: "M0 " + round(-size * 0.38) + "q" + round(size * 0.02) + " " + round(-size * 0.1) + " " + round(size * 0.1) + " " + round(-size * 0.16),
+        stroke: "#8a7a44",
+        "stroke-width": 1.8,
+        "stroke-linecap": "round",
+        fill: "none",
+      },
       group
     );
     GRAPES.forEach(function (grape) {
@@ -278,7 +305,7 @@
     return group;
   }
 
-  // ---------------------------------------------------------------- the punnet
+  // ---------------------------------------------------------------- the punnets
   // Where pieces come to rest, bottom row first, in punnet coordinates (origin at the bottom
   // centre, y up is negative). Rows above the rim narrow into a heap.
   function makeSlots() {
@@ -320,7 +347,8 @@
     }
   }
 
-  function createPunnet() {
+  // An empty clear punnet: back wall, room for fruit, front wall with ribs, rim.
+  function drawPunnet(parent) {
     var shape = product.punnet;
     var outline =
       "M" + -shape.bottom / 2 + " 0L" + shape.bottom / 2 + " 0L" + shape.top / 2 + " " + -shape.height + "L" + -shape.top / 2 + " " + -shape.height + "Z";
@@ -328,39 +356,64 @@
     var ribCount = Math.round(shape.bottom / 16);
     for (var i = 1; i < ribCount; i++) {
       var share = i / ribCount;
-      ribs +=
-        "M" + round(-shape.bottom / 2 + shape.bottom * share) + " -3L" + round(-shape.top / 2 + shape.top * share) + " " + (-shape.height + 3);
+      ribs += "M" + round(-shape.bottom / 2 + shape.bottom * share) + " -3L" + round(-shape.top / 2 + shape.top * share) + " " + (-shape.height + 3);
     }
-    var node = el("g", { class: "scale__punnet" });
+    var node = el("g", { class: "scale__punnet" }, parent);
     el("path", { class: "scale__punnet-back", d: outline }, node);
     var fruit = el("g", {}, node);
     el("path", { class: "scale__punnet-front", d: outline }, node);
     el("path", { class: "scale__punnet-ribs", d: ribs }, node);
     el("rect", { class: "scale__punnet-rim", x: -shape.top / 2 - 5, y: -shape.height - 4, width: shape.top + 10, height: 6, rx: 3 }, node);
-    stage.appendChild(node);
-    return {
-      node: node,
-      fruit: fruit,
-      pieces: [],
-      slots: makeSlots(),
-      variety: Math.random() < 0.65 ? "white" : "red",
-    };
+    return { node: node, fruit: fruit };
   }
 
-  function slotFor(index) {
-    var slots = punnet.slots;
+  function createPunnet() {
+    var drawn = drawPunnet(stage);
+    return { node: drawn.node, fruit: drawn.fruit, pieces: [], slots: makeSlots(), variety: Math.random() < 0.65 ? "white" : "red" };
+  }
+
+  function drawStack() {
+    while (stackLayer.firstChild) stackLayer.removeChild(stackLayer.firstChild);
+    for (var i = 0; i < 3; i++) place(drawPunnet(stackLayer).node, { x: STACK.x, y: STACK.y - i * 5, s: STACK.s });
+  }
+
+  function slotFor(target, index) {
+    var slots = target.slots;
     if (index < slots.length) return slots[index];
     var top = slots[slots.length - 1 - (index % 4)];
     return { x: top.x + (Math.random() - 0.5) * product.size, y: top.y - product.size * 0.3, r: top.r };
   }
 
-  function addPieceNode(weightOfPiece) {
-    var node = product.draw(product.size * Math.pow(weightOfPiece / product.mean, 1 / 3), punnet.variety);
-    punnet.fruit.appendChild(node);
-    return node;
+  function addPiece(target, pieceWeight, slot) {
+    var node = product.draw(product.size * Math.pow(pieceWeight / product.mean, 1 / 3), target.variety);
+    target.fruit.appendChild(node);
+    return { node: node, weight: pieceWeight, slot: slot };
   }
 
-  function printLabel(current, net, instant) {
+  // Fills a punnet at once to just above its target, for the picture before anyone plays.
+  function fillAtOnce(target) {
+    var pieces = [];
+    var total = 0;
+    while (total < product.target) {
+      var next = randomPieceWeight();
+      pieces.push(next);
+      total += next;
+    }
+    var wanted = product.target + 0.6 + Math.random() * product.target * 0.006;
+    var scaled = 0;
+    pieces.forEach(function (value, index) {
+      // The last piece takes up the rounding, so the reading is exactly the weight wanted.
+      var share = index === pieces.length - 1 ? wanted - scaled : (value * wanted) / total;
+      share = Math.round(share * 10) / 10;
+      scaled += share;
+      var piece = addPiece(target, share, slotFor(target, index));
+      place(piece.node, piece.slot);
+      target.pieces.push(piece);
+    });
+    return Math.round(scaled * 10) / 10;
+  }
+
+  function printLabel(target, net, instant) {
     var shape = product.punnet;
     var label = el("g", { class: "scale__label" });
     el("rect", { x: -32, y: -15, width: 64, height: 30, rx: 2 }, label);
@@ -374,13 +427,13 @@
       bars += "M" + x + " 7.5h" + width + "v5h" + -width + "Z";
     }
     el("path", { class: "scale__label-code", d: bars }, label);
-    current.node.appendChild(label);
+    target.node.appendChild(label);
     var at = { x: 0, y: -shape.height * 0.42 };
     if (instant || still()) {
       place(label, at);
       return;
     }
-    tween(label, { x: at.x, y: at.y - 6, s: 0.7, o: 0 }, { x: at.x, y: at.y, s: 1, o: 1 }, 200, easeOut);
+    tween(label, { x: at.x, y: at.y - 6, s: 0.7, o: 0 }, { x: at.x, y: at.y, s: 1, o: 1 }, { duration: 200, ease: easeOut });
   }
 
   // ---------------------------------------------------------------- motion
@@ -394,8 +447,18 @@
     return t < 0.5 ? 2 * t * t : 1 - 2 * (1 - t) * (1 - t);
   }
 
-  function tween(node, from, to, duration, ease, done, delay) {
-    tweens.push({ node: node, from: from, to: to, start: performance.now() + (delay || 0), duration: duration, ease: ease, done: done });
+  // Moves a node from one state to another; `arc` lifts it on the way, as a hand would.
+  function tween(node, from, to, options) {
+    tweens.push({
+      node: node,
+      from: from,
+      to: to,
+      start: performance.now() + (options.delay || 0),
+      duration: options.duration,
+      ease: options.ease || easeInOut,
+      arc: options.arc || 0,
+      done: options.done,
+    });
     place(node, from);
     wake();
   }
@@ -412,6 +475,7 @@
           values[key] = item.from[key] + (item.to[key] - item.from[key]) * eased;
         }
       }
+      if (item.arc) values.y -= item.arc * Math.sin(Math.PI * eased);
       place(item.node, values);
       if (progress >= 1) {
         tweens.splice(i, 1);
@@ -421,8 +485,7 @@
   }
 
   // The reading overshoots and swings for a moment whenever the load changes, as a real load
-  // cell does: hard when fruit lands, gently when load comes off. The STABLE light comes on once
-  // it has settled.
+  // cell does: hard when fruit lands, gently when load comes off. STABLE lights once it settles.
   function kick(change, impact, damping) {
     if (still()) return;
     spring.offset -= change;
@@ -445,7 +508,7 @@
       spring.velocity += (-omega * omega * spring.offset - damping * spring.velocity) * dt;
       spring.offset += spring.velocity * dt;
     }
-    if (Math.abs(spring.offset) < 0.04 && Math.abs(spring.velocity) < 0.8) {
+    if (Math.abs(spring.offset) < 0.2 && Math.abs(spring.velocity) < 2) {
       if (!spring.quietSince) spring.quietSince = now;
       if (now - spring.quietSince > 140) {
         spring.offset = 0;
@@ -491,115 +554,71 @@
   }
 
   // ---------------------------------------------------------------- the display
-  // Seven segments per digit, a to g; four digits with the decimal point before the last.
-  var SEGMENTS = {
-    "0": "abcdef",
-    "1": "bc",
-    "2": "abged",
-    "3": "abgcd",
-    "4": "fgbc",
-    "5": "afgcd",
-    "6": "afgedc",
-    "7": "abc",
-    "8": "abcdefg",
-    "9": "abcdfg",
-    "-": "g",
-    " ": "",
+  // The tolerance light fills from the bottom: five red segments up to the target, two green
+  // up to 5 % over, five amber beyond.
+  var LED_STEPS = [-1, -0.16, -0.12, -0.08, -0.04, 0, 0.025, 0.05, 0.08, 0.11, 0.14, 0.17];
+  var GLYPHS = {
+    "": "M232 76h12",
+    under: "M230 76h16",
+    ok: "M230.5 76.5l5.2 5.2 10-11",
+    over: "M230 76h16M238 68v16",
   };
-  var digits = [];
+  var BAR_WIDTH = 124;
+  var BAR_SPAN = 1.2; // the bar runs to 120 % of the target; the mark stands at 100 %
 
-  function buildDigits() {
-    var width = 24;
-    var height = 36;
-    var thick = 5;
-    var left = [166, 198, 230, 270];
-    var top = 257;
-    function horizontal(cx, cy) {
-      var half = width / 2 - 1.5;
-      return [
-        [cx - half, cy],
-        [cx - half + thick / 2, cy - thick / 2],
-        [cx + half - thick / 2, cy - thick / 2],
-        [cx + half, cy],
-        [cx + half - thick / 2, cy + thick / 2],
-        [cx - half + thick / 2, cy + thick / 2],
-      ];
-    }
-    function vertical(cx, cy) {
-      var half = height / 4 - 1.5;
-      return [
-        [cx, cy - half],
-        [cx + thick / 2, cy - half + thick / 2],
-        [cx + thick / 2, cy + half - thick / 2],
-        [cx, cy + half],
-        [cx - thick / 2, cy + half - thick / 2],
-        [cx - thick / 2, cy - half + thick / 2],
-      ];
-    }
-    left.forEach(function (x) {
-      var shapes = {
-        a: horizontal(x + width / 2, top),
-        g: horizontal(x + width / 2, top + height / 2),
-        d: horizontal(x + width / 2, top + height),
-        f: vertical(x, top + height / 4),
-        b: vertical(x + width, top + height / 4),
-        e: vertical(x, top + (3 * height) / 4),
-        c: vertical(x + width, top + (3 * height) / 4),
-      };
-      var digit = {};
-      Object.keys(shapes).forEach(function (name) {
-        digit[name] = el(
-          "polygon",
-          {
-            class: "scale__seg",
-            points: shapes[name]
-              .map(function (corner) {
-                return round(corner[0]) + "," + round(corner[1]);
-              })
-              .join(" "),
-          },
-          digitLayer
-        );
-      });
-      digits.push(digit);
-    });
-    el("circle", { class: "scale__seg is-on", cx: 262, cy: top + height, r: 2.8 }, digitLayer);
-    var fallback = figure.querySelector("[data-scale-fallback]");
-    detach(fallback);
-  }
-
-  // 251.4 → ["2", "5", "1", "4"], 5.3 → [" ", " ", "5", "3"]; a negative reading gets a minus in
-  // front of its first digit, as on a real scale.
-  function digitsOf(value) {
-    var clamped = Math.max(-99.9, Math.min(999.9, Math.round(value * 10) / 10));
-    var chars = String(Math.round(Math.abs(clamped) * 10)).split("");
-    while (chars.length < 2) chars.unshift("0");
-    while (chars.length < 4) chars.unshift(" ");
-    if (clamped < 0) chars[chars.lastIndexOf(" ")] = "-";
-    return chars;
+  function stateOf(reading) {
+    if (reading < 1) return "";
+    if (reading < product.target) return "under";
+    return reading <= product.target * (1 + OK_SHARE) ? "ok" : "over";
   }
 
   function render(force) {
-    var reading = Math.round((weight + spring.offset) * 10) / 10;
-    if (reading === 0) reading = 0; // turns -0 into 0, so the display never shows "-0.0"
+    var reading = Math.round(weight + spring.offset);
+    if (reading === 0) reading = 0; // turns -0 into 0
     if (force || reading !== shownReading) {
       shownReading = reading;
-      digitsOf(reading).forEach(function (char, index) {
-        var on = SEGMENTS[char] || "";
-        Object.keys(digits[index]).forEach(function (name) {
-          setClass(digits[index][name], "is-on", on.indexOf(name) >= 0);
-        });
+      screen.weight.textContent = String(reading);
+      var state = stateOf(reading);
+      var deviation = (reading - product.target) / product.target;
+      leds.forEach(function (led, level) {
+        // Level 7 is the first amber one: it lights only once the reading is past the green band.
+        var lit = reading >= 1 && (level === 7 ? deviation > OK_SHARE : deviation >= LED_STEPS[level]);
+        setClass(led, "is-on", lit);
       });
-      var state = reading < 0.05 ? "" : reading < product.target ? "under" : reading <= product.target * (1 + OVER_SHARE) ? "ok" : "over";
-      setClass(lamps.under, "is-on", state === "under");
-      setClass(lamps.ok, "is-on", state === "ok");
-      setClass(lamps.over, "is-on", state === "over");
+      ["under", "ok", "over"].forEach(function (name) {
+        setClass(screen.icon, "is-" + name, state === name);
+        setClass(screen.bar, "is-" + name, state === name);
+      });
+      screen.glyph.setAttribute("d", GLYPHS[state]);
+      var share = Math.max(0, Math.min(BAR_SPAN, reading / product.target)) / BAR_SPAN;
+      screen.bar.setAttribute("width", String(round(BAR_WIDTH * share)));
     }
-    setClass(stableLight, "is-on", settled() && weight > 0);
+    var calm = settled();
+    setClass(screen.stable, "is-on", calm && weight > 0);
+    setClass(screen.zero, "is-on", calm && reading === 0);
+  }
+
+  function showProductOnScreen() {
+    screen.productName.textContent = product.name;
+    screen.target.textContent = "Target " + product.target + " g";
+  }
+
+  function showOperator(playing) {
+    screen.operator.textContent = playing ? "Operator: you" : "Station 1";
+  }
+
+  // The operator's badge at the reader: a moment of lime on the RFID mark.
+  function readBadge() {
+    showOperator(true);
+    if (!rfid || still()) return;
+    setClass(rfid, "is-reading", true);
+    later(function () {
+      setClass(rfid, "is-reading", false);
+    }, 700);
   }
 
   // ---------------------------------------------------------------- playing
-  function pieceWeight() {
+  function randomPieceWeight() {
     var value = product.mean + product.spread * (Math.random() + Math.random() - 1);
     return Math.round(value * 10) / 10;
   }
@@ -618,8 +637,7 @@
       return;
     }
     if (order && !order.firstFillAt) order.firstFillAt = now;
-    var piece = { weight: pieceWeight(), slot: slotFor(punnet.pieces.length + falling.length) };
-    piece.node = addPieceNode(piece.weight);
+    var piece = addPiece(punnet, randomPieceWeight(), slotFor(punnet, punnet.pieces.length + falling.length));
     if (still()) {
       place(piece.node, piece.slot);
       land(piece);
@@ -629,12 +647,14 @@
     var drift = (Math.random() - 0.5) * 18;
     tween(
       piece.node,
-      { x: piece.slot.x + drift, y: piece.slot.y - 260, r: piece.slot.r - 20 },
+      { x: piece.slot.x + drift, y: piece.slot.y - 300, r: piece.slot.r - 20 },
       { x: piece.slot.x, y: piece.slot.y, r: piece.slot.r },
-      300 + Math.random() * 90,
-      easeIn,
-      function () {
-        land(piece);
+      {
+        duration: 320 + Math.random() * 90,
+        ease: easeIn,
+        done: function () {
+          land(piece);
+        },
       }
     );
   }
@@ -662,10 +682,12 @@
         piece.node,
         { x: slot.x, y: slot.y, r: slot.r, o: 1 },
         { x: slot.x + 30, y: slot.y - 150, r: slot.r + 50, o: 0 },
-        360,
-        easeOut,
-        function () {
-          detach(piece.node);
+        {
+          duration: 360,
+          ease: easeOut,
+          done: function () {
+            detach(piece.node);
+          },
         }
       );
     }
@@ -675,17 +697,7 @@
     wake();
   }
 
-  function startPour() {
-    if (mode !== "playing" || pouring) return;
-    pouring = true;
-    setClass(fillButton, "is-pouring", true);
-    var now = performance.now();
-    dropPiece(now);
-    nextDropAt = now + Math.max(240, product.every); // a tap drops exactly one piece
-    wake();
-  }
-
-  // Stops pouring; the reading is announced once it settles, for anyone not watching the digits.
+  // Stops pouring; the reading is announced once it settles, for anyone not watching the screen.
   function stopPour() {
     if (!pouring) return;
     haltPour();
@@ -698,6 +710,16 @@
     setClass(fillButton, "is-pouring", false);
   }
 
+  function startPour() {
+    if (mode !== "playing" || pouring) return;
+    pouring = true;
+    setClass(fillButton, "is-pouring", true);
+    var now = performance.now();
+    dropPiece(now);
+    nextDropAt = now + Math.max(240, product.every); // a tap drops exactly one piece
+    wake();
+  }
+
   function requestPack() {
     if (!punnet || mode !== "playing" || weight <= 0) return;
     haltPour();
@@ -708,33 +730,36 @@
     wake();
   }
 
+  // What the scale shows is what counts: whole grams, at or above the target to pass.
   function pack() {
     var current = punnet;
-    var net = Math.round(weight * 10) / 10;
+    var net = Math.round(weight);
     var accepted = net >= product.target;
     order.count += 1;
     order.lastPackAt = performance.now();
     if (accepted) {
+      var extra = net - product.target;
       order.packed += 1;
-      order.giveaway += net - product.target;
+      order.giveaway += extra;
       printLabel(current, net);
-      say("Packed " + grams(net) + " g: " + grams(net - product.target) + " g giveaway.");
+      say("Packed " + net + " g: " + extra + " g giveaway (" + ((extra / product.target) * 100).toFixed(1) + " %).");
+      leave(current, "packed", 380);
     } else {
       order.rejected += 1;
-      say("Rejected: " + grams(product.target - net) + " g under. Short punnets come off the line.");
+      say("Rejected: " + (product.target - net) + " g under. Short punnets can't be sold.");
+      leave(current, "rejected", 120);
     }
-    leave(current, accepted ? "packed" : "rejected", accepted ? 380 : 120);
     updateProgress();
     if (order.count >= PUNNETS_PER_ORDER) {
       mode = "moving";
       syncControls();
       later(finishOrder, still() ? 0 : 900);
     } else {
-      arrive(accepted ? 520 : 260);
+      arrive(accepted ? 560 : 300);
     }
   }
 
-  // The punnet leaves the scale: along the outfeed when packed, off the line when rejected.
+  // The punnet leaves the scale: set down on the bench when packed, off the bench when rejected.
   function leave(current, how, delay) {
     if (punnet === current) punnet = null;
     var load = weight;
@@ -743,22 +768,60 @@
       kick(-load, 0, 0.8);
       wake();
     }, still() ? 0 : delay);
-    if (still()) {
-      detach(current.node);
-      weight = 0;
+    if (how === "packed") {
+      park(current, delay);
       return;
     }
-    var from = { x: PAN.x, y: PAN.y, r: 0, o: 1 };
-    var to =
-      how === "rejected"
-        ? { x: PAN.x - 150, y: PAN.y + 210, r: -40, o: 0 }
-        : { x: PAN.x + 420, y: PAN.y, r: 0, o: 1 };
-    tween(current.node, from, to, how === "rejected" ? 620 : 640, how === "rejected" ? easeIn : easeInOut, function () {
+    if (still()) {
       detach(current.node);
-    }, delay);
+      return;
+    }
+    tween(
+      current.node,
+      { x: PAN.x, y: PAN.y, r: 0, o: 1 },
+      { x: PAN.x - 40, y: PAN.y + 160, r: -38, o: 0 },
+      {
+        duration: 620,
+        ease: easeIn,
+        delay: delay,
+        done: function () {
+          detach(current.node);
+        },
+      }
+    );
   }
 
-  // An empty punnet comes in on the infeed; the scale reads zero, the punnet tared.
+  // A packed punnet goes to the bench on the right; the one before it moves on, out of sight.
+  function park(current, delay) {
+    var previous = parked;
+    parked = current;
+    if (previous) {
+      if (still()) {
+        detach(previous.node);
+      } else {
+        tween(
+          previous.node,
+          { x: PARKED.x, y: PARKED.y, s: PARKED.s },
+          { x: PARKED.x + 190, y: PARKED.y, s: PARKED.s },
+          {
+            duration: 520,
+            ease: easeIn,
+            delay: delay,
+            done: function () {
+              detach(previous.node);
+            },
+          }
+        );
+      }
+    }
+    if (still()) {
+      place(current.node, PARKED);
+      return;
+    }
+    tween(current.node, { x: PAN.x, y: PAN.y, s: 1 }, { x: PARKED.x, y: PARKED.y, s: PARKED.s }, { duration: 660, delay: delay + 80, arc: 60 });
+  }
+
+  // An empty punnet comes from the stack on the left; the scale reads zero, the punnet tared.
   function arrive(delay) {
     mode = "moving";
     syncControls();
@@ -770,15 +833,17 @@
     }
     tween(
       punnet.node,
-      { x: PAN.x - 420, y: PAN.y, r: 0, o: 1 },
-      { x: PAN.x, y: PAN.y, r: 0, o: 1 },
-      620,
-      easeOut,
-      function () {
-        kick(0, 18, 0.45);
-        ready();
-      },
-      delay
+      { x: STACK.x, y: STACK.y - 12, s: STACK.s },
+      { x: PAN.x, y: PAN.y, s: 1 },
+      {
+        duration: 640,
+        delay: delay,
+        arc: 70,
+        done: function () {
+          kick(0, 18, 0.45);
+          ready();
+        },
+      }
     );
   }
 
@@ -792,8 +857,10 @@
     clearMotion();
     order = { count: 0, packed: 0, rejected: 0, giveaway: 0, firstFillAt: 0, lastPackAt: 0 };
     summary.hidden = true;
+    readBadge();
+    var hadPunnet = !!punnet;
     if (punnet) leave(punnet, "packed", 0);
-    arrive(punnet ? 160 : 0);
+    arrive(hadPunnet ? 260 : 0);
     updateProgress();
     say("Hold Fill to pour, tap it for a single piece. Pack once the reading settles.");
   }
@@ -810,17 +877,21 @@
     var best = loadBest();
     var previous = best[productKey];
     var clean = order.rejected === 0 && order.packed === PUNNETS_PER_ORDER;
+    var fruit = product.name.toLowerCase();
     var line;
     if (clean && (!previous || share < previous.giveaway)) {
       best[productKey] = { giveaway: share, perMinute: perMinute };
       saveBest(best);
-      line = previous ? "Order packed, and a new best for " + product.name.toLowerCase() + "." : "Order packed. That's your first full order of " + product.name.toLowerCase() + ".";
+      line = previous
+        ? "Order packed with " + share.toFixed(1) + " % giveaway: a new best for " + fruit + "."
+        : "Order packed with " + share.toFixed(1) + " % giveaway. Now try to get it lower.";
     } else if (!clean) {
       line = "Order done, with " + order.rejected + " rejected. Underweight costs more than giveaway.";
     } else {
-      line = "Order packed. Your best for " + product.name.toLowerCase() + ": " + previous.giveaway.toFixed(1) + " % giveaway.";
+      line = "Order packed. Your best for " + fruit + ": " + previous.giveaway.toFixed(1) + " % giveaway.";
     }
     say(line);
+    showOperator(false);
     startButton.textContent = "Pack another order";
     syncControls();
     updateProgress();
@@ -858,10 +929,11 @@
     if (mode === "done") {
       progressText.textContent = "Order done";
     } else if (order) {
-      progressText.textContent = "Punnet " + Math.min(order.count + 1, PUNNETS_PER_ORDER) + " of " + PUNNETS_PER_ORDER;
+      progressText.textContent =
+        "Punnet " + Math.min(order.count + 1, PUNNETS_PER_ORDER) + " of " + PUNNETS_PER_ORDER + " · " + order.giveaway + " g giveaway";
     } else {
       var best = loadBest()[productKey];
-      progressText.textContent = best ? "Best: " + best.giveaway.toFixed(1) + " % giveaway" : "Five punnets a round";
+      progressText.textContent = best ? "Best: " + best.giveaway.toFixed(1) + " % giveaway" : "Goal: least giveaway";
     }
   }
 
@@ -889,40 +961,23 @@
     falling = [];
   }
 
-  // The picture before anyone plays: a punnet filled just past its target, labelled and weighed.
-  function showFilledPunnet() {
+  // The picture before anyone plays: a punnet just past its target on the scale, labelled, and
+  // a packed one on the bench beside it.
+  function showStation() {
     clearMotion();
     while (stage.firstChild) stage.removeChild(stage.firstChild);
+    drawStack();
+
+    parked = createPunnet();
+    printLabel(parked, fillAtOnce(parked), true);
+    place(parked.node, PARKED);
+
     punnet = createPunnet();
     place(punnet.node, PAN);
-    var pieces = [];
-    var total = 0;
-    while (total < product.target) {
-      var next = pieceWeight();
-      pieces.push(next);
-      total += next;
-    }
-    var wanted = product.target + 0.4 + Math.random() * product.target * 0.008;
-    var scaled = 0;
-    pieces = pieces.map(function (value, index) {
-      // The last piece takes up the rounding, so the reading is exactly the weight wanted.
-      var next = index === pieces.length - 1 ? wanted - scaled : (value * wanted) / total;
-      next = Math.round(next * 10) / 10;
-      scaled += next;
-      return next;
-    });
-    total = 0;
-    pieces.forEach(function (pieceWeightValue, index) {
-      var slot = slotFor(index);
-      var node = addPieceNode(pieceWeightValue);
-      place(node, slot);
-      punnet.pieces.push({ weight: pieceWeightValue, slot: slot, node: node });
-      total += pieceWeightValue;
-    });
-    weight = Math.round(total * 10) / 10;
+    weight = fillAtOnce(punnet);
+    printLabel(punnet, weight, true);
     spring.offset = 0;
     spring.velocity = 0;
-    printLabel(punnet, weight, true);
     render(true);
   }
 
@@ -937,18 +992,21 @@
     mode = "idle";
     order = null;
     startButton.textContent = "Start packing";
-    showFilledPunnet();
+    if (rfid) setClass(rfid, "is-reading", false);
+    showProductOnScreen();
+    showOperator(false);
+    showStation();
     syncControls();
     updateProgress();
     say(INTRO);
   }
 
+  var narrowQuery = window.matchMedia ? window.matchMedia("(max-width: 519px)") : null;
   function fitView() {
     svg.setAttribute("viewBox", narrowQuery && narrowQuery.matches ? VIEW_NARROW : VIEW_WIDE);
   }
 
   // ---------------------------------------------------------------- wiring
-  var narrowQuery = window.matchMedia ? window.matchMedia("(max-width: 519px)") : null;
   fitView();
   if (narrowQuery) {
     if (narrowQuery.addEventListener) narrowQuery.addEventListener("change", fitView);
@@ -994,6 +1052,5 @@
     event.preventDefault();
   });
 
-  buildDigits();
   selectProduct(productKey);
 })();

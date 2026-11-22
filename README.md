@@ -4,7 +4,7 @@
 
 I am a software engineer with almost two decades of experience, working mainly with C#, C++, Python, ASP.NET Core, REST, gRPC, Entity Framework Core, PostgreSQL, and Qt.
 
-💼 At work I build [foodProcess](https://www.topcontrol.it/product/foodProcess), production software for food packing.
+💼 At work I build [foodProcess](https://www.topcontrol.it/product/foodProcess), production software for food packing that reduces giveaway.
 
 🛠️ In my free time: self-hosted trading software, and [Share](https://github.com/eschgi/share), an open-source photo drop.
 
