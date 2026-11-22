@@ -120,7 +120,7 @@
         <div class="case__text">
           <p class="case__tag"><b>At work</b> · TopControl</p>
           <h3 id="case-foodprocess">foodProcess</h3>
-          <p>Production software for food packing. Its main goal is to reduce giveaway: product packed above the target weight and given away for free. It connects to the scales that weigh punnets of grapes, strawberries, blueberries and more, sends orders from the ERP to the packing lines, monitors and controls the lines in real time, and records every batch from goods receipt to dispatch.</p>
+          <p>Production software for food packing. Its main goal is to reduce giveaway: product packed above the target weight and given away for free. It connects to the scales that weigh punnets of strawberries, blueberries, tomatoes and more, sends orders from the ERP to the packing lines, monitors and controls the lines in real time, and records every batch from goods receipt to dispatch.</p>
           <dl class="case__facts">
             <div><dt>the main goal: less of it</dt><dd>Giveaway</dd></div>
             <div><dt>weighing every punnet</dt><dd>Scales</dd></div>
@@ -130,7 +130,7 @@
             <a href="https://www.topcontrol.it/product/foodProcess" target="_blank" rel="noopener noreferrer" data-cli-source="product">Product page <span aria-hidden="true">↗</span></a>
           </div>
         </div>
-        <!-- A packing scale, drawn and played by js/scale.js: a picture until someone plays. -->
+        <!-- A hand-packing scale, drawn after the real one and played by js/scale.js: a picture until someone plays. -->
         <figure class="case__visual scale" data-scale>
           <div class="scale__head">
             <span>Try the scale</span>
@@ -141,15 +141,14 @@
               <defs>
                 <radialGradient id="sc-spot" gradientUnits="userSpaceOnUse" cx="300" cy="160" r="280"><stop offset="0" stop-color="#ffffff" stop-opacity="0.055" /><stop offset="1" stop-color="#ffffff" stop-opacity="0" /></radialGradient>
                 <linearGradient id="sc-bench" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2b2c31" /><stop offset="1" stop-color="#18191c" /></linearGradient>
-                <linearGradient id="sc-steel-top" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a9aeb4" /><stop offset="1" stop-color="#d0d3d7" /></linearGradient>
+                <linearGradient id="sc-steel-top" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#c4c8cd" /><stop offset="1" stop-color="#a6abb2" /></linearGradient>
                 <linearGradient id="sc-steel-front" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#c7cbd0" /><stop offset="0.55" stop-color="#a3a8af" /><stop offset="1" stop-color="#83888f" /></linearGradient>
                 <linearGradient id="sc-steel-column" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#6f747a" /><stop offset="0.38" stop-color="#c3c7cb" /><stop offset="1" stop-color="#686d73" /></linearGradient>
                 <linearGradient id="sc-glass" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a2d31" /><stop offset="1" stop-color="#18191c" /></linearGradient>
                 <radialGradient id="sc-blueberry" cx="0.36" cy="0.32" r="0.78"><stop offset="0" stop-color="#8191dc" /><stop offset="0.45" stop-color="#404d96" /><stop offset="1" stop-color="#1f2550" /></radialGradient>
                 <radialGradient id="sc-bloom" cx="0.4" cy="0.35" r="0.7"><stop offset="0" stop-color="#ffffff" stop-opacity="0.22" /><stop offset="1" stop-color="#ffffff" stop-opacity="0" /></radialGradient>
                 <radialGradient id="sc-strawberry" cx="0.38" cy="0.34" r="0.8"><stop offset="0" stop-color="#ff7a74" /><stop offset="0.5" stop-color="#e0262f" /><stop offset="1" stop-color="#98101a" /></radialGradient>
-                <radialGradient id="sc-grape-white" cx="0.35" cy="0.3" r="0.8"><stop offset="0" stop-color="#e6f3a6" /><stop offset="0.55" stop-color="#a8c853" /><stop offset="1" stop-color="#6b8d2c" /></radialGradient>
-                <radialGradient id="sc-grape-red" cx="0.35" cy="0.3" r="0.8"><stop offset="0" stop-color="#d77a9a" /><stop offset="0.5" stop-color="#8e2a55" /><stop offset="1" stop-color="#4c1131" /></radialGradient>
+                <radialGradient id="sc-tomato" cx="0.38" cy="0.32" r="0.8"><stop offset="0" stop-color="#ff8a66" /><stop offset="0.5" stop-color="#e5361f" /><stop offset="1" stop-color="#9e170b" /></radialGradient>
               </defs>
               <rect x="-20" y="-20" width="640" height="352" fill="url(#sc-spot)" />
 
@@ -158,59 +157,64 @@
               <path d="M-20 300.5H620" stroke="#3c3d43" />
               <g data-scale-stack></g>
 
-              <!-- The scale's column and display head: tolerance light, screen, RFID reader. -->
-              <rect x="262" y="136" width="28" height="104" fill="url(#sc-steel-column)" />
-              <rect x="166" y="10" width="268" height="134" rx="9" fill="url(#sc-glass)" stroke="#9ea3a9" stroke-width="1.4" />
-              <rect x="169.5" y="13.5" width="261" height="127" rx="6.5" fill="none" stroke="#000000" stroke-opacity="0.45" />
-              <path d="M350 14c18 16 44 24 80 24M366 14c14 12 36 18 64 18M382 14c10 8 26 12 48 12" fill="none" stroke="#c9ad78" stroke-opacity="0.22" />
+              <!-- The platform, seen a little from above: stainless top and front on a dark plinth. -->
+              <ellipse cx="300" cy="301" rx="180" ry="4.5" fill="#000000" opacity="0.5" />
+              <path d="M144 288H456V298H335Q300 292 265 298H144Z" fill="#16171a" />
+              <rect x="150" y="297" width="18" height="3" fill="#0c0c0e" />
+              <rect x="432" y="297" width="18" height="3" fill="#0c0c0e" />
+              <rect x="134" y="252" width="332" height="37" rx="3" fill="url(#sc-steel-front)" />
+              <path d="M138 260H462M138 269H462M138 278H462" stroke="#ffffff" stroke-opacity="0.06" />
+              <path d="M138 285.5H462" stroke="#000000" stroke-opacity="0.18" />
+              <path d="M160 220H440L466 252H134Z" fill="url(#sc-steel-top)" />
+              <path d="M154 228H446M148 236H452M142 244H458" stroke="#ffffff" stroke-opacity="0.08" />
+              <path d="M134 252.5H466" stroke="#ffffff" stroke-opacity="0.5" />
+
+              <!-- The column, standing at the back of the platform, and the display head on it. -->
+              <rect x="262" y="136" width="28" height="90" fill="url(#sc-steel-column)" />
+              <path d="M262 226h28" stroke="#000000" stroke-opacity="0.3" />
+              <rect x="164" y="8" width="272" height="138" rx="10" fill="#c9cdd2" />
+              <rect x="166.5" y="10.5" width="267" height="133" rx="8.5" fill="url(#sc-glass)" />
+              <path d="M314 11c36 4 78 19 118 50M332 11c32 4 66 16 100 40M350 11c27 3 55 13 82 30M368 11c21 3 42 10 64 20" fill="none" stroke="#c9ad78" stroke-opacity="0.3" stroke-width="0.8" />
               <rect x="179" y="27" width="18" height="107" rx="3" fill="#0d0e10" />
-                <rect class="scale__led scale__led--amber" data-scale-led="11" x="182" y="30.0" width="12" height="7" rx="1.2" />
-                <rect class="scale__led scale__led--amber" data-scale-led="10" x="182" y="38.6" width="12" height="7" rx="1.2" />
-                <rect class="scale__led scale__led--amber" data-scale-led="9" x="182" y="47.2" width="12" height="7" rx="1.2" />
-                <rect class="scale__led scale__led--amber" data-scale-led="8" x="182" y="55.8" width="12" height="7" rx="1.2" />
-                <rect class="scale__led scale__led--amber" data-scale-led="7" x="182" y="64.4" width="12" height="7" rx="1.2" />
-                <rect class="scale__led scale__led--green" data-scale-led="6" x="182" y="73.0" width="12" height="7" rx="1.2" />
-                <rect class="scale__led scale__led--green" data-scale-led="5" x="182" y="81.6" width="12" height="7" rx="1.2" />
-                <rect class="scale__led scale__led--red" data-scale-led="4" x="182" y="90.2" width="12" height="7" rx="1.2" />
-                <rect class="scale__led scale__led--red" data-scale-led="3" x="182" y="98.8" width="12" height="7" rx="1.2" />
-                <rect class="scale__led scale__led--red" data-scale-led="2" x="182" y="107.4" width="12" height="7" rx="1.2" />
-                <rect class="scale__led scale__led--red" data-scale-led="1" x="182" y="116.0" width="12" height="7" rx="1.2" />
-                <rect class="scale__led scale__led--red" data-scale-led="0" x="182" y="124.6" width="12" height="7" rx="1.2" />
+              <rect class="scale__led scale__led--amber" data-scale-led="11" x="182" y="30.0" width="12" height="7" rx="1.2" />
+              <rect class="scale__led scale__led--amber" data-scale-led="10" x="182" y="38.6" width="12" height="7" rx="1.2" />
+              <rect class="scale__led scale__led--amber" data-scale-led="9" x="182" y="47.2" width="12" height="7" rx="1.2" />
+              <rect class="scale__led scale__led--amber" data-scale-led="8" x="182" y="55.8" width="12" height="7" rx="1.2" />
+              <rect class="scale__led scale__led--amber" data-scale-led="7" x="182" y="64.4" width="12" height="7" rx="1.2" />
+              <rect class="scale__led scale__led--green" data-scale-led="6" x="182" y="73.0" width="12" height="7" rx="1.2" />
+              <rect class="scale__led scale__led--green" data-scale-led="5" x="182" y="81.6" width="12" height="7" rx="1.2" />
+              <rect class="scale__led scale__led--red" data-scale-led="4" x="182" y="90.2" width="12" height="7" rx="1.2" />
+              <rect class="scale__led scale__led--red" data-scale-led="3" x="182" y="98.8" width="12" height="7" rx="1.2" />
+              <rect class="scale__led scale__led--red" data-scale-led="2" x="182" y="107.4" width="12" height="7" rx="1.2" />
+              <rect class="scale__led scale__led--red" data-scale-led="1" x="182" y="116.0" width="12" height="7" rx="1.2" />
+              <rect class="scale__led scale__led--red" data-scale-led="0" x="182" y="124.6" width="12" height="7" rx="1.2" />
               <rect x="212" y="22" width="146" height="110" rx="4" fill="#0b0c0e" />
               <rect x="217" y="27" width="136" height="100" rx="1.5" fill="#f3f5f6" />
-              <rect x="217" y="27" width="136" height="26" fill="#0f8b8d" />
-              <text class="scale__tft-label" x="222" y="37.5">NET</text>
-              <text class="scale__tft-stable" data-scale-stable x="222" y="48.5">STABLE</text>
-              <text class="scale__tft-weight" x="347" y="48" text-anchor="end"><tspan data-scale-weight>0</tspan><tspan class="scale__tft-unit" dx="2">g</tspan></text>
-              <rect class="scale__tft-icon" data-scale-icon x="223" y="61" width="30" height="30" rx="5" />
-              <path class="scale__tft-glyph" data-scale-glyph d="M232 76h12" />
-              <text class="scale__tft-product" data-scale-product-name x="260" y="69.5">Strawberries</text>
-              <text class="scale__tft-small" data-scale-target x="260" y="79.5">Target 250 g</text>
-              <text class="scale__tft-small scale__tft-small--muted" data-scale-operator x="260" y="89">Station 1</text>
-              <rect x="223" y="98" width="124" height="6" rx="3" fill="#dde1e4" />
-              <rect class="scale__tft-bar" data-scale-bar x="223" y="98" width="0" height="6" rx="3" />
-              <path d="M326.3 96v10" stroke="#1f2328" />
-              <text class="scale__tft-tiny" data-scale-zero x="223" y="119">›0‹</text>
-              <circle cx="312.5" cy="117.2" r="1.9" fill="#22c55e" />
-              <text class="scale__tft-tiny" x="347" y="119" text-anchor="end">foodProcess</text>
+              <text class="scale__tft-small scale__tft-small--muted" data-scale-operator x="221" y="36">Station 1</text>
+              <text class="scale__tft-product" data-scale-product-name x="221" y="45.5">Strawberries 250 g</text>
+              <rect x="285" y="29.5" width="66" height="20" rx="1.5" fill="#0f8b8d" />
+              <text class="scale__tft-label" x="288.5" y="36.5">Net</text>
+              <text class="scale__tft-weight" x="348.5" y="46.5" text-anchor="end"><tspan data-scale-weight>0.000</tspan><tspan class="scale__tft-unit" dx="1.5">kg</tspan></text>
+              <path d="M219 52.5H351" stroke="#dfe3e6" />
+              <rect class="scale__tft-icon" x="223" y="57" width="36" height="36" rx="3" />
+              <path class="scale__tft-glyph" data-scale-glyph d="M235 75h12" />
+              <rect x="265" y="63" width="82" height="24" rx="2" fill="#ffffff" stroke="#2b2f33" stroke-width="1.4" />
+              <rect class="scale__tft-bar" data-scale-bar x="266.7" y="64.7" width="0" height="20.6" rx="1" />
+              <path d="M332.2 60.5v29" stroke="#2b2f33" stroke-dasharray="2 1.5" />
+              <path d="M219 101.5H351" stroke="#dfe3e6" />
+              <text class="scale__tft-tiny" data-scale-zero x="222" y="117">›0‹</text>
+              <text class="scale__tft-tiny" data-scale-stable x="234" y="117">STABLE</text>
+              <path d="M262 111.5h3v3h-3zM266 111.5h3v3h-3zM270 111.5h3v3h-3zM262 115.5h3v3h-3zM266 115.5h3v3h-3zM270 115.5h3v3h-3z" fill="#a3a9b0" />
+              <path d="M278 118.5v-3M281 118.5v-6.5M284 118.5v-4.5" stroke="#a3a9b0" stroke-width="1.6" />
+              <circle cx="312.5" cy="115.2" r="1.9" fill="#22c55e" />
+              <text class="scale__tft-tiny" x="348" y="117" text-anchor="end">foodProcess</text>
               <g class="scale__rfid" data-scale-rfid>
                 <rect x="372" y="54" width="46" height="46" rx="7" />
                 <circle cx="395" cy="77" r="2.2" />
                 <path d="M389 71a8.5 8.5 0 0 0 0 12M401 71a8.5 8.5 0 0 1 0 12M385 67a14 14 0 0 0 0 20M405 67a14 14 0 0 1 0 20" />
               </g>
 
-              <!-- The platform: stainless top and front on a dark plinth, wider than the head as on the real one. -->
-              <ellipse cx="300" cy="301" rx="180" ry="4.5" fill="#000000" opacity="0.5" />
-              <path d="M144 289H456V298H335Q300 292 265 298H144Z" fill="#16171a" />
-              <rect x="150" y="297" width="18" height="3" fill="#0c0c0e" />
-              <rect x="432" y="297" width="18" height="3" fill="#0c0c0e" />
-              <rect x="134" y="252" width="332" height="38" rx="3" fill="url(#sc-steel-front)" />
-              <path d="M138 260H462M138 270H462M138 280H462" stroke="#ffffff" stroke-opacity="0.06" />
-              <path d="M138 286.5H462" stroke="#000000" stroke-opacity="0.18" />
-              <path d="M150 236H450L466 252H134Z" fill="url(#sc-steel-top)" />
-              <path d="M134 252.5H466" stroke="#ffffff" stroke-opacity="0.45" />
-
-              <!-- The punnets and their fruit, drawn by scale.js. -->
+              <!-- The punnets and their produce, drawn by scale.js. -->
               <g data-scale-stage></g>
             </svg>
           </div>
@@ -218,7 +222,7 @@
             <div class="scale__products" role="group" aria-label="Fruit">
               <button type="button" class="scale__product" data-scale-product="blueberries" aria-pressed="false"><b>Blueberries</b><small>125 g</small></button>
               <button type="button" class="scale__product" data-scale-product="strawberries" aria-pressed="true"><b>Strawberries</b><small>250 g</small></button>
-              <button type="button" class="scale__product" data-scale-product="grapes" aria-pressed="false"><b>Grapes</b><small>500 g</small></button>
+              <button type="button" class="scale__product" data-scale-product="tomatoes" aria-pressed="false"><b>Tomatoes</b><small>500 g</small></button>
             </div>
             <dl class="scale__kpis" data-scale-summary hidden>
               <div><dt>giveaway</dt><dd data-scale-kpi="giveaway">–</dd></div>
@@ -233,7 +237,7 @@
               <button type="button" class="scale__button" data-scale-remove>Take one out</button>
               <button type="button" class="scale__button" data-scale-pack>Pack</button>
             </div>
-            <p class="scale__status" data-scale-status aria-live="polite">Fill five punnets to at least their target weight, with as little giveaway as you can: every gram above the target is fruit given away for free.</p>
+            <p class="scale__status" data-scale-status aria-live="polite">Fill five punnets to at least their target weight, with as little giveaway as you can: every gram above the target is product given away for free.</p>
           </div>
           <figcaption class="scale__foot"><span>A mini game, not the product. On a real line every scale reports to foodProcess, which helps bring the giveaway down.</span></figcaption>
         </figure>

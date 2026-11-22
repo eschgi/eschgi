@@ -18,7 +18,7 @@
   var PUNNETS_PER_ORDER = 5;
   var OK_SHARE = 0.05; // up to 5 % over the target is green; above that, amber
   var FULL_SHARE = 1.8; // a punnet takes at most 180 % of its target
-  var PAN = { x: 300, y: 245, s: 1 }; // where a punnet stands on the scale
+  var PAN = { x: 300, y: 244, s: 1 }; // where a punnet stands on the scale
   var STACK = { x: 52, y: 300, s: 0.6 }; // the empty punnets, on the bench to the left
   var PARKED = { x: 542, y: 300, s: 0.52 }; // the last packed punnet, on the bench to the right
   var VIEW_WIDE = "0 0 600 312";
@@ -52,17 +52,17 @@
       punnet: { top: 180, bottom: 156, height: 64 },
       draw: drawStrawberry,
     },
-    grapes: {
-      name: "Grapes",
+    tomatoes: {
+      name: "Tomatoes",
       target: 500,
-      mean: 62,
-      spread: 24,
-      every: 400,
-      size: 50,
-      width: 0.9,
-      tilt: 110,
-      punnet: { top: 220, bottom: 192, height: 80 },
-      draw: drawGrapes,
+      mean: 34,
+      spread: 11,
+      every: 320,
+      size: 34,
+      width: 1,
+      tilt: 40,
+      punnet: { top: 204, bottom: 178, height: 70 },
+      draw: drawTomato,
     },
   };
 
@@ -77,11 +77,9 @@
     weight: part("weight"),
     stable: part("stable"),
     zero: part("zero"),
-    icon: part("icon"),
     glyph: part("glyph"),
     bar: part("bar"),
     productName: part("product-name"),
-    target: part("target"),
     operator: part("operator"),
   };
   var rfid = part("rfid");
@@ -98,7 +96,7 @@
   var removeButton = part("remove");
   var packButton = part("pack");
   var summary = part("summary");
-  if (!svg || !stage || !stackLayer || !screen.weight || !fillButton || !packButton || leds.length !== 12) return;
+  if (!svg || !stage || !stackLayer || !screen.weight || !screen.glyph || !fillButton || !packButton || leds.length !== 12) return;
 
   var reducedQuery = window.matchMedia ? window.matchMedia("(prefers-reduced-motion: reduce)") : null;
   function still() {
@@ -108,12 +106,12 @@
   }
 
   var INTRO =
-    "Fill five punnets to at least their target weight, with as little giveaway as you can: every gram above the target is fruit given away for free.";
+    "Fill five punnets to at least their target weight, with as little giveaway as you can: every gram above the target is product given away for free.";
 
   var productKey = "strawberries";
   var product = PRODUCTS[productKey];
   var mode = "idle"; // idle, moving, playing, packing, done
-  var punnet = null; // the punnet on the scale: { node, fruit, pieces, slots, variety }
+  var punnet = null; // the punnet on the scale: { node, fruit, pieces, slots }
   var parked = null; // the last packed punnet, on the bench
   var weight = 0; // grams on the scale, net of the punnet
   var spring = { offset: 0, velocity: 0, damping: 0.3, quietSince: 0 }; // how the reading swings before it settles
@@ -269,39 +267,22 @@
     return group;
   }
 
-  // A bunch: rows of four, three, two and one grape, narrowing to its tip.
-  var GRAPES = [
-    [-0.33, -0.3],
-    [-0.11, -0.32],
-    [0.11, -0.31],
-    [0.33, -0.28],
-    [-0.22, -0.09],
-    [0, -0.1],
-    [0.22, -0.08],
-    [-0.11, 0.12],
-    [0.11, 0.13],
-    [0.01, 0.33],
-  ];
-
-  function drawGrapes(size, variety) {
+  // A round tomato, a little flattened, with its green calyx and a highlight.
+  function drawTomato(size) {
     var group = el("g", {});
+    var radius = size / 2;
+    el("ellipse", { rx: round(radius), ry: round(radius * 0.9), fill: "url(#sc-tomato)" }, group);
     el(
-      "path",
-      {
-        d: "M0 " + round(-size * 0.38) + "q" + round(size * 0.02) + " " + round(-size * 0.1) + " " + round(size * 0.1) + " " + round(-size * 0.16),
-        stroke: "#8a7a44",
-        "stroke-width": 1.8,
-        "stroke-linecap": "round",
-        fill: "none",
-      },
+      "ellipse",
+      { cx: round(-radius * 0.38), cy: round(-radius * 0.3), rx: round(radius * 0.22), ry: round(radius * 0.13), fill: "#ffffff", opacity: 0.32, transform: "rotate(-32)" },
       group
     );
-    GRAPES.forEach(function (grape) {
-      var cx = grape[0] * size;
-      var cy = grape[1] * size;
-      el("ellipse", { cx: round(cx), cy: round(cy), rx: round(size * 0.125), ry: round(size * 0.135), fill: "url(#sc-grape-" + variety + ")" }, group);
-      el("ellipse", { cx: round(cx - size * 0.04), cy: round(cy - size * 0.06), rx: round(size * 0.038), ry: round(size * 0.026), fill: "#ffffff", opacity: 0.4 }, group);
-    });
+    el("path", { d: star(0, -radius * 0.72, radius * 0.46, radius * 0.11, 6), fill: "#3f8a26" }, group);
+    el(
+      "path",
+      { d: "M0 " + round(-radius * 0.74) + "v" + round(-radius * 0.2), stroke: "#2f6b1c", "stroke-width": 1.8, "stroke-linecap": "round" },
+      group
+    );
     return group;
   }
 
@@ -359,6 +340,7 @@
       ribs += "M" + round(-shape.bottom / 2 + shape.bottom * share) + " -3L" + round(-shape.top / 2 + shape.top * share) + " " + (-shape.height + 3);
     }
     var node = el("g", { class: "scale__punnet" }, parent);
+    el("ellipse", { class: "scale__punnet-shadow", rx: shape.bottom / 2 + 5, ry: 3 }, node);
     el("path", { class: "scale__punnet-back", d: outline }, node);
     var fruit = el("g", {}, node);
     el("path", { class: "scale__punnet-front", d: outline }, node);
@@ -369,7 +351,7 @@
 
   function createPunnet() {
     var drawn = drawPunnet(stage);
-    return { node: drawn.node, fruit: drawn.fruit, pieces: [], slots: makeSlots(), variety: Math.random() < 0.65 ? "white" : "red" };
+    return { node: drawn.node, fruit: drawn.fruit, pieces: [], slots: makeSlots() };
   }
 
   function drawStack() {
@@ -385,7 +367,7 @@
   }
 
   function addPiece(target, pieceWeight, slot) {
-    var node = product.draw(product.size * Math.pow(pieceWeight / product.mean, 1 / 3), target.variety);
+    var node = product.draw(product.size * Math.pow(pieceWeight / product.mean, 1 / 3));
     target.fruit.appendChild(node);
     return { node: node, weight: pieceWeight, slot: slot };
   }
@@ -558,12 +540,12 @@
   // up to 5 % over, five amber beyond.
   var LED_STEPS = [-1, -0.16, -0.12, -0.08, -0.04, 0, 0.025, 0.05, 0.08, 0.11, 0.14, 0.17];
   var GLYPHS = {
-    "": "M232 76h12",
-    under: "M230 76h16",
-    ok: "M230.5 76.5l5.2 5.2 10-11",
-    over: "M230 76h16M238 68v16",
+    "": "M235 75h12",
+    under: "M232 75h18",
+    ok: "M231.5 75.5l6 6 11.5-12.5",
+    over: "M232 75h18M241 66v18",
   };
-  var BAR_WIDTH = 124;
+  var BAR_WIDTH = 78.6;
   var BAR_SPAN = 1.2; // the bar runs to 120 % of the target; the mark stands at 100 %
 
   function stateOf(reading) {
@@ -577,7 +559,8 @@
     if (reading === 0) reading = 0; // turns -0 into 0
     if (force || reading !== shownReading) {
       shownReading = reading;
-      screen.weight.textContent = String(reading);
+      // Net in kilograms, as the real scale shows it: 251 g reads 0.251.
+      screen.weight.textContent = (reading < 0 ? "-" : "") + (Math.abs(reading) / 1000).toFixed(3);
       var state = stateOf(reading);
       var deviation = (reading - product.target) / product.target;
       leds.forEach(function (led, level) {
@@ -586,7 +569,7 @@
         setClass(led, "is-on", lit);
       });
       ["under", "ok", "over"].forEach(function (name) {
-        setClass(screen.icon, "is-" + name, state === name);
+        setClass(screen.glyph, "is-" + name, state === name);
         setClass(screen.bar, "is-" + name, state === name);
       });
       screen.glyph.setAttribute("d", GLYPHS[state]);
@@ -599,8 +582,7 @@
   }
 
   function showProductOnScreen() {
-    screen.productName.textContent = product.name;
-    screen.target.textContent = "Target " + product.target + " g";
+    screen.productName.textContent = product.name + " " + product.target + " g";
   }
 
   function showOperator(playing) {

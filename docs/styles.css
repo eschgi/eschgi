@@ -771,80 +771,84 @@ h3 {
   fill: var(--warning);
 }
 
-/* The scale's screen, light like the real one. */
+/* The scale's screen, laid out like the real one: product and operator, Net in kg, a big check
+   (or minus, or plus) beside a fill bar, and a row of small icons. */
 .scale__tft-label {
-  fill: rgb(255 255 255 / 0.78);
-  font: 700 6px var(--font-sans);
-  letter-spacing: 0.08em;
-}
-
-.scale__tft-stable {
-  fill: #ffffff;
-  opacity: 0.28;
-  font: 700 4.8px var(--font-sans);
-  letter-spacing: 0.08em;
-}
-
-.scale__tft-stable.is-on {
-  opacity: 0.92;
+  fill: rgb(255 255 255 / 0.8);
+  font: 600 5.4px var(--font-sans);
 }
 
 .scale__tft-weight {
   fill: #ffffff;
-  font: 700 18px var(--font-sans);
+  font: 700 12.5px var(--font-sans);
   font-variant-numeric: tabular-nums;
 }
 
 .scale__tft-unit {
-  font-size: 10px;
+  font-size: 7px;
   font-weight: 600;
-}
-
-.scale__tft-icon,
-.scale__tft-bar {
-  fill: #c5cad0;
-}
-
-.scale__tft-icon.is-under,
-.scale__tft-bar.is-under {
-  fill: #ef4444;
-}
-
-.scale__tft-icon.is-ok,
-.scale__tft-bar.is-ok {
-  fill: #65a30d;
-}
-
-.scale__tft-icon.is-over,
-.scale__tft-bar.is-over {
-  fill: var(--warning);
-}
-
-.scale__tft-glyph {
-  fill: none;
-  stroke: #ffffff;
-  stroke-width: 3.2;
-  stroke-linecap: round;
-  stroke-linejoin: round;
 }
 
 .scale__tft-product {
   fill: #1f2328;
-  font: 700 8px var(--font-sans);
+  font: 700 6.2px var(--font-sans);
 }
 
 .scale__tft-small {
   fill: #4b5563;
-  font: 500 6.2px var(--font-sans);
+  font: 500 5.6px var(--font-sans);
 }
 
 .scale__tft-small--muted {
   fill: #8a9099;
 }
 
+.scale__tft-icon {
+  fill: #ffffff;
+  stroke: #c5cad0;
+  stroke-width: 1.2;
+}
+
+.scale__tft-glyph {
+  fill: none;
+  stroke: #c5cad0;
+  stroke-width: 4.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.scale__tft-bar {
+  fill: #c5cad0;
+}
+
+.scale__tft-glyph.is-under {
+  stroke: #ef4444;
+}
+
+.scale__tft-bar.is-under {
+  fill: #ef4444;
+}
+
+.scale__tft-glyph.is-ok {
+  stroke: #3da33a;
+}
+
+.scale__tft-bar.is-ok {
+  fill: #3da33a;
+}
+
+.scale__tft-glyph.is-over {
+  stroke: var(--warning);
+}
+
+.scale__tft-bar.is-over {
+  fill: var(--warning);
+}
+
 .scale__tft-tiny {
-  fill: #8a9099;
-  font: 600 5.4px var(--font-sans);
+  fill: #a3a9b0;
+  font: 600 5px var(--font-sans);
+  letter-spacing: 0.04em;
 }
 
 .scale__tft-tiny.is-on {
@@ -871,6 +875,11 @@ h3 {
 
 .scale__rfid.is-reading circle {
   fill: var(--accent);
+}
+
+.scale__punnet-shadow {
+  fill: #000000;
+  opacity: 0.22;
 }
 
 .scale__punnet-back {
