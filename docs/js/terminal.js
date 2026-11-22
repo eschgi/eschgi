@@ -1357,34 +1357,88 @@
     var history = [];
     var historyIndex = 0;
 
-    var COMMANDS = {
-      help: function () {
-        print("available commands:");
-        line("  " + key("about") + "      who I am");
-        line("  " + key("work") + "       foodProcess, what I build at work");
-        line("  " + key("building") + "   the self-hosted trading software, in my free time");
-        line("  " + key("share") + "      the app I built with AI, for myself");
-        line("  " + key("projects") + "   all three");
-        line("  " + key("stack") + "      languages & technologies (e.g. stack data)");
-        line("  " + key("ai") + "         how I work with AI");
-        line("  " + key("ask") + "        ask the site a question, e.g. ask what do you build at work?");
-        line("  " + key("stats") + "      GitHub numbers");
-        line("  " + key("contact") + "    where to find me");
-        line("  " + key("bugbash") + "    play Bug Bash");
-        line("  " + key("ls") + " · " + key("cat") + "   browse the \"files\"");
-        line("  " + key("echo") + " · " + key("date") + " · " + key("history") + " · " + key("clear"));
+    // Every command, with its other names, for help. Anything in COMMANDS without an entry here
+    // is still listed, under "more", so the help can't fall behind the commands.
+    var HELP = [
+      [
+        "available commands:",
+        [
+          [["about", "whoami"], "who I am"],
+          [["work", "job", "foodprocess"], "foodProcess, what I build at work"],
+          [["building"], "the self-hosted trading software, in my free time"],
+          [["share"], "the app I built with AI, for myself"],
+          [["projects", "project"], "all three"],
+          [["stack", "skills"], "languages & technologies (e.g. stack data)"],
+          [["ai"], "how I work with AI"],
+          [["ask"], "ask the site a question, e.g. ask what do you build at work?"],
+          [["stats"], "GitHub numbers"],
+          [["contact", "socials"], "where to find me"],
+          [["bugbash", "bugs", "play", "game"], "play Bug Bash"],
+          [["ls"], "list the \"files\""],
+          [["cat"], "read one, e.g. cat about.txt"],
+          [["echo"], "print what follows"],
+          [["date"], "today's date and time"],
+          [["history"], "the commands so far"],
+          [["clear"], "clear the screen"],
+          [["help"], "this list"],
+        ],
+      ],
+      [
+        "easter eggs (don't tell anyone):",
+        [
+          [["hack"], "a cinematic fake intrusion"],
+          [["matrix"], "digital rain (matrix off to stop)"],
+          [["crt"], "an old monitor (crt off to stop)"],
+          [["snake"], "a game of snake, or triple-click the portrait on the front page"],
+          [["gravity", "destroy"], "let the page fall apart (Esc rebuilds it)"],
+          [["blackhole", "supernova", "collapse"], "swallow the page (Esc to escape)"],
+          [["launch", "liftoff", "rocket"], "lift-off (Esc aborts)"],
+          [["sudo"], "try sudo make me a sandwich"],
+          [["rm"], "try rm -rf /"],
+          [["git"], "try git push --force"],
+          [["vim", "vi", "nano"], "an editor you might never leave"],
+          [["emacs"], "M-x butterfly"],
+          [["exit", "quit"], "try to leave"],
+          [["coffee"], "a refill"],
+          [["uptime"], "how long I've been at it"],
+          [["ping"], "pong"],
+          [["hello", "hi"], "say hello"],
+        ],
+      ],
+    ];
+    var HELP_COLUMN = 24; // names longer than this just get two spaces before their description
+
+    function help() {
+      var listed = {};
+      HELP.forEach(function (section, index) {
+        if (index) print(" ");
+        print(section[0]);
+        section[1].forEach(function (entry) {
+          var names = entry[0];
+          names.forEach(function (name) {
+            listed[name] = true;
+          });
+          var width = names.join(" · ").length;
+          line(
+            "  " +
+              names.map(key).join(" · ") +
+              " ".repeat(Math.max(2, HELP_COLUMN - width)) +
+              escapeHtml(entry[1])
+          );
+        });
+      });
+      var more = Object.keys(COMMANDS).filter(function (name) {
+        return !listed[name];
+      });
+      if (more.length) {
         print(" ");
-        print("easter eggs (don't tell anyone):");
-        line("  " + key("hack") + "       a cinematic fake intrusion");
-        line("  " + key("matrix") + "     digital rain (" + key("matrix off") + " to stop)");
-        line("  " + key("crt") + "        an old monitor (" + key("crt off") + " to stop)");
-        line("  " + key("snake") + "      a game of snake, or triple-click the portrait on the front page");
-        line("  " + key("gravity") + "    let the page fall apart");
-        line("  " + key("blackhole") + "  swallow the page");
-        line("  " + key("launch") + "     lift-off");
-        line("  " + key("sudo") + " · " + key("rm -rf /") + " · " + key("git push --force") + " · " + key("vim") + " · " + key("emacs") + " · " + key("exit") + " · " + key("coffee") + " · " + key("ping") + " · " + key("uptime"));
-        line('  <span class="dim">Tab completes, ↑/↓ walk the history.</span>');
-      },
+        line("more: " + more.map(key).join(" · "));
+      }
+      line('<span class="dim">Tab completes, ↑/↓ walk the history.</span>');
+    }
+
+    var COMMANDS = {
+      help: help,
       about: aboutCommand,
       whoami: aboutCommand,
       work: workCommand,
