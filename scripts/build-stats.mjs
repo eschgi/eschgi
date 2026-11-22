@@ -60,7 +60,10 @@ query ($after: String) {
       totalPullRequestReviewContributions
       totalIssueContributions
       totalRepositoryContributions
-      contributionCalendar { totalContributions }
+      contributionCalendar {
+        totalContributions
+        weeks { contributionDays { date contributionCount contributionLevel } }
+      }
     }
   }
 }`;
@@ -129,6 +132,24 @@ async function main() {
 
   const c = viewer.contributionsCollection;
 
+  // The contribution calendar, one entry a day from `start` (the first week may be
+  // partial): counts as numbers, GitHub's own quartile levels as one digit a day.
+  const LEVELS = {
+    NONE: 0,
+    FIRST_QUARTILE: 1,
+    SECOND_QUARTILE: 2,
+    THIRD_QUARTILE: 3,
+    FOURTH_QUARTILE: 4,
+  };
+  const days = c.contributionCalendar.weeks.flatMap((w) => w.contributionDays);
+  const calendar = days.length
+    ? {
+        start: days[0].date,
+        counts: days.map((d) => d.contributionCount),
+        levels: days.map((d) => LEVELS[d.contributionLevel] ?? 0).join(""),
+      }
+    : null;
+
   const stats = {
     generatedAt: new Date().toISOString(),
     login: viewer.login,
@@ -151,11 +172,18 @@ async function main() {
       repositories: c.totalRepositoryContributions,
     },
     languages, // [{ name, color, percent }]
+    calendar: "__CALENDAR__", // { start, counts, levels }, written on one line below
     schemaVersion: 1,
   };
 
+  // The calendar goes on a single line so the daily commit stays a small diff.
+  const json = JSON.stringify(stats, null, 2).replace(
+    '"__CALENDAR__"',
+    JSON.stringify(calendar)
+  );
+
   await mkdir(dirname(OUT), { recursive: true });
-  await writeFile(OUT, JSON.stringify(stats, null, 2) + "\n", "utf8");
+  await writeFile(OUT, json + "\n", "utf8");
   console.log(`Wrote ${OUT}`);
 }
 
