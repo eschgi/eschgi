@@ -1026,6 +1026,26 @@
       print(textOf(".footer__fine p"), "dim");
     }
 
+    function share() {
+      var card = document.querySelector(".case");
+      if (!card) return print("share: not on this page", "cli__err");
+      print(textOf(".case__lead"));
+      Array.prototype.forEach.call(card.querySelectorAll(".case__points strong"), function (node) {
+        print("  > " + clean(node.textContent));
+      });
+      var source = card.querySelector(".case__actions a");
+      if (source) {
+        line(
+          key("source") +
+            ' <a href="' +
+            escapeHtml(source.href) +
+            '" target="_blank" rel="noopener noreferrer">' +
+            escapeHtml(source.href.replace(/^https?:\/\//, "")) +
+            "</a>"
+        );
+      }
+    }
+
     function bugbash() {
       print("Spawning bugs in production.ts… 🐛 good luck.");
       document.dispatchEvent(new CustomEvent("eschgi:bugbash"));
@@ -1033,7 +1053,7 @@
 
     function ls() {
       line(
-        [key("about.txt"), key("building.md"), key("stack/"), key("ai.md"), key("contact.txt"), key("production.ts")].join("  ")
+        [key("about.txt"), key("building.md"), key("share.md"), key("stack/"), key("ai.md"), key("contact.txt"), key("production.ts")].join("  ")
       );
     }
 
@@ -1048,6 +1068,8 @@
           return stack();
         case "ai.md":
           return ai();
+        case "share.md":
+          return share();
         case "contact.txt":
           return contact();
         case "production.ts":
@@ -1137,6 +1159,7 @@
         line("  " + key("building") + "   the self-hosted trading software");
         line("  " + key("stack") + "      languages & technologies (e.g. stack data)");
         line("  " + key("ai") + "         how I work with AI");
+        line("  " + key("share") + "      the app I built with AI, for myself");
         line("  " + key("stats") + "      GitHub numbers");
         line("  " + key("contact") + "    where to find me");
         line("  " + key("bugbash") + "    play Bug Bash");
@@ -1158,6 +1181,7 @@
         stack(args[0]);
       },
       ai: ai,
+      share: share,
       stats: stats,
       contact: contact,
       socials: contact,

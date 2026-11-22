@@ -74,6 +74,8 @@
     <symbol id="i-bug" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="7.5" y="7" width="9" height="13" rx="4.5" /><path d="M9.5 7.2a2.5 2.5 0 0 1 5 0M12 11v9M7.5 12H3.5M20.5 12h-4M7.8 16.5l-3.3 2M16.2 16.5l3.3 2M7.8 9.2 4.5 7M16.2 9.2 19.5 7" /></symbol>
     <symbol id="i-git" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="2.5" /><circle cx="6" cy="18" r="2.5" /><circle cx="18" cy="9" r="2.5" /><path d="M6 8.5v7M18 11.5c0 3-2.5 4-6 4H8.5" /></symbol>
     <symbol id="i-play" viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.8v14.4a1 1 0 0 0 1.5.86l11.4-7.2a1 1 0 0 0 0-1.72L8.5 3.94A1 1 0 0 0 7 4.8Z" /></symbol>
+    <symbol id="i-images" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="3" width="14" height="14" rx="2.5" /><path d="M3.5 7v11a2.5 2.5 0 0 0 2.5 2.5h11" /><circle cx="12" cy="8" r="1.6" /><path d="m21 13.5-3.2-3.2-6.6 6.6" /></symbol>
+    <symbol id="i-package" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.8 20.5 7.5v9L12 21.2 3.5 16.5v-9z" /><path d="M3.8 7.6 12 12.2l8.2-4.6M12 12.2v9" /></symbol>
     <symbol id="i-replay" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 12a8.5 8.5 0 1 0 2.5-6" /><path d="M3.5 3.5V8H8" /></symbol>
   </svg>
 
@@ -453,7 +455,7 @@
             <div class="stack-group" data-stack-group="languages">
               <h3><span class="swatch" aria-hidden="true"></span>Languages</h3>
               <ul class="chips">
-                <li data-weight="3">C#</li><li data-weight="3">C++</li><li data-weight="3">Python</li><li data-weight="2">TypeScript</li><li data-weight="2">JavaScript</li><li data-weight="2">SQL</li><li data-weight="1">Java</li><li data-weight="1">Dart</li><li data-weight="1">Delphi</li>
+                <li data-weight="3">C#</li><li data-weight="3">C++</li><li data-weight="3">Python</li><li data-weight="2">TypeScript</li><li data-weight="2">JavaScript</li><li data-weight="2">Go</li><li data-weight="2">SQL</li><li data-weight="1">Java</li><li data-weight="1">Kotlin</li><li data-weight="1">Dart</li><li data-weight="1">Delphi</li>
               </ul>
             </div>
             <div class="stack-group" data-stack-group="frameworks">
@@ -471,7 +473,7 @@
             <div class="stack-group" data-stack-group="ops">
               <h3><span class="swatch" aria-hidden="true"></span>DevOps &amp; observability</h3>
               <ul class="chips">
-                <li data-weight="2">Docker</li><li data-weight="2">Git</li><li data-weight="1">GitHub Actions</li><li data-weight="1">Docker Compose</li><li data-weight="1">OpenTelemetry</li><li data-weight="1">Seq</li><li data-weight="1">Nginx</li><li data-weight="1">Linux</li>
+                <li data-weight="2">Docker</li><li data-weight="2">Git</li><li data-weight="1">GitHub Actions</li><li data-weight="1">Docker Compose</li><li data-weight="1">OpenTelemetry</li><li data-weight="1">Seq</li><li data-weight="1">Nginx</li><li data-weight="1">Cloudflare</li><li data-weight="1">Linux</li>
               </ul>
             </div>
             <div class="stack-group" data-stack-group="ai">
@@ -492,64 +494,107 @@
 
     <!-- ===================================================================== AI -->
     <section id="ai" aria-labelledby="ai-title">
-      <div class="container section ai__grid">
-        <div class="reveal">
-          <span class="eyebrow"><svg aria-hidden="true"><use href="#i-sparkle" /></svg>AI-assisted engineering</span>
-          <h2 class="section-title" id="ai-title">
-            Built with AI, <span class="text-accent">owned by an engineer.</span>
-          </h2>
-          <p class="section-lead">
-            Like most engineers today, I use AI to build new software and to extend existing codebases.
-            Coding agents such as Claude Code explore unfamiliar code, draft implementations and tests,
-            and carry a refactoring through hundreds of files. Most of my recent commits are co-authored
-            by one. What makes that work is the discipline around it.
-          </p>
+      <div class="container section">
+        <div class="ai__grid">
+          <div class="reveal">
+            <span class="eyebrow"><svg aria-hidden="true"><use href="#i-sparkle" /></svg>AI-assisted engineering</span>
+            <h2 class="section-title" id="ai-title">
+              Built with AI, <span class="text-accent">owned by an engineer.</span>
+            </h2>
+            <p class="section-lead">
+              Like most engineers today, I use AI to build new software and to extend existing codebases.
+              Coding agents such as Claude Code explore unfamiliar code, draft implementations and tests,
+              and carry a refactoring through hundreds of files. Most of my recent commits are co-authored
+              by one. What makes that work is the discipline around it.
+            </p>
 
-          <ul class="ai__points">
-            <li>
-              <span class="icon-tile icon-tile--accent"><svg aria-hidden="true"><use href="#i-book" /></svg></span>
-              <div><h3>Context, written down</h3><p>Conventions, architecture notes and per-area rules live next to the code, so agents and people follow the same playbook.</p></div>
-            </li>
-            <li>
-              <span class="icon-tile icon-tile--warning"><svg aria-hidden="true"><use href="#i-shield" /></svg></span>
-              <div><h3>Guardrails, not hope</h3><p>Hooks ask before anything reaches main, before a force push or a tag. Analyzers and CI catch the rest.</p></div>
-            </li>
-            <li>
-              <span class="icon-tile icon-tile--positive"><svg aria-hidden="true"><use href="#i-check" /></svg></span>
-              <div><h3>Tests define done</h3><p>A change is finished when it builds clean and its tests pass — whoever, or whatever, typed it.</p></div>
-            </li>
-            <li>
-              <span class="icon-tile icon-tile--info"><svg aria-hidden="true"><use href="#i-eye" /></svg></span>
-              <div><h3>Judgment stays human</h3><p>I decide the architecture and the trade-offs, read the diffs, and the merge button stays mine.</p></div>
-            </li>
-          </ul>
-        </div>
-
-        <div class="reveal">
-          <div class="code-well agent" data-agent-session>
-            <div class="window-bar">
-              <span class="window-dots" aria-hidden="true"><span></span><span></span><span></span></span>
-              <span class="window-title">claude — ~/project</span>
-              <button class="window-action" type="button" data-agent-replay hidden>
-                <svg aria-hidden="true"><use href="#i-replay" /></svg>Replay
-              </button>
-            </div>
-            <!-- A typical session, illustrative. The full log is in the markup for readers without JavaScript. -->
-            <ol class="agent__log" aria-label="An illustrative AI coding session">
-              <li class="agent__prompt"><span class="text-accent">❯</span> Add retry with exponential backoff to the exchange client, with tests.</li>
-              <li><span class="agent__icon text-info">●</span> Reading <code>CLAUDE.md</code> and the client's rules</li>
-              <li><span class="agent__icon text-info">●</span> Plan: 3 files, 1 test class</li>
-              <li><span class="agent__icon text-warning">✎</span> <code>ExchangeClient.cs</code><span class="agent__diff"><span class="text-positive">+38</span> <span class="text-negative">−6</span></span></li>
-              <li><span class="agent__icon text-warning">✎</span> <code>RetryPolicy.cs</code><span class="agent__diff"><span class="text-positive">+54</span></span></li>
-              <li><span class="agent__icon text-warning">✎</span> <code>ExchangeClientRetryTests.cs</code><span class="agent__diff"><span class="text-positive">+91</span></span></li>
-              <li data-run><span class="agent__icon dim">▶</span> <code>dotnet build</code><span class="agent__result text-positive">✓ 0 warnings</span></li>
-              <li data-run><span class="agent__icon dim">▶</span> <code>dotnet test</code><span class="agent__result text-positive">✓ 214 passed</span></li>
-              <li><span class="agent__icon text-warning">⏸</span> <code>git push origin main</code><span class="agent__result text-warning">needs approval</span></li>
-              <li><span class="agent__icon text-positive">✓</span> Pull request opened from <code>feature/retry</code></li>
-            </ol>
+            <ul class="ai__points">
+              <li>
+                <span class="icon-tile icon-tile--accent"><svg aria-hidden="true"><use href="#i-book" /></svg></span>
+                <div><h3>Context, written down</h3><p>Conventions, architecture notes and per-area rules live next to the code, so agents and people follow the same playbook.</p></div>
+              </li>
+              <li>
+                <span class="icon-tile icon-tile--warning"><svg aria-hidden="true"><use href="#i-shield" /></svg></span>
+                <div><h3>Guardrails, not hope</h3><p>Hooks ask before anything reaches main, before a force push or a tag. Analyzers and CI catch the rest.</p></div>
+              </li>
+              <li>
+                <span class="icon-tile icon-tile--positive"><svg aria-hidden="true"><use href="#i-check" /></svg></span>
+                <div><h3>Tests define done</h3><p>A change is finished when it builds clean and its tests pass — whoever, or whatever, typed it.</p></div>
+              </li>
+              <li>
+                <span class="icon-tile icon-tile--info"><svg aria-hidden="true"><use href="#i-eye" /></svg></span>
+                <div><h3>Judgment stays human</h3><p>I decide the architecture and the trade-offs, read the diffs, and the merge button stays mine.</p></div>
+              </li>
+            </ul>
           </div>
-          <p class="ai__note">An illustrative session: the agent drafts and verifies, the hooks stop it at <code>main</code>, and the pull request waits for a human.</p>
+
+          <div class="reveal">
+            <div class="code-well agent" data-agent-session>
+              <div class="window-bar">
+                <span class="window-dots" aria-hidden="true"><span></span><span></span><span></span></span>
+                <span class="window-title">claude — ~/project</span>
+                <button class="window-action" type="button" data-agent-replay hidden>
+                  <svg aria-hidden="true"><use href="#i-replay" /></svg>Replay
+                </button>
+              </div>
+              <!-- A typical session, illustrative. The full log is in the markup for readers without JavaScript. -->
+              <ol class="agent__log" aria-label="An illustrative AI coding session">
+                <li class="agent__prompt"><span class="text-accent">❯</span> Add retry with exponential backoff to the exchange client, with tests.</li>
+                <li><span class="agent__icon text-info">●</span> Reading <code>CLAUDE.md</code> and the client's rules</li>
+                <li><span class="agent__icon text-info">●</span> Plan: 3 files, 1 test class</li>
+                <li><span class="agent__icon text-warning">✎</span> <code>ExchangeClient.cs</code><span class="agent__diff"><span class="text-positive">+38</span> <span class="text-negative">−6</span></span></li>
+                <li><span class="agent__icon text-warning">✎</span> <code>RetryPolicy.cs</code><span class="agent__diff"><span class="text-positive">+54</span></span></li>
+                <li><span class="agent__icon text-warning">✎</span> <code>ExchangeClientRetryTests.cs</code><span class="agent__diff"><span class="text-positive">+91</span></span></li>
+                <li data-run><span class="agent__icon dim">▶</span> <code>dotnet build</code><span class="agent__result text-positive">✓ 0 warnings</span></li>
+                <li data-run><span class="agent__icon dim">▶</span> <code>dotnet test</code><span class="agent__result text-positive">✓ 214 passed</span></li>
+                <li><span class="agent__icon text-warning">⏸</span> <code>git push origin main</code><span class="agent__result text-warning">needs approval</span></li>
+                <li><span class="agent__icon text-positive">✓</span> Pull request opened from <code>feature/retry</code></li>
+              </ol>
+            </div>
+            <p class="ai__note">An illustrative session: the agent drafts and verifies, the hooks stop it at <code>main</code>, and the pull request waits for a human.</p>
+          </div>
         </div>
+        <!-- The real thing behind the claims above: open source, built with AI agents. -->
+        <article class="card case reveal" aria-labelledby="share-title">
+          <div class="case__copy">
+            <span class="eyebrow"><svg aria-hidden="true"><use href="#i-sparkle" /></svg>Built with AI, for myself</span>
+            <h3 class="case__title" id="share-title">
+              <span class="case__logo" aria-hidden="true"><svg><use href="#i-images" /></svg></span>
+              Share
+            </h3>
+            <p class="case__lead">
+              A self-hosted place where family and friends drop photos, videos and documents. I built it
+              for my own use, with AI coding agents at my side, and published it as open source in case
+              it's useful to you too.
+            </p>
+            <ul class="case__points">
+              <li><svg aria-hidden="true"><use href="#i-check" /></svg><span><strong>Sending with a PIN</strong>, in any browser, with no app and no account. Uploads of several gigabytes resume after a dropped connection.</span></li>
+              <li><svg aria-hidden="true"><use href="#i-check" /></svg><span><strong>Folders with their own people</strong>, each with end-to-end encryption if you want it.</span></li>
+              <li><svg aria-hidden="true"><use href="#i-check" /></svg><span><strong>Photos in full quality over WhatsApp</strong>, packed into ZIPs by the Android app.</span></li>
+            </ul>
+            <ul class="chips chips--sm" aria-label="Built with">
+              <li>Go</li><li>PostgreSQL</li><li>Preact</li><li>TypeScript</li><li>Flutter</li><li>Kotlin</li><li>S3</li>
+            </ul>
+            <div class="case__actions">
+              <a class="btn btn--ghost" href="https://github.com/eschgi/share" target="_blank" rel="noopener noreferrer"><svg aria-hidden="true"><use href="#i-github" /></svg>Source on GitHub</a>
+              <a class="btn btn--ghost" href="https://github.com/eschgi/share/releases/latest" target="_blank" rel="noopener noreferrer"><svg aria-hidden="true"><use href="#i-package" /></svg>Latest release</a>
+              <span class="pill pill--warning">Early development · Apache 2.0</span>
+            </div>
+          </div>
+          <div class="case__visual">
+            <div class="case__stage">
+              <figure class="case__browser">
+                <div class="case__chrome" aria-hidden="true"><span class="window-dots"><span></span><span></span><span></span></span>Share · Library</div>
+                <img src="assets/share/library-computer.webp" width="1440" height="900" loading="lazy" decoding="async"
+                     alt="Share's library on a computer: the folders Family, Wedding Anna &amp; Marco, Kindergarten and Taxes 2026 beside the photos, grouped by day" />
+              </figure>
+              <figure class="case__phone">
+                <img src="assets/share/send-phone.webp" width="390" height="844" loading="lazy" decoding="async"
+                     alt="Sending on a phone with a PIN: Send your files. Photos, videos, documents, anything. No app, no account." />
+              </figure>
+            </div>
+          </div>
+        </article>
       </div>
     </section>
 
