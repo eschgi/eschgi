@@ -256,7 +256,7 @@
           </dl>
           <p class="case__stack"><b>Built with</b> .NET 11 · ASP.NET Core · PostgreSQL · gRPC · React · Flutter · Tauri</p>
         </div>
-        <!-- A backtest, played by js/backtest.js: this illustration until someone plays. -->
+        <!-- A backtest, drawn and played by js/backtest.js; this illustration shows when JavaScript is off. -->
         <figure class="case__visual chart" data-backtest>
           <div class="chart__head">
             <span data-backtest-title>Backtest: a strategy against its opponents</span>
@@ -264,7 +264,7 @@
           </div>
           <div class="chart__legend" aria-hidden="true">
             <span><i class="chart__key chart__key--strategy"></i><span data-backtest-name>Strategy</span> <b data-backtest-value="you"></b></span>
-            <span><i class="chart__key chart__key--hold"></i>Hold everything <b data-backtest-value="hold"></b></span>
+            <span><i class="chart__key chart__key--hold" data-backtest-hold-key></i>Hold everything <b data-backtest-value="hold"></b></span>
             <span><i class="chart__key chart__key--random"></i>Random control <b data-backtest-value="random"></b></span>
           </div>
           <svg class="chart__plot" data-backtest-plot viewBox="0 0 600 260" preserveAspectRatio="none" aria-hidden="true">
@@ -289,12 +289,12 @@
             <div class="play__row" data-backtest-start-row>
               <button type="button" class="play__button play__button--primary" data-backtest-start>Start a backtest</button>
             </div>
-            <div class="play__row play__row--actions play__row--thirds" data-backtest-actions hidden>
-              <button type="button" class="play__button play__button--primary" data-backtest-buy>Buy</button>
+            <div class="play__row play__row--actions play__row--trade" data-backtest-actions hidden>
+              <button type="button" class="play__button" data-backtest-buy>Buy</button>
               <button type="button" class="play__button" data-backtest-sell>Sell</button>
-              <button type="button" class="play__button" data-backtest-fast>Faster <small>hold</small></button>
+              <button type="button" class="play__button play__button--primary" data-backtest-next>Next day <small>hold</small></button>
             </div>
-            <p class="play__status" data-backtest-status aria-live="polite">Trade a demo market for 160 days. Beat holding everything and a random control, and your strategy would get money. Each trade costs 0.1 %.</p>
+            <p class="play__status" data-backtest-status aria-live="polite">Trade a demo market for 60 days. Make money and beat holding everything and a random control, and your strategy would get money. Each trade costs 0.1 %.</p>
           </div>
           <figcaption class="chart__foot"><span>A mini game with demo data, not the software itself.</span></figcaption>
         </figure>
