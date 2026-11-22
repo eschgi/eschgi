@@ -614,7 +614,7 @@
     function popup(x, y, text, color) {
       popups.push({
         x: Math.max(90, Math.min(width - 90, x)),
-        y: Math.max(26, Math.min(height - 12, y)),
+        y: Math.max(48, Math.min(height - 12, y)),
         text: text,
         color: color,
         age: 0,
