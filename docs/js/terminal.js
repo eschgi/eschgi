@@ -1072,17 +1072,177 @@
       }
     }
 
-    // The Lab's other toys: scroll to them here, or go to the Lab from anywhere else.
-    function labSection(id, words) {
-      return function () {
-        if (document.getElementById(id)) {
-          print(words);
-          goTo(id);
-        } else {
-          print("That lives in the Lab. On my way…");
-          window.location.href = "lab.html#" + id;
-        }
-      };
+    // `ask`: answers a question from the front page's own text by retrieval, with no language
+    // model behind it: every sentence of the page is a document, weighed by TF-IDF, and the one
+    // most like the question (by cosine similarity) is the answer. The R in RAG, on its own.
+    var STOPWORDS = (
+      "a about am an and any are as at be been but by can could did do does for from had has have he how i if in " +
+      "into is it its me my of on or our she so some that the their them then there these they this to us was " +
+      "we were what when where which who whom why will with would you your"
+    ).split(" ");
+    // A few words visitors use for what the page calls something else.
+    var SYNONYMS = {
+      job: ["engineer", "work"],
+      looking: ["looking", "role"],
+      employer: ["work"],
+      company: ["work"],
+      hobby: ["free"],
+      spare: ["free"],
+      programming: ["language"],
+      skill: ["expertise", "language"],
+      tool: ["devops", "tool"],
+      experience: ["year", "decade"],
+      email: ["contact"],
+      hire: ["role"],
+      hiring: ["role"],
+      llm: ["ai"],
+    };
+
+    function terms(text) {
+      var words = [];
+      (text.toLowerCase().match(/[a-z0-9#+]+/g) || []).forEach(function (word) {
+        if (STOPWORDS.indexOf(word) >= 0) return;
+        if (word.length > 3 && /s$/.test(word) && !/ss$/.test(word)) word = word.slice(0, -1);
+        words.push.apply(words, SYNONYMS[word] || [word]);
+      });
+      return words;
+    }
+
+    function wordCount(text) {
+      return clean(text).split(" ").length;
+    }
+
+    function withoutStop(text) {
+      return clean(text).replace(/[.:]$/, "");
+    }
+
+    // The page as documents: each sentence of its text, where it came from, the title of what it
+    // belongs to (a card, a list, a principle) and the section around it. A match is scored on the
+    // sentence's own words, a little on its section, with a bonus when the question names the
+    // title; a card's description gets a small head start over its other lines.
+    var SECTIONS = { top: "the introduction", work: "Work", how: "How I work", expertise: "Expertise", activity: "Activity", contact: "Contact" };
+    var library = null;
+    function libraryOf(doc) {
+      if (library) return library;
+      var documents = [];
+      function add(text, where, title, about, boost) {
+        // Split after . ! ? or : before a capital, without lookbehind, which older Safari lacks.
+        clean(text)
+          .replace(/([.!?:])\s+(?=[A-Z])/g, "$1\u0000")
+          .split("\u0000")
+          .forEach(function (sentence) {
+            if (terms(sentence).length) documents.push({ text: sentence, where: where, title: title || "", about: about || "", boost: boost || 0 });
+          });
+      }
+      Array.prototype.forEach.call(doc.querySelectorAll("main section"), function (section) {
+        var heading = section.querySelector("h1, h2");
+        var label = section.querySelector(".label");
+        var where = SECTIONS[section.id] || (heading ? withoutStop(heading.textContent) : "the front page");
+        var about = where + " " + (heading ? heading.textContent : "") + " " + (label ? label.textContent : "");
+        Array.prototype.forEach.call(section.querySelectorAll("[data-cli]"), function (card) {
+          var title = card.querySelector("h3");
+          var name = title ? clean(title.textContent) : where;
+          Array.prototype.forEach.call(card.querySelectorAll(".case__text > p, .case__stack"), function (node) {
+            var description = !node.classList.contains("case__tag") && !node.classList.contains("case__stack");
+            add(node.textContent, name, name, about, description ? 0.05 : 0);
+          });
+          var facts = Array.prototype.map.call(card.querySelectorAll(".case__facts > div"), function (fact) {
+            return clean(fact.querySelector("dd").textContent) + " " + clean(fact.querySelector("dt").textContent);
+          });
+          if (facts.length) add(facts.join(", ") + ".", name, name, about);
+        });
+        Array.prototype.forEach.call(section.querySelectorAll(".hero__lead, .section-note"), function (node) {
+          if (!node.closest("[data-cli]")) add(node.textContent, where, "", about);
+        });
+        // Headings and labels only when they make a statement, not when they name a section.
+        Array.prototype.forEach.call(section.querySelectorAll("h1, h2, .label"), function (node) {
+          if (wordCount(node.textContent) >= 10) add(node.textContent, where, "", about);
+        });
+        Array.prototype.forEach.call(section.querySelectorAll(".principles li"), function (item) {
+          var name = clean(item.querySelector("h3").textContent);
+          // Kept whole: split at its colon, the title alone would answer.
+          documents.push({ text: name + ": " + clean(item.querySelector("p").textContent), where: where, title: name, about: about, boost: 0 });
+        });
+        Array.prototype.forEach.call(section.querySelectorAll(".expertise__group"), function (group) {
+          var name = clean(group.querySelector("h3").textContent);
+          var items = Array.prototype.map.call(group.querySelectorAll("li"), function (item) {
+            return clean(item.textContent);
+          });
+          documents.push({ text: name + ": " + items.join(", ") + ".", where: "Expertise", title: name, about: "expertise use know", boost: 0 });
+        });
+        var links = Array.prototype.map.call(section.querySelectorAll("[data-contact-links] a"), function (anchor) {
+          return clean(anchor.getAttribute("data-label") || anchor.textContent);
+        });
+        if (links.length) documents.push({ text: "Find me on " + links.join(", ") + ".", where: where, title: "contact", about: "contact reach message talk", boost: 0 });
+      });
+      Array.prototype.forEach.call(doc.querySelectorAll(".facts > div"), function (fact) {
+        documents.push({ text: clean(fact.querySelector("dd").textContent) + " " + clean(fact.querySelector("dt").textContent) + ".", where: "the facts", title: "", about: "", boost: 0 });
+      });
+      var counts = {};
+      documents.forEach(function (entry) {
+        unique(terms(entry.text + " " + entry.title + " " + entry.about)).forEach(function (term) {
+          counts[term] = (counts[term] || 0) + 1;
+        });
+      });
+      library = { documents: documents, idf: {} };
+      Object.keys(counts).forEach(function (term) {
+        library.idf[term] = Math.log((documents.length + 1) / (counts[term] + 1)) + 1;
+      });
+      documents.forEach(function (entry) {
+        entry.textVector = vectorOf(terms(entry.text), library.idf);
+        entry.aboutVector = vectorOf(terms(entry.about), library.idf);
+        entry.titleTerms = terms(entry.title);
+      });
+      return library;
+    }
+
+    function unique(items) {
+      return items.filter(function (item, index) {
+        return items.indexOf(item) === index;
+      });
+    }
+
+    function vectorOf(words, idf) {
+      var vector = {};
+      words.forEach(function (word) {
+        if (idf[word]) vector[word] = (vector[word] || 0) + idf[word];
+      });
+      return vector;
+    }
+
+    function cosine(a, b) {
+      var dot = 0;
+      var normA = 0;
+      var normB = 0;
+      Object.keys(a).forEach(function (key) {
+        normA += a[key] * a[key];
+        if (b[key]) dot += a[key] * b[key];
+      });
+      Object.keys(b).forEach(function (key) {
+        normB += b[key] * b[key];
+      });
+      return normA && normB ? dot / Math.sqrt(normA * normB) : 0;
+    }
+
+    function ask(doc, args) {
+      var question = args.join(" ").trim();
+      if (!question) return print("usage: ask <question>, e.g. ask what do you build at work?", "cli__err");
+      var shelf = libraryOf(doc);
+      var query = vectorOf(terms(question), shelf.idf);
+      var best = null;
+      shelf.documents.forEach(function (entry) {
+        var named = entry.titleTerms.some(function (term) {
+          return query[term];
+        });
+        var score = 0.85 * cosine(query, entry.textVector) + 0.15 * cosine(query, entry.aboutVector) + (named ? 0.25 : 0) + entry.boost;
+        if (!best || score > best.score) best = { entry: entry, score: score };
+      });
+      if (!best || best.score < 0.18) {
+        print("No answer on this site for that. Try: ask which languages do you use?", "dim");
+        return;
+      }
+      print(best.entry.text);
+      line('<span class="dim">— from ' + escapeHtml(best.entry.where) + ", match " + best.score.toFixed(2) + " (TF-IDF retrieval, no language model)</span>");
     }
 
     var aboutCommand = withHome(about);
@@ -1207,15 +1367,23 @@
         line("  " + key("projects") + "   all three");
         line("  " + key("stack") + "      languages & technologies (e.g. stack data)");
         line("  " + key("ai") + "         how I work with AI");
+        line("  " + key("ask") + "        ask the site a question, e.g. ask what do you build at work?");
         line("  " + key("stats") + "      GitHub numbers");
         line("  " + key("contact") + "    where to find me");
         line("  " + key("bugbash") + "    play Bug Bash");
-        line("  " + key("quiz") + "       name that language");
-        line("  " + key("race") + "       the sort race");
-        line("  " + key("life") + "       Conway's Game of Life");
         line("  " + key("ls") + " · " + key("cat") + "   browse the \"files\"");
         line("  " + key("echo") + " · " + key("date") + " · " + key("history") + " · " + key("clear"));
-        line('  <span class="dim">… and a few that are not listed. Tab completes, ↑/↓ walk the history.</span>');
+        print(" ");
+        print("easter eggs (don't tell anyone):");
+        line("  " + key("hack") + "       a cinematic fake intrusion");
+        line("  " + key("matrix") + "     digital rain (" + key("matrix off") + " to stop)");
+        line("  " + key("crt") + "        an old monitor (" + key("crt off") + " to stop)");
+        line("  " + key("snake") + "      a game of snake, or triple-click the portrait on the front page");
+        line("  " + key("gravity") + "    let the page fall apart");
+        line("  " + key("blackhole") + "  swallow the page");
+        line("  " + key("launch") + "     lift-off");
+        line("  " + key("sudo") + " · " + key("rm -rf /") + " · " + key("git push --force") + " · " + key("vim") + " · " + key("emacs") + " · " + key("exit") + " · " + key("coffee") + " · " + key("ping") + " · " + key("uptime"));
+        line('  <span class="dim">Tab completes, ↑/↓ walk the history.</span>');
       },
       about: aboutCommand,
       whoami: aboutCommand,
@@ -1229,14 +1397,11 @@
       skills: stackCommand,
       ai: aiCommand,
       share: shareCommand,
+      ask: withHome(ask),
       stats: stats,
       contact: contactCommand,
       socials: contactCommand,
       bugbash: bugbash,
-      quiz: labSection("quiz", "Ten snippets, four guesses each. Good luck."),
-      race: labSection("race", "Pick the numbers, then start the race."),
-      sort: labSection("race", "Pick the numbers, then start the race."),
-      life: labSection("life", "Four rules, endless patterns."),
       bugs: bugbash,
       play: bugbash,
       game: bugbash,

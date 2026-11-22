@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Lab — Stefan Eschgfäller</title>
-  <meta name="description" content="The playful side of eschgi.com: Bug Bash, a game about squashing bugs before they reach production; Name that language, a quiz; a race of sorting algorithms; Conway's Game of Life; the languages and tools as a 3D sphere; and a terminal with a few easter eggs." />
+  <meta name="description" content="The playful side of eschgi.com: Bug Bash, a game about squashing bugs before they reach production; a neural network that learns in your browser; the languages and tools as a 3D sphere; and a terminal with a few easter eggs." />
   <meta name="theme-color" content="#0c0c0e" />
   <meta name="color-scheme" content="dark" />
   <link rel="canonical" href="https://eschgi.com/lab.html" />
@@ -15,9 +15,7 @@
   <script src="js/site.js" defer></script>
   <script src="js/bugbash.js" defer></script>
   <script src="js/terminal.js" defer></script>
-  <script src="js/quiz.js" defer></script>
-  <script src="js/sortrace.js" defer></script>
-  <script src="js/life.js" defer></script>
+  <script src="js/neural.js" defer></script>
 </head>
 <body data-page="lab">
   <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="display: none">
@@ -60,14 +58,12 @@
     <section class="wrap lab-intro" aria-labelledby="lab-title">
       <p class="label">Lab</p>
       <h1 id="lab-title">The playful side.</h1>
-      <p class="lab-intro__lead">Two games, a race, a simulation, a sphere and a terminal: kept off the front page, built with the same care.</p>
+      <p class="lab-intro__lead">A game, a neural network, a sphere and a terminal: kept off the front page, built with the same care.</p>
       <nav class="lab-toc" aria-label="On this page">
         <a href="#bugbash"><span>01</span>Bug Bash</a>
-        <a href="#quiz"><span>02</span>Name that language</a>
-        <a href="#race"><span>03</span>Sort race</a>
-        <a href="#life"><span>04</span>Life</a>
-        <a href="#sphere"><span>05</span>Tech sphere</a>
-        <a href="#terminal"><span>06</span>Terminal</a>
+        <a href="#neural"><span>02</span>Neural network</a>
+        <a href="#sphere"><span>03</span>Tech sphere</a>
+        <a href="#terminal"><span>04</span>Terminal</a>
       </nav>
     </section>
 
@@ -149,98 +145,39 @@
       <noscript><p class="activity__fallback">Bug Bash needs JavaScript — the bugs are made of it.</p></noscript>
     </section>
 
-    <!-- ===================================================================== NAME THAT LANGUAGE (js/quiz.js) -->
-    <section class="wrap section" id="quiz" aria-labelledby="quiz-title">
+    <!-- ===================================================================== NEURAL NETWORK (js/neural.js) -->
+    <section class="wrap section" id="neural" aria-labelledby="neural-title">
       <div class="section-top reveal">
         <div>
-          <p class="label">02 · Name that language</p>
-          <h2 id="quiz-title">One snippet, four guesses.</h2>
+          <p class="label">02 · Neural network</p>
+          <h2 id="neural-title">Watch a neural network learn.</h2>
         </div>
-        <div class="section-note">
-          <p>Ten snippets in the languages I work with. Pick the language; every answer says what gave it away. Keys 1 to 4 work too.</p>
-          <p class="bugbash__best needs-js">Your best: <strong data-quiz-best>0</strong> of 10</p>
-        </div>
+        <p class="section-note">A small neural network, trained here in your browser with nothing but JavaScript: two inputs, two hidden layers of eight neurons, one output. The field shows what it believes and sharpens as it learns; the diagram shows what each neuron sees, and every weight. Click the field to add points.</p>
       </div>
-      <div class="code-well quiz reveal needs-js" data-quiz>
-        <div class="window-bar">
-          <span class="window-dots" aria-hidden="true"><span></span><span></span><span></span></span>
-          <span class="window-title" data-quiz-file>snippet.???</span>
-          <span class="quiz__score" data-quiz-score></span>
-        </div>
-        <pre class="quiz__code"><code data-quiz-code></code></pre>
-        <div class="quiz__answers">
-          <div class="quiz__choices" data-quiz-choices role="group" aria-label="Languages"></div>
-          <p class="quiz__status" data-quiz-status aria-live="polite"></p>
-          <button type="button" class="play__button play__button--primary quiz__next" data-quiz-next hidden>Next snippet</button>
-        </div>
-      </div>
-    </section>
-
-    <!-- ===================================================================== SORT RACE (js/sortrace.js) -->
-    <section class="wrap section" id="race" aria-labelledby="race-title">
-      <div class="section-top reveal">
-        <div>
-          <p class="label">03 · Sort race</p>
-          <h2 id="race-title">Measure, then optimize.</h2>
-        </div>
-        <p class="section-note">Four sorting algorithms race on the same numbers, one comparison or write per step. Which one wins depends on the data: try the nearly sorted numbers.</p>
-      </div>
-      <div class="race reveal needs-js" data-race>
-        <div class="race__lanes">
-          <figure class="race__lane" data-race-lane="bubble">
-            <canvas aria-hidden="true"></canvas>
-            <figcaption><b>Bubble sort</b><span data-race-steps>0 steps</span><span class="race__place" data-race-place></span></figcaption>
-          </figure>
-          <figure class="race__lane" data-race-lane="insertion">
-            <canvas aria-hidden="true"></canvas>
-            <figcaption><b>Insertion sort</b><span data-race-steps>0 steps</span><span class="race__place" data-race-place></span></figcaption>
-          </figure>
-          <figure class="race__lane" data-race-lane="merge">
-            <canvas aria-hidden="true"></canvas>
-            <figcaption><b>Merge sort</b><span data-race-steps>0 steps</span><span class="race__place" data-race-place></span></figcaption>
-          </figure>
-          <figure class="race__lane" data-race-lane="quick">
-            <canvas aria-hidden="true"></canvas>
-            <figcaption><b>Quicksort</b><span data-race-steps>0 steps</span><span class="race__place" data-race-place></span></figcaption>
-          </figure>
+      <div class="neural reveal needs-js" data-neural>
+        <div class="neural__stage">
+          <div class="neural__frame">
+            <canvas class="neural__field" data-neural-field role="img" aria-label="The network's prediction over the field, with the training points"></canvas>
+          </div>
+          <div class="neural__frame neural__side">
+            <canvas class="neural__net" data-neural-net aria-hidden="true"></canvas>
+            <canvas class="neural__loss" data-neural-loss aria-hidden="true"></canvas>
+          </div>
         </div>
         <div class="play__controls">
-          <div class="play__choices race__shapes" role="group" aria-label="Numbers">
-            <button type="button" class="play__choice" data-race-shape="random" aria-pressed="true"><b>Random</b></button>
-            <button type="button" class="play__choice" data-race-shape="nearly" aria-pressed="false"><b>Nearly sorted</b></button>
-            <button type="button" class="play__choice" data-race-shape="reversed" aria-pressed="false"><b>Reversed</b></button>
-            <button type="button" class="play__choice" data-race-shape="few" aria-pressed="false"><b>Few distinct</b></button>
+          <div class="play__choices neural__data" role="group" aria-label="Data">
+            <button type="button" class="play__choice" data-neural-data="circle" aria-pressed="true"><b>Circle</b></button>
+            <button type="button" class="play__choice" data-neural-data="xor" aria-pressed="false"><b>XOR</b></button>
+            <button type="button" class="play__choice" data-neural-data="moons" aria-pressed="false"><b>Moons</b></button>
+            <button type="button" class="play__choice" data-neural-data="spiral" aria-pressed="false"><b>Spiral</b></button>
           </div>
-          <div class="play__row">
-            <button type="button" class="play__button play__button--primary" data-race-start>Start the race</button>
+          <div class="play__row neural__actions">
+            <button type="button" class="play__button play__button--primary" data-neural-train aria-pressed="false">Train</button>
+            <button type="button" class="play__button" data-neural-step>Step</button>
+            <button type="button" class="play__button" data-neural-reset>New weights</button>
+            <button type="button" class="play__button" data-neural-paint>Click adds <i class="neural__swatch neural__swatch--lime"></i>lime</button>
           </div>
-          <p class="play__status" data-race-status aria-live="polite">Pick the numbers, then start the race.</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- ===================================================================== LIFE (js/life.js) -->
-    <section class="wrap section" id="life" aria-labelledby="life-title">
-      <div class="section-top reveal">
-        <div>
-          <p class="label">04 · Life</p>
-          <h2 id="life-title">Four rules, endless patterns.</h2>
-        </div>
-        <p class="section-note">Conway's Game of Life: a live cell with two or three neighbours lives on, an empty cell with exactly three comes alive, every other cell dies. Draw on the board, or start a glider gun.</p>
-      </div>
-      <div class="life reveal needs-js" data-life>
-        <div class="life__stage">
-          <canvas class="life__board" data-life-board role="img" aria-label="Game of Life board: draw cells with a pointer"></canvas>
-        </div>
-        <div class="play__controls">
-          <div class="play__row life__buttons">
-            <button type="button" class="play__button play__button--primary" data-life-play aria-pressed="false">Play</button>
-            <button type="button" class="play__button" data-life-step>Step</button>
-            <button type="button" class="play__button" data-life-random>Random</button>
-            <button type="button" class="play__button" data-life-gun>Glider gun</button>
-            <button type="button" class="play__button" data-life-clear>Clear</button>
-          </div>
-          <p class="play__status" data-life-status>Generation 0 · 0 cells</p>
+          <p class="play__status" data-neural-status>Epoch 0</p>
         </div>
       </div>
     </section>
@@ -249,7 +186,7 @@
     <section class="wrap section" id="sphere" aria-labelledby="sphere-title">
       <div class="section-top reveal">
         <div>
-          <p class="label">05 · Tech sphere</p>
+          <p class="label">03 · Tech sphere</p>
           <h2 id="sphere-title">Languages and tools, in three dimensions.</h2>
         </div>
         <p class="section-note"><span class="hide-touch">Drag the sphere, or point at a group to light it up.</span><span class="show-touch">Drag the sphere to spin it.</span> The same lists, flat and readable, are on the <a href="./#expertise">front page</a>.</p>
@@ -267,10 +204,10 @@
     <section class="wrap section" id="terminal" aria-labelledby="terminal-title">
       <div class="section-top reveal">
         <div>
-          <p class="label">06 · Terminal</p>
+          <p class="label">04 · Terminal</p>
           <h2 id="terminal-title">Prefer the command line?</h2>
         </div>
-        <p class="section-note">Type <code class="inline-code">help</code> and press Enter. Not every command is in the help; curiosity is rewarded.</p>
+        <p class="section-note">Type <code class="inline-code">help</code> and press Enter, or ask it something: <code class="inline-code">ask what do you build at work?</code> The easter eggs are in the help now, too.</p>
       </div>
 
       <div class="code-well cli reveal needs-js" id="cli">
