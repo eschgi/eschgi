@@ -765,7 +765,7 @@
         return;
       }
       escapedCount++;
-      sla = Math.max(0, sla - (critter.kind === "leak" ? 40 : 20));
+      sla = Math.max(0, sla - (critter.kind === "leak" ? 20 : 10));
       popup(x, y, critter.kind === "leak" ? "Out of memory in prod!" : pickOne(ESCAPE_LINES), "#f05252");
       flashLine(y, "is-broken");
       setStreak(0);
