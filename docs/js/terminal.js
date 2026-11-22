@@ -1,6 +1,7 @@
 // The terminal at the bottom of the page, and the easter eggs it can summon:
 // snake (also: triple-click the avatar), crt, matrix, gravity, blackhole, launch and hack.
 // Its commands read the page itself, so the terminal never says something the page doesn't.
+// The commands and the file names are the same in every language; what they print is not.
 (function () {
   "use strict";
 
@@ -16,6 +17,18 @@
   }
   function clean(text) {
     return (text || "").replace(/\s+/g, " ").trim();
+  }
+  function escapeHtml(text) {
+    return String(text).replace(/[&<>"]/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c];
+    });
+  }
+  // The words, in the visitor's language (js/i18n.js), or in English as written here.
+  function t(text, params) {
+    if (eschgi.t) return eschgi.t(text, params);
+    return text.replace(/\{(\w+)\}/g, function (match, name) {
+      return params && params[name] !== undefined ? String(params[name]) : match;
+    });
   }
 
   // ===================================================================== snake
@@ -69,7 +82,7 @@
       var overlay = el("div", "egg");
       overlay.setAttribute("role", "dialog");
       overlay.setAttribute("aria-modal", "true");
-      overlay.setAttribute("aria-label", "Hidden Snake game");
+      overlay.setAttribute("aria-label", t("Hidden Snake game"));
 
       var panel = el("div", "egg__panel");
       var bar = el(
@@ -80,12 +93,12 @@
       );
       var closeButton = el("button", "egg__close", "&#10005;");
       closeButton.type = "button";
-      closeButton.setAttribute("aria-label", "Close game");
+      closeButton.setAttribute("aria-label", t("Close game"));
       bar.appendChild(closeButton);
 
       var hudBar = el("div", "egg__hud");
-      var scoreElement = el("span", "", "score <b>0</b>");
-      var highElement = el("span", "", "hi <b>" + readHigh() + "</b>");
+      var scoreElement = el("span", "", escapeHtml(t("score")) + " <b>0</b>");
+      var highElement = el("span", "", escapeHtml(t("hi")) + " <b>" + readHigh() + "</b>");
       hudBar.appendChild(scoreElement);
       hudBar.appendChild(highElement);
 
@@ -101,18 +114,20 @@
       var controls = el(
         "div",
         "egg__controls",
-        '<button type="button" class="egg__pad-btn egg__pad--up" data-dir="up" aria-label="Up">&#9650;</button>' +
-          '<button type="button" class="egg__pad-btn egg__pad--left" data-dir="left" aria-label="Left">&#9664;</button>' +
-          '<button type="button" class="egg__pad-btn egg__pad--mid" data-action="pause" aria-label="Pause or resume">&#9208;</button>' +
-          '<button type="button" class="egg__pad-btn egg__pad--right" data-dir="right" aria-label="Right">&#9654;</button>' +
-          '<button type="button" class="egg__pad-btn egg__pad--down" data-dir="down" aria-label="Down">&#9660;</button>'
+        '<button type="button" class="egg__pad-btn egg__pad--up" data-dir="up" aria-label="' + escapeHtml(t("Up")) + '">&#9650;</button>' +
+          '<button type="button" class="egg__pad-btn egg__pad--left" data-dir="left" aria-label="' + escapeHtml(t("Left")) + '">&#9664;</button>' +
+          '<button type="button" class="egg__pad-btn egg__pad--mid" data-action="pause" aria-label="' + escapeHtml(t("Pause or resume")) + '">&#9208;</button>' +
+          '<button type="button" class="egg__pad-btn egg__pad--right" data-dir="right" aria-label="' + escapeHtml(t("Right")) + '">&#9654;</button>' +
+          '<button type="button" class="egg__pad-btn egg__pad--down" data-dir="down" aria-label="' + escapeHtml(t("Down")) + '">&#9660;</button>'
       );
       var hint = el(
         "p",
         "egg__hint",
-        coarse
-          ? "swipe or use the pad · tap the board to pause · ✕ quits"
-          : "arrows / wasd · p pause · r restart · esc quit"
+        escapeHtml(
+          coarse
+            ? t("swipe or use the pad · tap the board to pause · ✕ quits")
+            : t("arrows / wasd · p pause · r restart · esc quit")
+        )
       );
 
       var body = el("div", "egg__body");
@@ -166,8 +181,8 @@
       }
 
       function updateHud() {
-        scoreElement.innerHTML = "score <b>" + score + "</b>";
-        highElement.innerHTML = "hi <b>" + readHigh() + "</b>";
+        scoreElement.innerHTML = escapeHtml(t("score")) + " <b>" + score + "</b>";
+        highElement.innerHTML = escapeHtml(t("hi")) + " <b>" + readHigh() + "</b>";
       }
 
       function setDirection(x, y) {
@@ -257,12 +272,12 @@
         updateHud();
         showMessage(
           '<span class="egg__over glitch" data-text="GAME OVER">GAME OVER</span>' +
-            '<span class="egg__final">score ' +
-            score +
-            (record ? ' · <em class="egg__record">new high!</em>' : "") +
+            '<span class="egg__final">' +
+            escapeHtml(t("score {score}", { score: score })) +
+            (record ? ' · <em class="egg__record">' + escapeHtml(t("new high!")) + "</em>" : "") +
             "</span>" +
             '<span class="egg__again dim">' +
-            (coarse ? "tap to retry · ✕ to quit" : "press r to retry · esc to quit") +
+            escapeHtml(coarse ? t("tap to retry · ✕ to quit") : t("press r to retry · esc to quit")) +
             "</span>"
         );
       }
@@ -279,7 +294,7 @@
       function togglePause() {
         if (over) return;
         paused = !paused;
-        if (paused) showMessage('<span class="egg__paused">paused</span>');
+        if (paused) showMessage('<span class="egg__paused">' + escapeHtml(t("paused")) + "</span>");
         else {
           hideMessage();
           last = 0;
@@ -341,7 +356,7 @@
       function onVisibility() {
         if (document.hidden && !over) {
           paused = true;
-          showMessage('<span class="egg__paused">paused</span>');
+          showMessage('<span class="egg__paused">' + escapeHtml(t("paused")) + "</span>");
         }
       }
       function onBackdrop(event) {
@@ -638,7 +653,7 @@
     document.body.appendChild(stage);
     hidePage("gravity-on");
 
-    var reset = el("button", "btn btn--ghost gravity-reset", "&#8635; Rebuild the page");
+    var reset = el("button", "btn btn--ghost gravity-reset", "&#8635; " + escapeHtml(t("Rebuild the page")));
     reset.type = "button";
     reset.addEventListener("click", function () {
       window.location.reload();
@@ -859,7 +874,7 @@
       banner.textContent = "1";
     });
     later(1350, function () {
-      banner.textContent = "LIFTOFF";
+      banner.textContent = t("LIFTOFF");
       rocket.classList.add("rocket--shake");
     });
     later(1850, function () {
@@ -882,7 +897,7 @@
       window.clearInterval(trail);
       rocket.style.display = "none";
       banner.className = "rocket-banner rocket-banner--orbit";
-      banner.textContent = "in orbit ✨";
+      banner.textContent = t("in orbit ✨");
     });
     later(5400, teardown);
   }
@@ -900,11 +915,6 @@
       log.appendChild(div);
       log.scrollTop = log.scrollHeight;
       return div;
-    }
-    function escapeHtml(text) {
-      return String(text).replace(/[&<>]/g, function (c) {
-        return c === "&" ? "&amp;" : c === "<" ? "&lt;" : "&gt;";
-      });
     }
     function print(text, className) {
       return line(escapeHtml(text), className);
@@ -925,7 +935,7 @@
             command(doc, args || []);
           })
           .catch(function () {
-            print("couldn't read the front page; it's all on eschgi.com", "cli__err");
+            print(t("couldn't read the front page; it's all on eschgi.com"), "cli__err");
           });
       };
     }
@@ -954,7 +964,7 @@
 
     function project(doc, hook) {
       var card = doc.querySelector('[data-cli="' + hook + '"]');
-      if (!card) return print(hook + ": nothing to show", "cli__err");
+      if (!card) return print(t("{name}: nothing to show", { name: hook }), "cli__err");
       line(key(from(card, "h3")) + ' <span class="dim">' + escapeHtml(from(card, ".case__tag")) + "</span>");
       print(from(card, ".case__text > p:not(.case__tag):not(.case__stack)"));
       var facts = Array.prototype.map.call(card.querySelectorAll(".case__facts > div"), function (fact) {
@@ -964,7 +974,7 @@
       var stack = from(card, ".case__stack");
       if (stack) print(stack, "dim");
       var source = card.querySelector("[data-cli-source]");
-      if (source) link(source.getAttribute("data-cli-source") || "source", source.href);
+      if (source) link(source.getAttribute("data-cli-source") === "product" ? t("product") : t("source"), source.href);
     }
 
     function work(doc) {
@@ -1008,7 +1018,7 @@
       var arg = args[0];
       var want = arg ? GROUP_ALIASES[arg.toLowerCase().replace(/\/$/, "")] : null;
       if (arg && !want) {
-        return print("stack: no such group: " + arg + " (try: languages, frameworks, data, ops, ai)", "cli__err");
+        return print(t("stack: no such group: {group} (try: languages, frameworks, data, ops, ai)", { group: arg }), "cli__err");
       }
       Array.prototype.forEach.call(doc.querySelectorAll("[data-stack-group]"), function (group) {
         if (want && group.getAttribute("data-stack-group") !== want) return;
@@ -1028,46 +1038,44 @@
 
     function contact(doc) {
       Array.prototype.forEach.call(doc.querySelectorAll("[data-contact-links] a"), function (anchor) {
-        link(anchor.getAttribute("data-label") || "link", anchor.href);
+        link(anchor.getAttribute("data-label") || t("link"), anchor.href);
       });
       print(from(doc, "#contact-title"), "dim");
     }
 
     function stats() {
-      if (!eschgi.loadStats) return print("stats: no numbers here; they live on github.com/eschgi", "cli__err");
+      if (!eschgi.loadStats) return print(t("stats: no numbers here; they live on github.com/eschgi"), "cli__err");
       eschgi
         .loadStats()
         .then(function (data) {
           var c = data.contributions || {};
           var format = eschgi.formatNumber || String;
           print(
-            format(c.lastYearTotal || 0) +
-              " contributions  ·  " +
-              format(c.commits || 0) +
-              " commits  ·  " +
-              format(c.pullRequests || 0) +
-              " pull requests  ·  " +
-              format(c.issues || 0) +
-              " issues  (last 12 months)"
+            t("{contributions} contributions  ·  {commits} commits  ·  {pullRequests} pull requests  ·  {issues} issues  (last 12 months)", {
+              contributions: format(c.lastYearTotal || 0),
+              commits: format(c.commits || 0),
+              pullRequests: format(c.pullRequests || 0),
+              issues: format(c.issues || 0),
+            })
           );
           var languages = (data.languages || []).slice(0, 5).map(function (language) {
-            return language.name + " " + language.percent + "%";
+            return language.name + " " + format(language.percent) + "%";
           });
-          if (languages.length) line(key("top languages") + " " + escapeHtml(languages.join("  ·  ")));
+          if (languages.length) line(key(t("top languages")) + " " + escapeHtml(languages.join("  ·  ")));
           if (document.getElementById("activity")) goTo("activity");
-          else line('<span class="dim">The weekly chart is on the <a href="./#activity">front page</a>.</span>');
+          else line('<span class="dim">' + t('The weekly chart is on the <a href="./#activity">front page</a>.') + "</span>");
         })
         .catch(function () {
-          print("stats: no numbers yet; they live on github.com/eschgi", "cli__err");
+          print(t("stats: no numbers yet; they live on github.com/eschgi"), "cli__err");
         });
     }
 
     function bugbash() {
       if (document.querySelector("[data-bugbash]")) {
-        print("Spawning bugs in production.ts… 🐛 good luck.");
+        print(t("Spawning bugs in production.ts… 🐛 good luck."));
         document.dispatchEvent(new CustomEvent("eschgi:bugbash"));
       } else {
-        print("Bug Bash lives in the Lab. On my way…");
+        print(t("Bug Bash lives in the Lab. On my way…"));
         window.location.href = "lab.html#bugbash";
       }
     }
@@ -1105,11 +1113,11 @@
         case "contact.txt":
           return contactCommand([]);
         case "production.ts":
-          return print("// it's crawling with bugs 🐛 — try `bugbash`");
+          return print(t("// it's crawling with bugs 🐛 — try `bugbash`"));
         case "":
-          return print("cat: missing file operand (try: cat about.txt)", "cli__err");
+          return print(t("cat: missing file operand (try: cat about.txt)"), "cli__err");
         default:
-          return print("cat: " + arg + ": No such file or directory", "cli__err");
+          return print(t("cat: {file}: No such file or directory", { file: arg }), "cli__err");
       }
     }
 
@@ -1121,14 +1129,15 @@
       return bytes.join(" ");
     }
     function hack(args) {
-      if (hacking) return print("hack: operation already in progress…", "cli__err");
+      if (hacking) return print(t("hack: operation already in progress…"), "cli__err");
       var target = args[0] || "mainframe";
-      var granted = '<span class="glitch cli__granted" data-text="ACCESS GRANTED">ACCESS GRANTED</span>';
-      var payoff = "…just kidding. It's a static site — nothing to steal but good vibes 😄";
-      var hint = "(try `help`, or `snake`)";
+      var words = escapeHtml(t("ACCESS GRANTED"));
+      var granted = '<span class="glitch cli__granted" data-text="' + words + '">' + words + "</span>";
+      var payoff = t("…just kidding. It's a static site — nothing to steal but good vibes 😄");
+      var hint = t("(try `help`, or `snake`)");
       if (reduced()) {
-        print("> establishing uplink to " + target + "…", "cli__hack");
-        print("> bypassing firewall… done", "cli__hack");
+        print(t("> establishing uplink to {target}…", { target: target }), "cli__hack");
+        print(t("> bypassing firewall… done"), "cli__hack");
         line(granted);
         print(payoff);
         print(hint, "cli__hack");
@@ -1139,21 +1148,24 @@
       var bar = null;
       function drawBar(percent) {
         var filled = Math.round((percent / 100) * 20);
-        var text = "> scanning ports  [" + new Array(filled + 1).join("█") + new Array(21 - filled).join("░") + "] " + percent + "%";
+        var text = t("> scanning ports  [{bar}] {percent}%", {
+          bar: new Array(filled + 1).join("█") + new Array(21 - filled).join("░"),
+          percent: percent,
+        });
         if (!bar) bar = print(text, "cli__hack cli__hack--bar");
         else bar.textContent = text;
       }
       var steps = [
-        [0, function () { print("> initializing exploit framework…", "cli__hack"); }],
-        [260, function () { print("> establishing uplink to " + target + "…", "cli__hack"); }],
+        [0, function () { print(t("> initializing exploit framework…"), "cli__hack"); }],
+        [260, function () { print(t("> establishing uplink to {target}…", { target: target }), "cli__hack"); }],
       ];
       [0, 18, 47, 73, 91, 100].forEach(function (percent, index) {
         steps.push([index === 0 ? 320 : 170, function () { drawBar(percent); }]);
       });
-      steps.push([260, function () { print("> firewall breached. dumping memory:", "cli__hack"); }]);
+      steps.push([260, function () { print(t("> firewall breached. dumping memory:"), "cli__hack"); }]);
       steps.push([180, function () { print("  " + hex(), "cli__hack"); }]);
       steps.push([140, function () { print("  " + hex(), "cli__hack"); }]);
-      steps.push([300, function () { print("> cracking root credentials… ✓", "cli__hack"); }]);
+      steps.push([300, function () { print(t("> cracking root credentials… ✓"), "cli__hack"); }]);
       steps.push([360, function () { line(granted); }]);
       steps.push([420, function () { print(payoff); }]);
       steps.push([180, function () { print(hint, "cli__hack"); }]);
@@ -1173,12 +1185,33 @@
       })();
     }
 
+    // `calm` and `start` are functions that return what to say, in the current language.
     function motionEgg(name, run, calm, start) {
       return function () {
-        if (reduced()) return print(name + ": " + calm, "cli__err");
-        print(start);
+        if (reduced()) return print(name + ": " + calm(), "cli__err");
+        print(start());
         run();
       };
+    }
+
+    // A command and what it does, the descriptions lined up in one column.
+    function entry(names, words) {
+      var gap = Math.max(1, 11 - names.replace(/<[^>]+>/g, "").length);
+      line("  " + names + new Array(gap + 1).join(" ") + escapeHtml(words));
+    }
+
+    var LANGUAGE_NAMES = { en: "English", de: "Deutsch", it: "Italiano" };
+
+    function language(args) {
+      var wanted = (args[0] || "").toLowerCase();
+      if (!wanted) {
+        return line(escapeHtml(t("language:")) + " " + key(LANGUAGE_NAMES[eschgi.lang] || LANGUAGE_NAMES.en) + ' <span class="dim">(en · de · it)</span>');
+      }
+      if (!LANGUAGE_NAMES[wanted] || !eschgi.setLanguage) {
+        return print(t("lang: no such language: {language} (try: en, de, it)", { language: args[0] }), "cli__err");
+      }
+      eschgi.setLanguage(wanted);
+      line(escapeHtml(t("language:")) + " " + key(LANGUAGE_NAMES[wanted]));
     }
 
     var history = [];
@@ -1186,20 +1219,21 @@
 
     var COMMANDS = {
       help: function () {
-        print("available commands:");
-        line("  " + key("about") + "      who I am");
-        line("  " + key("work") + "       foodProcess, what I build at work");
-        line("  " + key("building") + "   the self-hosted trading software, in my free time");
-        line("  " + key("share") + "      the app I built with AI, for myself");
-        line("  " + key("projects") + "   all three");
-        line("  " + key("stack") + "      languages & technologies (e.g. stack data)");
-        line("  " + key("ai") + "         how I work with AI");
-        line("  " + key("stats") + "      GitHub numbers");
-        line("  " + key("contact") + "    where to find me");
-        line("  " + key("bugbash") + "    play Bug Bash");
-        line("  " + key("ls") + " · " + key("cat") + "   browse the \"files\"");
+        print(t("available commands:"));
+        entry(key("about"), t("who I am"));
+        entry(key("work"), t("foodProcess, what I build at work"));
+        entry(key("building"), t("the self-hosted trading software, in my free time"));
+        entry(key("share"), t("the app I built with AI, for myself"));
+        entry(key("projects"), t("all three"));
+        entry(key("stack"), t("languages & technologies (e.g. stack data)"));
+        entry(key("ai"), t("how I work with AI"));
+        entry(key("stats"), t("GitHub numbers"));
+        entry(key("contact"), t("where to find me"));
+        entry(key("bugbash"), t("play Bug Bash"));
+        entry(key("lang"), t("the site in English, German or Italian (e.g. lang de)"));
+        entry(key("ls") + " · " + key("cat"), t('browse the "files"'));
         line("  " + key("echo") + " · " + key("date") + " · " + key("history") + " · " + key("clear"));
-        line('  <span class="dim">… and a few that are not listed. Tab completes, ↑/↓ walk the history.</span>');
+        line('  <span class="dim">' + escapeHtml(t("… and a few that are not listed. Tab completes, ↑/↓ walk the history.")) + "</span>");
       },
       about: aboutCommand,
       whoami: aboutCommand,
@@ -1228,10 +1262,11 @@
         print(args.join(" "));
       },
       date: function () {
-        print(new Date().toString());
+        var now = new Date();
+        print(eschgi.lang && eschgi.lang !== "en" ? now.toLocaleString(eschgi.locale, { dateStyle: "full", timeStyle: "long" }) : now.toString());
       },
       history: function () {
-        if (!history.length) return print("no history yet");
+        if (!history.length) return print(t("no history yet"));
         history.forEach(function (entry, index) {
           print(String(index + 1).padStart(4) + "  " + entry);
         });
@@ -1239,81 +1274,94 @@
       clear: function () {
         log.innerHTML = "";
       },
+      lang: language,
       uptime: function () {
-        print("up almost two decades, 1 user, load average: coffee, code, review");
+        print(t("up almost two decades, 1 user, load average: coffee, code, review"));
       },
       coffee: function () {
-        print("☕ brewing… done. Focus +10, bugs −1.");
+        print(t("☕ brewing… done. Focus +10, bugs −1."));
       },
       ping: function () {
         print("pong 🏓");
       },
       hello: function () {
-        print("Hi there! 👋 Type 'help' to look around.");
+        print(t("Hi there! 👋 Type 'help' to look around."));
       },
       hi: function () {
-        print("Hi there! 👋 Type 'help' to look around.");
+        print(t("Hi there! 👋 Type 'help' to look around."));
       },
       vim: function () {
-        print("Opening vim… just kidding — you might never get out. 🙂");
+        print(t("Opening vim… just kidding — you might never get out. 🙂"));
       },
       emacs: function () {
-        print("M-x butterfly 🦋 — careful, in Bug Bash that's a feature.");
+        print(t("M-x butterfly 🦋 — careful, in Bug Bash that's a feature."));
       },
       exit: function () {
-        print("There is no exit. There is only Bug Bash.");
+        print(t("There is no exit. There is only Bug Bash."));
       },
       rm: function (args) {
-        if (args.join(" ").indexOf("-rf") >= 0) return print("rm: refusing to remove '/': this site is read-only (and backed up)", "cli__err");
-        print("rm: missing operand", "cli__err");
+        if (args.join(" ").indexOf("-rf") >= 0) return print(t("rm: refusing to remove '/': this site is read-only (and backed up)"), "cli__err");
+        print(t("rm: missing operand"), "cli__err");
       },
       git: function (args) {
         var sub = args.join(" ");
         if (sub.indexOf("push") === 0 && sub.indexOf("--force") >= 0) {
-          return print("A hook stopped you: force pushes need a human's approval. 🛑", "cli__err");
+          return print(t("A hook stopped you: force pushes need a human's approval. 🛑"), "cli__err");
         }
-        if (sub === "blame") return print("It was me. It's always me.");
-        if (sub === "status") return print("On branch main. Nothing to commit, working tree clean ✨");
+        if (sub === "blame") return print(t("It was me. It's always me."));
+        if (sub === "status") return print(t("On branch main. Nothing to commit, working tree clean ✨"));
         if (sub.indexOf("log") === 0) return print("a1b2c3d fix: the bug that fixed the other bug");
-        print("git: try 'git status', 'git blame', 'git log' or 'git push --force'", "cli__err");
+        print(t("git: try 'git status', 'git blame', 'git log' or 'git push --force'"), "cli__err");
       },
       sudo: function (args) {
-        if (args.join(" ") === "make me a sandwich") return print("Okay. 🥪");
-        print("Permission denied: nice try 😏", "cli__err");
+        if (args.join(" ") === "make me a sandwich") return print(t("Okay. 🥪"));
+        print(t("Permission denied: nice try 😏"), "cli__err");
       },
       snake: function () {
-        print("launching nibbles.exe…");
+        print(t("launching nibbles.exe…"));
         document.dispatchEvent(new CustomEvent("eschgi:snake"));
       },
       crt: function (args) {
         var arg = (args[0] || "").toLowerCase();
         var on = crt.toggle(arg === "on" ? "on" : arg === "off" ? "off" : null);
-        line("crt mode: " + key(on ? "on" : "off"));
+        line(escapeHtml(t("crt mode:")) + " " + key(on ? "on" : "off"));
       },
       matrix: function (args) {
-        if (reduced()) return print("matrix: the rain is off in reduced-motion mode — there is no spoon.", "cli__err");
+        if (reduced()) return print(t("matrix: the rain is off in reduced-motion mode — there is no spoon."), "cli__err");
         var arg = (args[0] || "").toLowerCase();
         var on = matrix.toggle(arg === "on" ? "on" : arg === "off" ? "off" : null);
-        print(on ? "Wake up, Neo… 🐇 follow the white rabbit." : "unplugged.");
-        line("matrix mode: " + key(on ? "on" : "off"));
+        print(on ? t("Wake up, Neo… 🐇 follow the white rabbit.") : t("unplugged."));
+        line(escapeHtml(t("matrix mode:")) + " " + key(on ? "on" : "off"));
       },
       gravity: motionEgg(
         "gravity",
         gravity,
-        "physics is off in reduced-motion mode — everything stays where it belongs.",
-        "Detaching the DOM… mind your head. (Esc or the button rebuilds it)"
+        function () {
+          return t("physics is off in reduced-motion mode — everything stays where it belongs.");
+        },
+        function () {
+          return t("Detaching the DOM… mind your head. (Esc or the button rebuilds it)");
+        }
       ),
       blackhole: motionEgg(
         "blackhole",
         blackhole,
-        "spacetime stays flat in reduced-motion mode.",
-        "Crossing the event horizon… 🕳️ (Esc to escape)"
+        function () {
+          return t("spacetime stays flat in reduced-motion mode.");
+        },
+        function () {
+          return t("Crossing the event horizon… 🕳️ (Esc to escape)");
+        }
       ),
       launch: motionEgg(
         "launch",
         launchRocket,
-        "🚀 liftoff! (the animation is off in reduced-motion mode) — in orbit ✨",
-        "Ignition sequence start… 🚀 (Esc aborts)"
+        function () {
+          return t("🚀 liftoff! (the animation is off in reduced-motion mode) — in orbit ✨");
+        },
+        function () {
+          return t("Ignition sequence start… 🚀 (Esc aborts)");
+        }
       ),
       hack: hack,
     };
@@ -1325,6 +1373,12 @@
     COMMANDS.vi = COMMANDS.vim;
     COMMANDS.nano = COMMANDS.vim;
     COMMANDS.quit = COMMANDS.exit;
+    // For anyone who asks in German or Italian.
+    COMMANDS.hilfe = COMMANDS.help;
+    COMMANDS.aiuto = COMMANDS.help;
+    COMMANDS.language = COMMANDS.lang;
+    COMMANDS.sprache = COMMANDS.lang;
+    COMMANDS.lingua = COMMANDS.lang;
     var NAMES = Object.keys(COMMANDS);
 
     function run(raw) {
@@ -1332,7 +1386,7 @@
       var name = parts.shift().toLowerCase();
       if (!name) return;
       if (Object.prototype.hasOwnProperty.call(COMMANDS, name)) COMMANDS[name](parts);
-      else print("command not found: " + name + " — type 'help'", "cli__err");
+      else print(t("command not found: {name} — type 'help'", { name: name }), "cli__err");
     }
 
     form.addEventListener("submit", function (event) {

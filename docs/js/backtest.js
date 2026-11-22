@@ -14,6 +14,21 @@
   var figure = document.querySelector("[data-backtest]");
   if (!figure) return;
 
+  // The words, in the visitor's language (js/i18n.js), or in English as written here.
+  function t(text, params) {
+    var eschgi = window.eschgi;
+    if (eschgi && eschgi.t) return eschgi.t(text, params);
+    return text.replace(/\{(\w+)\}/g, function (match, name) {
+      return params && params[name] !== undefined ? String(params[name]) : match;
+    });
+  }
+
+  // A number with a fixed count of decimals, written the visitor's way: 1.2, or 1,2 in German.
+  function decimal(value, digits) {
+    var eschgi = window.eschgi;
+    return eschgi && eschgi.formatNumber ? eschgi.formatNumber(value, digits) : value.toFixed(digits);
+  }
+
   var SVG_NS = "http://www.w3.org/2000/svg";
   var BEST_KEY = "eschgi.backtest.best";
   var HISTORY_DAYS = 30;
@@ -54,12 +69,14 @@
   var summary = part("summary");
   if (!plot || !startButton || !buyButton || !sellButton || !nextButton) return;
 
-  var INTRO =
-    "Trade a demo market for 60 days. Make money and beat holding everything and a random control, and your strategy would get money. Each trade costs 0.1 %.";
+  function intro() {
+    return t("Trade a demo market for 60 days. Make money and beat holding everything and a random control, and your strategy would get money. Each trade costs 0.1 %.");
+  }
 
   var marketKey = "crypto";
   var mode = "idle"; // idle (the demo strategy's backtest), running, done
   var run = null;
+  var saying = null; // what the status line says, as a function, so it can be said again in another language
   var holding = false;
   var nextStepAt = 0;
   var frame = 0;
@@ -178,10 +195,11 @@
   }
 
   // ---------------------------------------------------------------- a strategy's run
-  function newRun(data, label) {
+  // `player` is the visitor's own run; the other is the demo strategy's.
+  function newRun(data, player) {
     return {
       data: data,
-      label: label,
+      player: player,
       you: [100],
       day: 0,
       inMarket: false,
@@ -231,7 +249,7 @@
     var best = null;
     for (var attempt = 0; attempt < 60; attempt++) {
       var data = newMarket(marketKey);
-      var demo = newRun(data, "Strategy");
+      var demo = newRun(data, false);
       for (var day = 0; day < PLAY_DAYS; day++) {
         var index = HISTORY_DAYS - 1 + day;
         var rising = average(data, index, FAST_AVERAGE) > average(data, index, SLOW_AVERAGE);
@@ -254,12 +272,12 @@
   // ---------------------------------------------------------------- formatting
   function percent(value) {
     var change = (value / 100 - 1) * 100;
-    if (Math.abs(change) < 0.05) return "0.0 %";
-    return (change > 0 ? "+" : "−") + Math.abs(change).toFixed(1) + " %";
+    if (Math.abs(change) < 0.05) return decimal(0, 1) + " %";
+    return (change > 0 ? "+" : "−") + decimal(Math.abs(change), 1) + " %";
   }
 
   function points(value) {
-    return value.toFixed(1);
+    return decimal(value, 1);
   }
 
   // ---------------------------------------------------------------- the chart
@@ -305,7 +323,7 @@
       marks: el("g", {}, plot),
       dot: el("circle", { class: "backtest__dot", r: 3.2 }, plot),
     };
-    chart.historyLabel.textContent = "history";
+    chart.historyLabel.textContent = t("history");
   }
 
   function slot() {
@@ -417,11 +435,11 @@
   }
 
   function showValues(day) {
-    if (nameText) nameText.textContent = run.label;
+    if (nameText) nameText.textContent = run.player ? t("You") : t("Strategy");
     setValue("you", percent(run.you[day]));
     setValue("hold", percent(run.data.hold[day]));
     setValue("random", percent(run.data.random[day]));
-    if (progressText && mode === "running") progressText.textContent = "Day " + day + " of " + PLAY_DAYS;
+    if (progressText && mode === "running") progressText.textContent = t("Day {day} of {total}", { day: day, total: PLAY_DAYS });
   }
 
   function setValue(name, text) {
@@ -430,24 +448,32 @@
   }
 
   // ---------------------------------------------------------------- playing
+  function showTitle() {
+    if (!titleText) return;
+    titleText.textContent =
+      mode === "idle" ? t("Backtest: a strategy against its opponents") : t("Backtest: you against two opponents");
+  }
+
   function showDemo() {
     run = demoRun();
     if (!chart) buildChart();
     else measure();
-    if (titleText) titleText.textContent = "Backtest: a strategy against its opponents";
+    showTitle();
     draw();
   }
 
   function startRun() {
     stopHolding();
-    run = newRun(newMarket(marketKey), "You");
+    run = newRun(newMarket(marketKey), true);
     mode = "running";
     summary.hidden = true;
-    if (titleText) titleText.textContent = "Backtest: you against two opponents";
+    showTitle();
     measure();
     draw();
     syncControls();
-    say("30 days of history are on the chart. Tap Next day to move on a day, or hold it to let the days run. Buy and sell trade at the latest close.");
+    say(function () {
+      return t("30 days of history are on the chart. Tap Next day to move on a day, or hold it to let the days run. Buy and sell trade at the latest close.");
+    });
   }
 
   function stepOnce() {
@@ -484,7 +510,10 @@
   function buy() {
     if (mode !== "running" || run.inMarket) return;
     enter(run);
-    say("Bought at the close of day " + run.day + ". You're in the market.");
+    var day = run.day;
+    say(function () {
+      return t("Bought at the close of day {day}. You're in the market.", { day: day });
+    });
     syncControls();
     draw();
   }
@@ -492,8 +521,11 @@
   function sell() {
     if (mode !== "running" || !run.inMarket) return;
     exit(run);
+    var day = run.day;
     var trade = (run.you[run.day] / run.entry) * 100;
-    say("Sold at the close of day " + run.day + ": " + percent(trade) + " on that trade, after fees.");
+    say(function () {
+      return t("Sold at the close of day {day}: {change} on that trade, after fees.", { day: day, change: percent(trade) });
+    });
     syncControls();
     draw();
   }
@@ -505,36 +537,61 @@
     var you = run.you[PLAY_DAYS];
     var hold = run.data.hold[PLAY_DAYS];
     var random = run.data.random[PLAY_DAYS];
-    setKpi("you", percent(you));
-    setKpi("hold", percent(hold));
-    setKpi("random", percent(random));
+    showResults();
 
     var beatsHold = you > hold;
     var beatsRandom = you > random;
-    var line;
+    var words;
     if (beatsHold && beatsRandom && you > 100) {
-      line = "You made " + percent(you) + ", beating holding everything and the random control. This strategy would get money.";
       var edge = you - Math.max(hold, random);
       var best = loadBest();
-      if (!best[marketKey] || edge > best[marketKey]) {
+      var record = !best[marketKey] || edge > best[marketKey];
+      if (record) {
         best[marketKey] = edge;
         saveBest(best);
-        line += " A new best: " + points(edge) + " points ahead.";
       }
+      words = function () {
+        var line = t("You made {result}, beating holding everything and the random control. This strategy would get money.", {
+          result: percent(you),
+        });
+        return record ? line + " " + t("A new best: {points} points ahead.", { points: points(edge) }) : line;
+      };
     } else if (beatsHold && beatsRandom) {
-      line = "You beat both opponents but still lost money (" + percent(you) + "). A strategy has to make money too. No money yet.";
+      words = function () {
+        return t("You beat both opponents but still lost money ({result}). A strategy has to make money too. No money yet.", {
+          result: percent(you),
+        });
+      };
     } else if (beatsRandom) {
-      line = "Better than the random control, but holding everything did better. No money yet.";
+      words = function () {
+        return t("Better than the random control, but holding everything did better. No money yet.");
+      };
     } else if (beatsHold) {
-      line = "Better than holding everything, but no better than chance: the random control did as well. No money yet.";
+      words = function () {
+        return t("Better than holding everything, but no better than chance: the random control did as well. No money yet.");
+      };
     } else {
-      line = "Holding everything and the random control both did better. No money yet.";
+      words = function () {
+        return t("Holding everything and the random control both did better. No money yet.");
+      };
     }
-    if (run.trades === 0) line = "No trades, no strategy: holding cash made 0.0 %. No money yet.";
-    say(line);
-    if (progressText) progressText.textContent = run.trades + (run.trades === 1 ? " trade" : " trades") + ", " + PLAY_DAYS + " days";
-    startButton.textContent = "Run another backtest";
+    if (run.trades === 0) {
+      words = function () {
+        return t("No trades, no strategy: holding cash made {result}. No money yet.", { result: percent(100) });
+      };
+    }
+    say(words);
+    showProgress();
+    labelStart();
     syncControls();
+  }
+
+  // The numbers of a finished run, in the summary below the chart.
+  function showResults() {
+    if (mode !== "done") return;
+    setKpi("you", percent(run.you[PLAY_DAYS]));
+    setKpi("hold", percent(run.data.hold[PLAY_DAYS]));
+    setKpi("random", percent(run.data.random[PLAY_DAYS]));
   }
 
   function setKpi(name, value) {
@@ -560,14 +617,29 @@
   }
 
   // ---------------------------------------------------------------- the page around it
-  function say(text) {
+  // `words` is a function that returns the text, so the line can be said again in another language.
+  function say(words) {
+    saying = words;
+    var text = words();
     if (statusText && statusText.textContent !== text) statusText.textContent = text;
   }
 
   function showGoal() {
     if (!progressText) return;
     var best = loadBest()[marketKey];
-    progressText.textContent = best ? "Best: " + points(best) + " points ahead" : "Goal: beat both opponents";
+    progressText.textContent = best ? t("Best: {points} points ahead", { points: points(best) }) : t("Goal: beat both opponents");
+  }
+
+  function showProgress() {
+    if (!progressText) return;
+    if (mode === "running") progressText.textContent = t("Day {day} of {total}", { day: run.day, total: PLAY_DAYS });
+    else if (mode === "done") progressText.textContent = t("{count} trades, {days} days", { count: run.trades, days: PLAY_DAYS });
+    else showGoal();
+  }
+
+  // Before the first run the button starts one; after it, it starts another.
+  function labelStart() {
+    startButton.textContent = mode === "idle" ? t("Start a backtest") : t("Run another backtest");
   }
 
   function syncControls() {
@@ -652,10 +724,22 @@
     window.addEventListener("resize", redrawAtNewSize);
   }
 
+  // Another language: everything the backtest says, said again, without touching the run.
+  document.addEventListener("eschgi:language", function () {
+    showTitle();
+    if (chart) chart.historyLabel.textContent = t("history");
+    if (run) showValues(run.day);
+    showProgress();
+    showResults();
+    labelStart();
+    if (saying) say(saying);
+  });
+
   // With JavaScript, the legend's key for holding everything becomes a candle, as on the chart.
   if (holdKey) holdKey.setAttribute("class", "chart__key chart__key--candle");
-  say(INTRO);
+  say(intro);
   showGoal();
+  labelStart();
   syncControls();
   showDemo();
 })();

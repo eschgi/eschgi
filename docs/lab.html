@@ -4,14 +4,45 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Lab — Stefan Eschgfäller</title>
-  <meta name="description" content="The playful side of eschgi.com: Bug Bash, a game about squashing bugs before they reach production; the languages and tools as a 3D sphere; and a terminal with a few easter eggs." />
+  <meta name="description" content="The playful side of eschgi.com: Bug Bash, a game about squashing bugs before they reach production; the languages and tools as a 3D sphere; and a terminal with a few easter eggs." data-i18n-attr="content" />
   <meta name="theme-color" content="#0c0c0e" />
   <meta name="color-scheme" content="dark" />
   <link rel="canonical" href="https://eschgi.com/lab.html" />
   <link rel="icon" type="image/svg+xml" href="favicon.svg" />
   <link rel="preload" href="assets/fonts/inter-latin-variable.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="stylesheet" href="styles.css" />
-  <script>document.documentElement.classList.add("js");</script>
+  <script>
+    // Before anything is drawn: .js for the styles, and the visitor's language: the one they chose
+    // here before, else the first of their browser's languages the site speaks, else English. A page
+    // that is to be in German or Italian stays hidden until js/i18n.js has put it into that language,
+    // 3 s at most. The same in index.html and lab.html.
+    (function (root) {
+      root.classList.add("js");
+      var wanted = [];
+      try {
+        wanted.push(localStorage.getItem("eschgi.lang"));
+      } catch (error) {
+        // Storage can be unavailable; then the browser's languages decide.
+      }
+      wanted = wanted.concat(navigator.languages || [navigator.language]);
+      var lang = "en";
+      for (var i = 0; i < wanted.length; i++) {
+        var code = String(wanted[i] || "").toLowerCase().split("-")[0];
+        if (code === "en" || code === "de" || code === "it") {
+          lang = code;
+          break;
+        }
+      }
+      root.setAttribute("data-lang", lang);
+      if (lang !== "en") {
+        root.classList.add("i18n-pending");
+        setTimeout(function () {
+          root.classList.remove("i18n-pending");
+        }, 3000);
+      }
+    })(document.documentElement);
+  </script>
+  <script src="js/i18n.js" defer></script>
   <script src="js/site.js" defer></script>
   <script src="js/bugbash.js" defer></script>
   <script src="js/terminal.js" defer></script>
@@ -23,31 +54,36 @@
     <symbol id="i-replay" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 12a8.5 8.5 0 1 0 2.5-6" /><path d="M3.5 3.5V8H8" /></symbol>
   </svg>
 
-  <a href="#main" class="skip-link">Skip to content</a>
+  <a href="#main" class="skip-link" data-i18n>Skip to content</a>
 
   <header class="site-header">
     <div class="wrap site-header__bar">
       <a class="site-name" href="./">Stefan Eschgfäller</a>
-      <nav class="site-nav" aria-label="Main">
-        <a href="./#work">Work</a>
-        <a href="./#how">How I work</a>
-        <a href="./#expertise">Expertise</a>
-        <a href="./#activity">Activity</a>
-        <a href="./#contact">Contact</a>
+      <nav class="site-nav" aria-label="Main" data-i18n-attr="aria-label">
+        <a href="./#work" data-i18n>Work</a>
+        <a href="./#how" data-i18n>How I work</a>
+        <a href="./#expertise" data-i18n>Expertise</a>
+        <a href="./#activity" data-i18n>Activity</a>
+        <a href="./#contact" data-i18n>Contact</a>
         <a href="lab.html" aria-current="page">Lab</a>
       </nav>
+      <div class="lang-switch needs-js" role="group" aria-label="Language" data-i18n-attr="aria-label" data-lang-switch>
+        <button type="button" lang="en" title="English" aria-label="English" aria-pressed="true">EN</button>
+        <button type="button" lang="de" title="Deutsch" aria-label="Deutsch" aria-pressed="false">DE</button>
+        <button type="button" lang="it" title="Italiano" aria-label="Italiano" aria-pressed="false">IT</button>
+      </div>
       <button class="menu-button" type="button" data-nav-toggle aria-expanded="false" aria-controls="mobile-menu">
         <svg aria-hidden="true"><use href="#i-menu" /></svg>
-        <span class="sr-only">Menu</span>
+        <span class="sr-only" data-i18n>Menu</span>
       </button>
     </div>
-    <nav id="mobile-menu" class="mobile-menu" aria-label="Main" data-nav-menu hidden>
+    <nav id="mobile-menu" class="mobile-menu" aria-label="Main" data-i18n-attr="aria-label" data-nav-menu hidden>
       <div class="wrap">
-        <a href="./#work">Work</a>
-        <a href="./#how">How I work</a>
-        <a href="./#expertise">Expertise</a>
-        <a href="./#activity">Activity</a>
-        <a href="./#contact">Contact</a>
+        <a href="./#work" data-i18n>Work</a>
+        <a href="./#how" data-i18n>How I work</a>
+        <a href="./#expertise" data-i18n>Expertise</a>
+        <a href="./#activity" data-i18n>Activity</a>
+        <a href="./#contact" data-i18n>Contact</a>
         <a href="lab.html" aria-current="page">Lab</a>
       </div>
     </nav>
@@ -56,12 +92,12 @@
   <main id="main">
     <section class="wrap lab-intro" aria-labelledby="lab-title">
       <p class="label">Lab</p>
-      <h1 id="lab-title">The playful side.</h1>
-      <p class="lab-intro__lead">A game, a sphere and a terminal: kept off the front page, built with the same care.</p>
-      <nav class="lab-toc" aria-label="On this page">
+      <h1 id="lab-title" data-i18n>The playful side.</h1>
+      <p class="lab-intro__lead" data-i18n>A game, a sphere and a terminal: kept off the front page, built with the same care.</p>
+      <nav class="lab-toc" aria-label="On this page" data-i18n-attr="aria-label">
         <a href="#bugbash"><span>01</span>Bug Bash</a>
-        <a href="#sphere"><span>02</span>Tech sphere</a>
-        <a href="#terminal"><span>03</span>Terminal</a>
+        <a href="#sphere" data-i18n><span>02</span>Tech sphere</a>
+        <a href="#terminal" data-i18n><span>03</span>Terminal</a>
       </nav>
     </section>
 
@@ -70,11 +106,11 @@
       <div class="section-top reveal">
         <div>
           <p class="label">01 · Bug Bash</p>
-          <h2 id="bugbash-title">Squash the bugs before they reach production.</h2>
+          <h2 id="bugbash-title" data-i18n>Squash the bugs before they reach production.</h2>
         </div>
         <div class="section-note">
-          <p>A little game for everyone who has ever deployed on a Friday. Click the bugs crawling through the code, but leave the features alone.</p>
-          <p class="bugbash__best needs-js">Your best: <strong data-bb-best>0</strong></p>
+          <p data-i18n>A little game for everyone who has ever deployed on a Friday. Click the bugs crawling through the code, but leave the features alone.</p>
+          <p class="bugbash__best needs-js"><span data-i18n>Your best:</span> <strong data-bb-best>0</strong></p>
         </div>
       </div>
 
@@ -83,11 +119,11 @@
           <span class="window-dots" aria-hidden="true"><span></span><span></span><span></span></span>
           <span class="window-title">production.ts — Bug Bash</span>
           <div class="game__hud" aria-live="off">
-            <span class="hud-item"><span class="hud-item__label">Score</span><strong data-bb-score>0</strong></span>
+            <span class="hud-item"><span class="hud-item__label" data-i18n>Score</span><strong data-bb-score>0</strong></span>
             <span class="hud-item hud-item--combo" data-bb-combo-wrap><span class="hud-item__label">Combo</span><strong data-bb-combo>×1</strong></span>
-            <span class="hud-item"><span class="hud-item__label">Time</span><strong data-bb-time>45</strong></span>
+            <span class="hud-item"><span class="hud-item__label" data-i18n>Time</span><strong data-bb-time>45</strong></span>
             <span class="hud-item hud-item--sla"><span class="hud-item__label">SLA</span><span class="sla"><span class="sla__fill" data-bb-sla></span></span></span>
-            <span class="hud-item hud-item--tests" data-bb-shield hidden><span class="hud-item__label">Tests</span><strong data-bb-shield-count>2</strong></span>
+            <span class="hud-item hud-item--tests" data-bb-shield hidden><span class="hud-item__label" data-i18n>Tests</span><strong data-bb-shield-count>2</strong></span>
           </div>
         </div>
 
@@ -112,29 +148,29 @@
 <span class="bb-line"></span>
 <span class="bb-line"><span class="tok-kw">const</span> <span class="tok-fn">sleep</span> = (ms: <span class="tok-type">number</span>) =&gt;</span>
 <span class="bb-line">  <span class="tok-kw">new</span> <span class="tok-type">Promise</span>((resolve) =&gt; <span class="tok-fn">setTimeout</span>(resolve, ms));</span></pre>
-          <canvas class="game__canvas" data-bb-canvas tabindex="-1" aria-label="Bug Bash game board"></canvas>
+          <canvas class="game__canvas" data-bb-canvas tabindex="-1" aria-label="Bug Bash game board" data-i18n-attr="aria-label"></canvas>
 
           <div class="game__panel" data-bb-panel>
             <div class="game__panel-inner" data-bb-panel-content>
-              <h3 class="game__panel-title">Ready to debug?</h3>
-              <p class="game__panel-text">45 seconds. Every bug that crawls off the board escapes to production and costs you SLA.</p>
+              <h3 class="game__panel-title" data-i18n>Ready to debug?</h3>
+              <p class="game__panel-text" data-i18n>45 seconds. Every bug that crawls off the board escapes to production and costs you SLA.</p>
               <ul class="bb-legend" data-bb-legend>
-                <li data-kind="bug"><canvas width="44" height="44"></canvas><span><strong>Bug</strong>+10, the classic</span></li>
-                <li data-kind="race"><canvas width="44" height="44"></canvas><span><strong>Race condition</strong>+20, fast, comes in pairs</span></li>
-                <li data-kind="heisen"><canvas width="44" height="44"></canvas><span><strong>Heisenbug</strong>+30, moves when observed</span></li>
-                <li data-kind="leak"><canvas width="44" height="44"></canvas><span><strong>Memory leak</strong>+25, grows, takes 3 hits</span></li>
-                <li data-kind="feature"><canvas width="44" height="44"></canvas><span><strong>Feature</strong>not a bug. Don't squash!</span></li>
+                <li data-kind="bug"><canvas width="44" height="44"></canvas><span data-i18n><strong>Bug</strong>+10, the classic</span></li>
+                <li data-kind="race"><canvas width="44" height="44"></canvas><span data-i18n><strong>Race condition</strong>+20, fast, comes in pairs</span></li>
+                <li data-kind="heisen"><canvas width="44" height="44"></canvas><span data-i18n><strong>Heisenbug</strong>+30, moves when observed</span></li>
+                <li data-kind="leak"><canvas width="44" height="44"></canvas><span data-i18n><strong>Memory leak</strong>+25, grows, takes 3 hits</span></li>
+                <li data-kind="feature"><canvas width="44" height="44"></canvas><span data-i18n><strong>Feature</strong>not a bug. Don't squash!</span></li>
               </ul>
               <ul class="bb-powerups">
-                <li><canvas width="30" height="30" data-power="coffee"></canvas>Coffee<span class="bb-powerups__more"> slows bugs</span></li>
-                <li><canvas width="30" height="30" data-power="ai"></canvas>AI pair<span class="bb-powerups__more"> fixes a few</span></li>
-                <li><canvas width="30" height="30" data-power="tests"></canvas>Tests<span class="bb-powerups__more"> catch escapes</span></li>
+                <li><canvas width="30" height="30" data-power="coffee"></canvas><span data-i18n>Coffee</span><span class="bb-powerups__more" data-i18n>slows bugs</span></li>
+                <li><canvas width="30" height="30" data-power="ai"></canvas><span data-i18n>AI pair</span><span class="bb-powerups__more" data-i18n>fixes a few</span></li>
+                <li><canvas width="30" height="30" data-power="tests"></canvas><span data-i18n>Tests</span><span class="bb-powerups__more" data-i18n>catch escapes</span></li>
               </ul>
               <button class="btn btn--primary btn--lg" type="button" data-bb-start>
                 <svg aria-hidden="true"><use href="#i-play" /></svg>
-                Start debugging
+                <span data-i18n>Start debugging</span>
               </button>
-              <p class="game__hint"><span class="hide-touch">Click to squash · P or Esc pauses</span><span class="show-touch">Tap to squash</span></p>
+              <p class="game__hint"><span class="hide-touch" data-i18n>Click to squash · P or Esc pauses</span><span class="show-touch" data-i18n>Tap to squash</span></p>
             </div>
           </div>
         </div>
@@ -147,13 +183,13 @@
     <section class="wrap section" id="sphere" aria-labelledby="sphere-title">
       <div class="section-top reveal">
         <div>
-          <p class="label">02 · Tech sphere</p>
-          <h2 id="sphere-title">Languages and tools, in three dimensions.</h2>
+          <p class="label" data-i18n>02 · Tech sphere</p>
+          <h2 id="sphere-title" data-i18n>Languages and tools, in three dimensions.</h2>
         </div>
-        <p class="section-note"><span class="hide-touch">Drag the sphere, or point at a group to light it up.</span><span class="show-touch">Drag the sphere to spin it.</span> The same lists, flat and readable, are on the <a href="./#expertise">front page</a>.</p>
+        <p class="section-note"><span class="hide-touch" data-i18n>Drag the sphere, or point at a group to light it up.</span><span class="show-touch" data-i18n>Drag the sphere to spin it.</span> <span data-i18n>The same lists, flat and readable, are on the <a href="./#expertise">front page</a>.</span></p>
       </div>
       <div class="sphere-lab reveal needs-js">
-        <ul class="sphere-legend" data-sphere-legend aria-label="Groups"></ul>
+        <ul class="sphere-legend" data-sphere-legend aria-label="Groups" data-i18n-attr="aria-label"></ul>
         <div class="sphere-wrap" aria-hidden="true">
           <div class="sphere" data-sphere></div>
           <div class="sphere__glow"></div>
@@ -165,10 +201,10 @@
     <section class="wrap section" id="terminal" aria-labelledby="terminal-title">
       <div class="section-top reveal">
         <div>
-          <p class="label">03 · Terminal</p>
-          <h2 id="terminal-title">Prefer the command line?</h2>
+          <p class="label" data-i18n>03 · Terminal</p>
+          <h2 id="terminal-title" data-i18n>Prefer the command line?</h2>
         </div>
-        <p class="section-note">Type <code class="inline-code">help</code> and press Enter. Not every command is in the help; curiosity is rewarded.</p>
+        <p class="section-note" data-i18n>Type <code class="inline-code">help</code> and press Enter. Not every command is in the help; curiosity is rewarded.</p>
       </div>
 
       <div class="code-well cli reveal needs-js" id="cli">
@@ -177,13 +213,13 @@
           <span class="window-title">stefan@eschgi: ~</span>
         </div>
         <div class="cli__body">
-          <div class="cli__log" id="cli-log" role="log" aria-live="polite" aria-label="Command output">
-            <div class="cli__line dim">Welcome to eschgi.com — type <span class="cli__key">help</span> to get started.</div>
+          <div class="cli__log" id="cli-log" role="log" aria-live="polite" aria-label="Command output" data-i18n-attr="aria-label">
+            <div class="cli__line dim" data-i18n>Welcome to eschgi.com — type <span class="cli__key">help</span> to get started.</div>
           </div>
           <form class="cli__form" id="cli-form" autocomplete="off">
             <label class="cli__ps1" for="cli-input"><span class="text-accent">stefan@eschgi</span>:<span class="text-info">~</span>$</label>
             <input id="cli-input" class="cli__input" type="text" name="cmd"
-                   aria-label="Type a command and press Enter"
+                   aria-label="Type a command and press Enter" data-i18n-attr="aria-label"
                    autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" />
           </form>
         </div>
@@ -193,8 +229,8 @@
 
   <footer class="site-footer">
     <div class="wrap site-footer__bar">
-      <span>© <span data-year>2026</span> Stefan Eschgfäller · Hand-built, no trackers</span>
-      <span><a href="./">← Back to eschgi.com</a></span>
+      <span>© <span data-year>2026</span> Stefan Eschgfäller · <span data-i18n>Hand-built, no trackers</span></span>
+      <span><a href="./" data-i18n>← Back to eschgi.com</a></span>
     </div>
   </footer>
 </body>
