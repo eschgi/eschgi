@@ -14,7 +14,7 @@
   <meta property="og:url" content="https://eschgi.com/" />
   <meta property="og:site_name" content="eschgi.com" />
   <meta property="og:title" content="Stefan Eschgfäller — Software Engineer" />
-  <meta property="og:description" content="Reliable software, end to end. Almost two decades of C#, C++ and Python; currently building self-hosted trading software and Share, an open-source photo drop." />
+  <meta property="og:description" content="Reliable software, end to end. Almost two decades of C#, C++ and Python. At work, foodProcess: production software for food packing. In my free time, self-hosted trading software and Share, an open-source photo drop." />
   <meta property="og:image" content="https://eschgi.com/assets/og-cover.png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
@@ -100,7 +100,7 @@
       <dl class="facts reveal">
         <div><dt>of production software</dt><dd>~20 years</dd></div>
         <div><dt>primary languages</dt><dd>C# · C++ · Python</dd></div>
-        <div><dt>self-hosted, built end to end</dt><dd>2 products</dd></div>
+        <div><dt>one at work, two in my free time</dt><dd>3 products</dd></div>
         <div><dt>GitHub contributions, last 12 months</dt><dd data-fact="contributions">2,954</dd></div>
       </dl>
     </div>
@@ -110,14 +110,48 @@
       <div class="section-top reveal">
         <div>
           <p class="label">Selected work</p>
-          <h2 id="work-title">Two products, built end to end.</h2>
+          <h2 id="work-title">At work, and in my free time.</h2>
         </div>
-        <p class="section-note">Self-hosted trading software, kept private, and an open-source app for sharing photos — both built from the database schema to the user interface.</p>
+        <p class="section-note">foodProcess is what I build at work. The self-hosted trading software, kept private, and Share, an open-source app for sharing photos, are my own projects, built in my free time.</p>
       </div>
 
-      <article class="case reveal" aria-labelledby="case-trading" data-cli="trading">
+      <article class="case reveal" aria-labelledby="case-foodprocess" data-cli="foodprocess">
         <div class="case__text">
-          <p class="case__tag"><b>Private project</b> · in development</p>
+          <p class="case__tag"><b>At work</b> · TopControl</p>
+          <h3 id="case-foodprocess">foodProcess</h3>
+          <p>Production software for food packing: orders come from the ERP and go straight to the packing lines, the lines are monitored and controlled in real time, and every batch is recorded from goods receipt to dispatch.</p>
+          <dl class="case__facts">
+            <div><dt>orders sent to the lines</dt><dd>ERP</dd></div>
+            <div><dt>line monitoring and control</dt><dd>Live</dd></div>
+            <div><dt>giveaway, productivity</dt><dd>KPIs</dd></div>
+          </dl>
+          <div class="text-links text-links--small">
+            <a href="https://www.topcontrol.it/product/foodProcess" target="_blank" rel="noopener noreferrer" data-cli-source="product">Product page <span aria-hidden="true">↗</span></a>
+          </div>
+        </div>
+        <figure class="case__visual flow">
+          <div class="flow__head">
+            <span>From order to dispatch</span>
+            <span>Every batch traced</span>
+          </div>
+          <ol class="flow__steps">
+            <li><b>Order</b><span>from the ERP</span></li>
+            <li><b>Goods receipt</b><span>batch recorded</span></li>
+            <li class="is-live"><b>Packing</b><span>lines live</span></li>
+            <li><b>Dispatch</b><span>traced to the batch</span></li>
+          </ol>
+          <div class="flow__lines" aria-hidden="true">
+            <div class="flow__line"><span>Line 1</span><i style="--progress: 72%"></i></div>
+            <div class="flow__line"><span>Line 2</span><i style="--progress: 41%"></i></div>
+            <div class="flow__line"><span>Line 3</span><i style="--progress: 88%"></i></div>
+          </div>
+          <figcaption class="flow__foot"><span>Illustration, not a screenshot: what foodProcess keeps track of.</span></figcaption>
+        </figure>
+      </article>
+
+      <article class="case case--flip reveal" aria-labelledby="case-trading" data-cli="trading">
+        <div class="case__text">
+          <p class="case__tag"><b>In my free time</b> · private, in development</p>
           <h3 id="case-trading">Self-hosted trading software</h3>
           <p>Automated trading agents for crypto, stocks and forex that run on a server of your own — each with its own capital and strategy, and each explaining what it does and why. Strategies are backtested against holding everything and against a random control before they get money.</p>
           <dl class="case__facts">
@@ -148,9 +182,9 @@
         </figure>
       </article>
 
-      <article class="case case--flip reveal" aria-labelledby="case-share" data-cli="share">
+      <article class="case reveal" aria-labelledby="case-share" data-cli="share">
         <div class="case__text">
-          <p class="case__tag"><b>Open source</b> · v0.1.0 · built with AI, for myself</p>
+          <p class="case__tag"><b>In my free time</b> · open source · v0.1.0 · built with AI, for myself</p>
           <h3 id="case-share">Share</h3>
           <p>A self-hosted place where family and friends drop photos, videos and documents: sending with a PIN and no account, folders with their own people, and end-to-end encryption per folder.</p>
           <dl class="case__facts">

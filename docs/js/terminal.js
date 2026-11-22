@@ -961,9 +961,14 @@
         return from(fact, "dd") + " " + from(fact, "dt");
       });
       if (facts.length) print("  > " + facts.join("  ·  "));
-      print(from(card, ".case__stack"), "dim");
+      var stack = from(card, ".case__stack");
+      if (stack) print(stack, "dim");
       var source = card.querySelector("[data-cli-source]");
-      if (source) link("source", source.href);
+      if (source) link(source.getAttribute("data-cli-source") || "source", source.href);
+    }
+
+    function work(doc) {
+      project(doc, "foodprocess");
     }
 
     function building(doc) {
@@ -972,6 +977,15 @@
 
     function share(doc) {
       project(doc, "share");
+    }
+
+    function projects(doc) {
+      // A space, not "", so the separating line keeps its height.
+      work(doc);
+      line(" ");
+      building(doc);
+      line(" ");
+      share(doc);
     }
 
     var GROUP_ALIASES = {
@@ -1059,15 +1073,17 @@
     }
 
     var aboutCommand = withHome(about);
+    var workCommand = withHome(work);
     var buildingCommand = withHome(building);
     var shareCommand = withHome(share);
+    var projectsCommand = withHome(projects);
     var stackCommand = withHome(stack);
     var aiCommand = withHome(ai);
     var contactCommand = withHome(contact);
 
     function ls() {
       line(
-        [key("about.txt"), key("building.md"), key("share.md"), key("stack/"), key("ai.md"), key("contact.txt"), key("production.ts")].join("  ")
+        [key("about.txt"), key("work.md"), key("building.md"), key("share.md"), key("stack/"), key("ai.md"), key("contact.txt"), key("production.ts")].join("  ")
       );
     }
 
@@ -1075,6 +1091,8 @@
       switch ((arg || "").toLowerCase()) {
         case "about.txt":
           return aboutCommand([]);
+        case "work.md":
+          return workCommand([]);
         case "building.md":
           return buildingCommand([]);
         case "stack":
@@ -1170,10 +1188,12 @@
       help: function () {
         print("available commands:");
         line("  " + key("about") + "      who I am");
-        line("  " + key("building") + "   the self-hosted trading software");
+        line("  " + key("work") + "       foodProcess, what I build at work");
+        line("  " + key("building") + "   the self-hosted trading software, in my free time");
+        line("  " + key("share") + "      the app I built with AI, for myself");
+        line("  " + key("projects") + "   all three");
         line("  " + key("stack") + "      languages & technologies (e.g. stack data)");
         line("  " + key("ai") + "         how I work with AI");
-        line("  " + key("share") + "      the app I built with AI, for myself");
         line("  " + key("stats") + "      GitHub numbers");
         line("  " + key("contact") + "    where to find me");
         line("  " + key("bugbash") + "    play Bug Bash");
@@ -1183,8 +1203,12 @@
       },
       about: aboutCommand,
       whoami: aboutCommand,
+      work: workCommand,
+      job: workCommand,
+      foodprocess: workCommand,
       building: buildingCommand,
-      project: buildingCommand,
+      projects: projectsCommand,
+      project: projectsCommand,
       stack: stackCommand,
       skills: stackCommand,
       ai: aiCommand,

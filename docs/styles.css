@@ -643,7 +643,9 @@ h3 {
 }
 
 .chart__head,
-.chart__foot {
+.chart__foot,
+.flow__head,
+.flow__foot {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
@@ -716,6 +718,114 @@ h3 {
   width: 100%;
   height: auto;
   border-radius: 16px;
+}
+
+/* What foodProcess keeps track of: an illustration, never a screenshot of the product.
+   The rail runs down on a phone and across from 640px; the node of the live step is lime. */
+.flow {
+  padding: 1.5rem;
+}
+
+.flow__steps {
+  display: grid;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.flow__steps li {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  padding-left: 1.625rem;
+  line-height: 1.4;
+}
+
+.flow__steps li::before,
+.flow__steps li:not(:last-child)::after {
+  content: "";
+  position: absolute;
+}
+
+/* The node, centred on the first line of text. */
+.flow__steps li::before {
+  z-index: 1;
+  top: 0.3rem;
+  left: 0;
+  width: 0.625rem;
+  height: 0.625rem;
+  border: 1px solid var(--muted);
+  border-radius: 50%;
+  background: var(--surface);
+}
+
+/* The rail, from this node to the next. */
+.flow__steps li:not(:last-child)::after {
+  top: 0.6125rem;
+  left: 0.3125rem;
+  height: calc(100% + 1rem);
+  border-left: 1px solid var(--line-2);
+}
+
+.flow__steps .is-live::before {
+  border-color: var(--accent);
+  background: var(--accent);
+}
+
+.flow__steps b {
+  color: var(--text);
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.flow__steps span {
+  color: var(--muted);
+  font-size: 0.75rem;
+}
+
+.flow__lines {
+  display: grid;
+  gap: 0.625rem;
+  margin: 1.5rem 0 1.25rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--line);
+}
+
+.flow__line {
+  display: grid;
+  grid-template-columns: 3.25rem minmax(0, 1fr);
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--muted);
+  font-size: 0.75rem;
+}
+
+.flow__line i {
+  height: 4px;
+  border-radius: 2px;
+  background: linear-gradient(#5b5b63, #5b5b63) 0 0 / var(--progress, 50%) 100% no-repeat, var(--line);
+}
+
+@media (min-width: 640px) {
+  .flow__steps {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .flow__steps li {
+    padding: 1.375rem 0 0;
+  }
+
+  .flow__steps li::before {
+    top: 0;
+  }
+
+  .flow__steps li:not(:last-child)::after {
+    top: 0.3125rem;
+    width: calc(100% + 1rem);
+    height: 0;
+    border-top: 1px solid var(--line-2);
+    border-left: 0;
+  }
 }
 
 /* ---------------------------------------------------------- how I work */
