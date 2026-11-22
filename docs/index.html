@@ -4,36 +4,30 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Stefan Eschgfäller — Software Engineer</title>
-  <meta name="description" content="Stefan Eschgfäller — software engineer with almost two decades of experience in C#, C++ and Python, ASP.NET Core, gRPC, PostgreSQL and Qt. Currently building self-hosted trading software, with AI coding agents at his side." />
+  <meta name="description" content="Stefan Eschgfäller, software engineer. Reliable software, end to end: backends on ASP.NET Core and PostgreSQL, and the desktop, web and mobile applications that use them — almost two decades of C#, C++ and Python." />
   <meta name="author" content="Stefan Eschgfäller" />
   <meta name="theme-color" content="#0c0c0e" />
   <meta name="color-scheme" content="dark" />
   <link rel="canonical" href="https://eschgi.com/" />
 
-  <!-- Open Graph / Twitter -->
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://eschgi.com/" />
   <meta property="og:site_name" content="eschgi.com" />
   <meta property="og:title" content="Stefan Eschgfäller — Software Engineer" />
-  <meta property="og:description" content="Almost two decades of C#, C++ and Python — backends, desktop, web and mobile. Currently building self-hosted trading software, with AI at my side." />
+  <meta property="og:description" content="Reliable software, end to end. Almost two decades of C#, C++ and Python; currently building self-hosted trading software and Share, an open-source photo drop." />
   <meta property="og:image" content="https://eschgi.com/assets/og-cover.png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Stefan Eschgfäller — Software Engineer" />
-  <meta name="twitter:description" content="Almost two decades of C#, C++ and Python. Currently building self-hosted trading software." />
+  <meta name="twitter:description" content="Reliable software, end to end. Almost two decades of C#, C++ and Python." />
   <meta name="twitter:image" content="https://eschgi.com/assets/og-cover.png" />
 
   <link rel="icon" type="image/svg+xml" href="favicon.svg" />
   <link rel="preload" href="assets/fonts/inter-latin-variable.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="stylesheet" href="styles.css" />
-
-  <!-- Marks the page as JS-capable before first paint: `.reveal` and the game only hide or
-       wait under `.js`, so a blocked or failed script still leaves a fully readable page. -->
   <script>document.documentElement.classList.add("js");</script>
   <script src="js/site.js" defer></script>
-  <script src="js/bugbash.js" defer></script>
-  <script src="js/terminal.js" defer></script>
 
   <script type="application/ld+json">
     {
@@ -47,757 +41,231 @@
     }
   </script>
 </head>
-<body>
-  <!-- Icon sprite: defined once, referenced with <use href="#i-…">. Line glyphs in the spirit of Lucide. -->
+<body data-page="home">
   <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="display: none">
-    <symbol id="i-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6" /></symbol>
-    <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5" /></symbol>
-    <symbol id="i-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16" /></symbol>
-    <symbol id="i-github" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48l-.01-1.7c-2.78.6-3.37-1.34-3.37-1.34-.45-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.61.07-.61 1 .07 1.53 1.03 1.53 1.03.89 1.53 2.34 1.09 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.56-1.11-4.56-4.95 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.64 0 0 .84-.27 2.75 1.02a9.5 9.5 0 0 1 5 0c1.91-1.29 2.75-1.02 2.75-1.02.55 1.37.2 2.39.1 2.64.64.7 1.03 1.59 1.03 2.68 0 3.85-2.34 4.7-4.57 4.95.36.31.68.92.68 1.85l-.01 2.75c0 .26.18.58.69.48A10 10 0 0 0 12 2Z" /></symbol>
-    <symbol id="i-linkedin" viewBox="0 0 24 24" fill="currentColor"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28ZM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13ZM7.12 20.45H3.56V9h3.56v11.45ZM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0Z" /></symbol>
-    <symbol id="i-server" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="7" rx="2" /><rect x="3" y="13" width="18" height="7" rx="2" /><path d="M7 7.5h.01M7 16.5h.01M11 7.5h6M11 16.5h6" /></symbol>
-    <symbol id="i-monitor" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="3.5" width="19" height="13" rx="2" /><path d="M8 21h8M12 16.5V21" /></symbol>
-    <symbol id="i-phone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2.5" width="12" height="19" rx="2.5" /><path d="M11 18h2" /></symbol>
-    <symbol id="i-globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9" /><path d="M3.2 9.5h17.6M3.2 14.5h17.6" /><path d="M12 3c2.4 2.5 3.6 5.5 3.6 9s-1.2 6.5-3.6 9c-2.4-2.5-3.6-5.5-3.6-9S9.6 5.5 12 3Z" /></symbol>
-    <symbol id="i-database" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="6" rx="7.5" ry="3" /><path d="M4.5 6v12c0 1.7 3.4 3 7.5 3s7.5-1.3 7.5-3V6" /><path d="M4.5 12c0 1.7 3.4 3 7.5 3s7.5-1.3 7.5-3" /></symbol>
-    <symbol id="i-bot" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="8" width="16" height="12" rx="2.5" /><path d="M12 4v4" /><circle cx="9.2" cy="14" r="1.1" /><circle cx="14.8" cy="14" r="1.1" /></symbol>
-    <symbol id="i-plug" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3v5.5M15 3v5.5" /><path d="M6 8.5h12v3.2a6 6 0 0 1-12 0z" /><path d="M12 17.7V21" /></symbol>
-    <symbol id="i-flask" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 3v6.2L4.8 18a2 2 0 0 0 1.8 3h10.8a2 2 0 0 0 1.8-3l-4.7-8.8V3" /><path d="M8 3h8M7.6 14.5h8.8" /></symbol>
-    <symbol id="i-code" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m8 16-4-4 4-4M16 8l4 4-4 4M13.6 5 10.4 19" /></symbol>
-    <symbol id="i-shield" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 4.5 6v6c0 4.2 3.1 7.6 7.5 9 4.4-1.4 7.5-4.8 7.5-9V6z" /><path d="m9 12 2.2 2.2L15.4 10" /></symbol>
-    <symbol id="i-sparkle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.2 13.9 9l5.8 1.9-5.8 1.9L12 18.6l-1.9-5.8L4.3 10.9 10.1 9z" /><path d="M18.5 3v3M20 4.5h-3" /></symbol>
-    <symbol id="i-pulse" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h3.5l2.2-6 4.4 12 2.3-6H21" /></symbol>
-    <symbol id="i-layers" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 8.5 4.5L12 12 3.5 7.5z" /><path d="m3.5 12.2 8.5 4.5 8.5-4.5" /><path d="m3.5 16.7 8.5 4.5 8.5-4.5" /></symbol>
-    <symbol id="i-book" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5V5a2 2 0 0 1 2-2h13v15H6a2 2 0 0 0-2 2Z" /><path d="M6 21h13v-3M8.5 7.5h7" /></symbol>
-    <symbol id="i-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 12S6 5 12 5s9.5 7 9.5 7-3.5 7-9.5 7-9.5-7-9.5-7Z" /><circle cx="12" cy="12" r="2.8" /></symbol>
-    <symbol id="i-terminal" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 8 4 4-4 4M12 17h7" /></symbol>
-    <symbol id="i-bug" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="7.5" y="7" width="9" height="13" rx="4.5" /><path d="M9.5 7.2a2.5 2.5 0 0 1 5 0M12 11v9M7.5 12H3.5M20.5 12h-4M7.8 16.5l-3.3 2M16.2 16.5l3.3 2M7.8 9.2 4.5 7M16.2 9.2 19.5 7" /></symbol>
-    <symbol id="i-git" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="2.5" /><circle cx="6" cy="18" r="2.5" /><circle cx="18" cy="9" r="2.5" /><path d="M6 8.5v7M18 11.5c0 3-2.5 4-6 4H8.5" /></symbol>
-    <symbol id="i-play" viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.8v14.4a1 1 0 0 0 1.5.86l11.4-7.2a1 1 0 0 0 0-1.72L8.5 3.94A1 1 0 0 0 7 4.8Z" /></symbol>
-    <symbol id="i-images" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="3" width="14" height="14" rx="2.5" /><path d="M3.5 7v11a2.5 2.5 0 0 0 2.5 2.5h11" /><circle cx="12" cy="8" r="1.6" /><path d="m21 13.5-3.2-3.2-6.6 6.6" /></symbol>
-    <symbol id="i-package" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.8 20.5 7.5v9L12 21.2 3.5 16.5v-9z" /><path d="M3.8 7.6 12 12.2l8.2-4.6M12 12.2v9" /></symbol>
-    <symbol id="i-replay" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 12a8.5 8.5 0 1 0 2.5-6" /><path d="M3.5 3.5V8H8" /></symbol>
+    <symbol id="i-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16" /></symbol>
   </svg>
 
   <a href="#main" class="skip-link">Skip to content</a>
 
-  <!-- ===================================================================== NAV -->
-  <header class="nav" data-nav>
-    <nav class="container nav__bar" aria-label="Main">
-      <a href="#top" class="nav__brand" aria-label="Stefan Eschgfäller — home">
-        <svg class="brand-mark" viewBox="0 0 64 64" aria-hidden="true">
-          <rect width="64" height="64" rx="14" fill="#1f1f24" />
-          <rect x="1.5" y="1.5" width="61" height="61" rx="12.5" fill="none" stroke="#323238" stroke-width="3" />
-          <path d="M16 22 L28 32 L16 42" fill="none" stroke="#a3e635" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" />
-          <line x1="33" y1="44" x2="49" y2="44" stroke="#38bdf8" stroke-width="5.5" stroke-linecap="round" class="brand-mark__cursor" />
-        </svg>
-        <span class="nav__name">Stefan Eschgfäller</span>
-      </a>
-
-      <div class="nav__links" data-navlinks>
-        <a href="#about">About</a>
-        <a href="#building">Building</a>
-        <a href="#stack">Stack</a>
-        <a href="#ai">AI</a>
+  <header class="site-header">
+    <div class="wrap site-header__bar">
+      <a class="site-name" href="#top">Stefan Eschgfäller</a>
+      <nav class="site-nav" aria-label="Main" data-navlinks>
+        <a href="#work">Work</a>
+        <a href="#how">How I work</a>
+        <a href="#expertise">Expertise</a>
         <a href="#activity">Activity</a>
-        <a href="#bugbash">Bug Bash</a>
-        <a href="#terminal">Terminal</a>
-      </div>
-
-      <div class="nav__actions">
-        <a class="icon-btn" href="https://github.com/eschgi" target="_blank" rel="noopener noreferrer" aria-label="GitHub (opens in a new tab)">
-          <svg aria-hidden="true"><use href="#i-github" /></svg>
-        </a>
-        <a class="icon-btn" href="https://www.linkedin.com/in/stefaneschgfaeller" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn (opens in a new tab)">
-          <svg aria-hidden="true"><use href="#i-linkedin" /></svg>
-        </a>
-        <button class="icon-btn nav__toggle" type="button" data-nav-toggle aria-expanded="false" aria-controls="mobile-menu" aria-label="Toggle menu">
-          <svg aria-hidden="true"><use href="#i-menu" /></svg>
-        </button>
+        <a href="#contact">Contact</a>
+      </nav>
+      <button class="menu-button" type="button" data-nav-toggle aria-expanded="false" aria-controls="mobile-menu">
+        <svg aria-hidden="true"><use href="#i-menu" /></svg>
+        <span class="sr-only">Menu</span>
+      </button>
+    </div>
+    <nav id="mobile-menu" class="mobile-menu" aria-label="Main" data-nav-menu hidden>
+      <div class="wrap">
+        <a href="#work">Work</a>
+        <a href="#how">How I work</a>
+        <a href="#expertise">Expertise</a>
+        <a href="#activity">Activity</a>
+        <a href="#contact">Contact</a>
       </div>
     </nav>
-
-    <div id="mobile-menu" class="nav__menu" data-nav-menu hidden>
-      <div class="container nav__menu-inner">
-        <a href="#about">About</a>
-        <a href="#building">Building</a>
-        <a href="#stack">Stack</a>
-        <a href="#ai">AI</a>
-        <a href="#activity">Activity</a>
-        <a href="#bugbash">Bug Bash</a>
-        <a href="#terminal">Terminal</a>
-      </div>
-    </div>
   </header>
 
   <main id="main">
-    <!-- ===================================================================== HERO -->
-    <section class="hero" id="top" aria-labelledby="hero-title">
-      <div class="container-wide hero__grid">
-        <div class="hero__copy reveal">
-          <div class="hero__person">
-            <img class="hero__avatar" src="assets/avatar.jpg" width="64" height="64" alt="Portrait of Stefan Eschgfäller" />
-            <div>
-              <p class="hero__hello">Hi, I'm <strong>Stefan Eschgfäller</strong></p>
-              <p class="hero__role">Software engineer · almost two decades in production code</p>
-            </div>
-          </div>
-
-          <h1 class="hero__title" id="hero-title">
-            Building reliable software,
-            <span class="text-accent">from database to device.</span>
-          </h1>
-
-          <p class="hero__lead">
-            I design and build software in C#, C++ and Python — backends on ASP.NET Core, gRPC and
-            PostgreSQL, desktop applications with Qt, and the web and mobile clients on top of them.
-            These days AI coding agents work at my side; the architecture and the review stay with me.
-          </p>
-
-          <div class="hero__actions">
-            <a href="#building" class="btn btn--primary btn--lg">
-              See what I'm building
-              <svg aria-hidden="true"><use href="#i-arrow" /></svg>
-            </a>
-            <a href="https://github.com/eschgi" target="_blank" rel="noopener noreferrer" class="btn btn--ghost btn--lg">
-              <svg aria-hidden="true"><use href="#i-github" /></svg>
-              GitHub
-            </a>
-          </div>
-
-          <ul class="check-list hero__checks">
-            <li><svg aria-hidden="true"><use href="#i-check" /></svg>Backend · desktop · web · mobile</li>
-            <li><svg aria-hidden="true"><use href="#i-check" /></svg>Clean architecture, honest tests</li>
-            <li><svg aria-hidden="true"><use href="#i-check" /></svg>AI-assisted, human-reviewed</li>
-          </ul>
-        </div>
-
-        <div class="hero__visual reveal">
-          <!-- Decorative: it retells the lead in C#, so screen readers skip it. -->
-          <div class="code-card" aria-hidden="true">
-            <div class="window-bar">
-              <span class="window-dots" aria-hidden="true"><span></span><span></span><span></span></span>
-              <span class="window-title">engineer.cs</span>
-              <span class="window-tag">C#</span>
-            </div>
-            <pre class="code-card__code" data-typed><code><span class="tok-dim">// engineer.cs</span>
-<span class="tok-kw">var</span> stefan = <span class="tok-kw">new</span> <span class="tok-type">Engineer</span>(<span class="tok-str">"Stefan Eschgfäller"</span>)
-{
-    Experience = <span class="tok-str">"almost two decades"</span>,
-    Languages  = [<span class="tok-str">"C#"</span>, <span class="tok-str">"C++"</span>, <span class="tok-str">"Python"</span>, <span class="tok-str">"TypeScript"</span>],
-    Stack      = [<span class="tok-str">"ASP.NET Core"</span>, <span class="tok-str">"gRPC"</span>, <span class="tok-str">"PostgreSQL"</span>, <span class="tok-str">"Qt"</span>],
-    Building   = <span class="tok-str">"self-hosted trading software"</span>,
-    PairedWith = <span class="tok-type">AI</span>.CodingAgents, <span class="tok-dim">// diffs reviewed by me</span>
-};
-
-<span class="tok-kw">await</span> stefan.<span class="tok-fn">ShipAsync</span>();</code></pre>
-            <p class="code-card__output" data-typed-output>
-              <span class="text-positive">✓</span> Build succeeded <span class="dim">·</span> 0 warnings <span class="dim">·</span> 0 errors
-            </p>
-            <div class="code-card__status" aria-hidden="true">
-              <span><svg><use href="#i-git" /></svg>main</span>
-              <span class="text-positive">✓ 0 problems</span>
-              <span class="hide-sm">UTF-8 with BOM</span>
-              <span class="hide-sm">C#</span>
-            </div>
-          </div>
-
-          <a class="hero-badge hero-badge--building" href="#building">
-            <span class="live-dot" aria-hidden="true"></span>
-            <span>
-              <span class="hero-badge__label">Now building</span>
-              <span class="hero-badge__value">Self-hosted trading software</span>
-            </span>
-            <svg aria-hidden="true"><use href="#i-arrow" /></svg>
-          </a>
-
-          <a class="hero-badge hero-badge--stats" href="#activity" data-hero-stat hidden>
-            <span class="hero-badge__icon" aria-hidden="true"><svg><use href="#i-git" /></svg></span>
-            <span>
-              <span class="hero-badge__value" data-hero-contributions>0</span>
-              <span class="hero-badge__label">contributions in the last year</span>
-            </span>
-          </a>
+    <section class="wrap hero" id="top" aria-labelledby="hero-title">
+      <div class="hero__text reveal">
+        <p class="label">Software engineer · almost two decades of C#, C++ and Python</p>
+        <h1 id="hero-title" data-cli="headline">Reliable software,<br /> end to end.</h1>
+        <p class="hero__lead" data-cli="intro">
+          Backends on ASP.NET Core and PostgreSQL, and the applications that use them: desktop with Qt,
+          web with React, mobile with Flutter. I work with AI coding agents; the architecture and the
+          review stay with me.
+        </p>
+        <div class="text-links">
+          <a href="#work">Selected work <span aria-hidden="true">↓</span></a>
+          <a href="https://github.com/eschgi" target="_blank" rel="noopener noreferrer">GitHub <span aria-hidden="true">↗</span></a>
+          <a href="https://www.linkedin.com/in/stefaneschgfaeller" target="_blank" rel="noopener noreferrer">LinkedIn <span aria-hidden="true">↗</span></a>
         </div>
       </div>
+      <figure class="portrait reveal">
+        <img src="assets/avatar.jpg" width="460" height="460" alt="Portrait of Stefan Eschgfäller" />
+        <figcaption><span>Stefan Eschgfäller</span><span>eschgi.com</span></figcaption>
+      </figure>
     </section>
 
-    <!-- ===================================================================== ABOUT -->
-    <section class="band" id="about" aria-labelledby="about-title">
-      <div class="container section">
-        <div class="section-head section-head--center reveal">
-          <span class="eyebrow">About</span>
-          <h2 class="section-title" id="about-title">Engineering across the whole stack</h2>
-          <p class="section-lead">
-            I enjoy the whole life of a piece of software: the first sketch of its architecture, the
-            schema and its migrations, the API, the client people actually touch — and the deployment
-            that keeps it running. I care about clear boundaries, honest tests and code that still reads
-            well a year later.
-          </p>
-        </div>
+    <div class="wrap">
+      <dl class="facts reveal">
+        <div><dt>of production software</dt><dd>~20 years</dd></div>
+        <div><dt>primary languages</dt><dd>C# · C++ · Python</dd></div>
+        <div><dt>self-hosted, built end to end</dt><dd>2 products</dd></div>
+        <div><dt>GitHub contributions, last 12 months</dt><dd data-fact="contributions">2,954</dd></div>
+      </dl>
+    </div>
 
-        <div class="grid grid--4">
-          <article class="card card--hover reveal">
-            <span class="icon-tile icon-tile--accent"><svg aria-hidden="true"><use href="#i-server" /></svg></span>
-            <h3 class="card__title">Backend &amp; APIs</h3>
-            <p class="card__text">Services on ASP.NET Core with REST and gRPC, Entity Framework Core and PostgreSQL — observable, versioned and easy to change.</p>
-            <ul class="chips chips--sm"><li>ASP.NET Core</li><li>gRPC</li><li>EF Core</li></ul>
-          </article>
-          <article class="card card--hover reveal">
-            <span class="icon-tile icon-tile--info"><svg aria-hidden="true"><use href="#i-monitor" /></svg></span>
-            <h3 class="card__title">Desktop &amp; native</h3>
-            <p class="card__text">Responsive desktop software in C++ with Qt, and in C# and Delphi, from first prototype to long-lived product.</p>
-            <ul class="chips chips--sm"><li>C++</li><li>Qt</li><li>Delphi</li></ul>
-          </article>
-          <article class="card card--hover reveal">
-            <span class="icon-tile icon-tile--warning"><svg aria-hidden="true"><use href="#i-phone" /></svg></span>
-            <h3 class="card__title">Web &amp; mobile</h3>
-            <p class="card__text">The clients on top: React and TypeScript in the browser, Flutter on Android and Tauri in the Windows tray.</p>
-            <ul class="chips chips--sm"><li>React</li><li>Flutter</li><li>Tauri</li></ul>
-          </article>
-          <article class="card card--hover reveal">
-            <span class="icon-tile icon-tile--positive"><svg aria-hidden="true"><use href="#i-database" /></svg></span>
-            <h3 class="card__title">Data &amp; operations</h3>
-            <p class="card__text">Schemas and migrations on PostgreSQL, Firebird, MySQL and DuckDB — shipped in Docker, watched through OpenTelemetry.</p>
-            <ul class="chips chips--sm"><li>PostgreSQL</li><li>Docker</li><li>OTel</li></ul>
-          </article>
+    <!-- ===================================================================== WORK -->
+    <section class="wrap section" id="work" aria-labelledby="work-title">
+      <div class="section-top reveal">
+        <div>
+          <p class="label">Selected work</p>
+          <h2 id="work-title">Two products, built end to end.</h2>
         </div>
-
-        <div class="card principles reveal">
-          <ul class="principles__list">
-            <li>
-              <svg aria-hidden="true"><use href="#i-book" /></svg>
-              <span><strong>Readable first</strong>Code is read far more often than it is written — names and structure come before cleverness.</span>
-            </li>
-            <li>
-              <svg aria-hidden="true"><use href="#i-check" /></svg>
-              <span><strong>Tests define done</strong>A change is finished when it builds without warnings and its tests pass.</span>
-            </li>
-            <li>
-              <svg aria-hidden="true"><use href="#i-pulse" /></svg>
-              <span><strong>Measure, then optimize</strong>Profiles, traces and metrics beat guesses about where time goes.</span>
-            </li>
-            <li>
-              <svg aria-hidden="true"><use href="#i-sparkle" /></svg>
-              <span><strong>Automate the toil</strong>CI, analyzers and AI agents take the repetitive work; people take the decisions.</span>
-            </li>
-          </ul>
-        </div>
+        <p class="section-note">Self-hosted trading software, kept private, and an open-source app for sharing photos — both built from the database schema to the user interface.</p>
       </div>
-    </section>
 
-    <!-- ===================================================================== BUILDING -->
-    <section id="building" aria-labelledby="building-title">
-      <div class="container section">
-        <div class="section-head reveal">
-          <span class="eyebrow"><span class="live-dot live-dot--sm" aria-hidden="true"></span>Private project</span>
-          <h2 class="section-title" id="building-title">
-            Self-hosted trading software, <span class="text-accent">built end to end.</span>
-          </h2>
-          <p class="section-lead">
-            In my private project I build a modular trading platform that runs entirely on a server of
-            your own. Automated trading agents trade crypto, stocks and forex — each with its own capital
-            and trading strategy, and each saying what it does and why.
-          </p>
+      <article class="case reveal" aria-labelledby="case-trading" data-cli="trading">
+        <div class="case__text">
+          <p class="case__tag"><b>Private project</b> · in development</p>
+          <h3 id="case-trading">Self-hosted trading software</h3>
+          <p>Automated trading agents for crypto, stocks and forex that run on a server of your own — each with its own capital and strategy, and each explaining what it does and why. Strategies are backtested against holding everything and against a random control before they get money.</p>
+          <dl class="case__facts">
+            <div><dt>connectors</dt><dd>14</dd></div>
+            <div><dt>client apps</dt><dd>3</dd></div>
+            <div><dt>plugin SDKs</dt><dd>3</dd></div>
+          </dl>
+          <p class="case__stack"><b>Built with</b> .NET 11 · ASP.NET Core · PostgreSQL · gRPC · React · Flutter · Tauri</p>
         </div>
+        <figure class="case__visual chart">
+          <div class="chart__head">
+            <span>Backtest: a strategy against its opponents</span>
+            <span class="chart__legend" aria-hidden="true">
+              <span><i class="chart__key chart__key--strategy"></i>Strategy</span>
+              <span><i class="chart__key chart__key--hold"></i>Hold everything</span>
+              <span><i class="chart__key chart__key--random"></i>Random control</span>
+            </span>
+          </div>
+          <svg class="chart__plot" viewBox="0 0 600 260" preserveAspectRatio="none" aria-hidden="true">
+            <defs><linearGradient id="chart-fill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a3e635" stop-opacity="0.18" /><stop offset="1" stop-color="#a3e635" stop-opacity="0" /></linearGradient></defs>
+            <path d="M0 65H600M0 130H600M0 195H600" stroke="#1f1f24" stroke-width="1" />
+            <path d="M0.0 230.3 L5.5 228.9 L11.0 226.3 L16.5 226.5 L22.0 228.3 L27.5 227.7 L33.0 226.1 L38.5 223.3 L44.0 224.9 L49.5 226.6 L55.0 224.6 L60.6 222.9 L66.1 219.2 L71.6 216.4 L77.1 215.9 L82.6 215.6 L88.1 209.5 L93.6 209.3 L99.1 210.2 L104.6 211.8 L110.1 210.8 L115.6 209.6 L121.1 209.5 L126.6 208.8 L132.1 207.4 L137.6 205.0 L143.1 201.7 L148.6 200.4 L154.1 203.6 L159.6 201.1 L165.1 203.5 L170.6 203.0 L176.1 205.5 L181.7 204.6 L187.2 205.5 L192.7 204.2 L198.2 195.9 L203.7 195.1 L209.2 192.1 L214.7 194.4 L220.2 194.2 L225.7 191.7 L231.2 190.9 L236.7 189.1 L242.2 187.9 L247.7 189.4 L253.2 187.1 L258.7 188.1 L264.2 182.5 L269.7 182.8 L275.2 180.0 L280.7 179.0 L286.2 175.4 L291.7 176.0 L297.2 172.3 L302.8 171.6 L308.3 167.0 L313.8 164.1 L319.3 162.6 L324.8 163.7 L330.3 160.4 L335.8 157.9 L341.3 151.8 L346.8 151.8 L352.3 148.9 L357.8 146.1 L363.3 144.0 L368.8 142.1 L374.3 140.2 L379.8 140.9 L385.3 143.0 L390.8 143.0 L396.3 139.8 L401.8 133.6 L407.3 129.0 L412.8 124.1 L418.3 120.0 L423.9 116.1 L429.4 114.0 L434.9 109.7 L440.4 101.6 L445.9 101.4 L451.4 102.5 L456.9 93.5 L462.4 90.9 L467.9 85.4 L473.4 80.2 L478.9 83.4 L484.4 71.6 L489.9 62.1 L495.4 59.6 L500.9 54.4 L506.4 52.0 L511.9 54.3 L517.4 53.1 L522.9 49.5 L528.4 42.4 L533.9 37.1 L539.4 34.9 L545.0 26.3 L550.5 28.2 L556.0 22.2 L561.5 14.5 L567.0 14.0 L572.5 21.4 L578.0 24.1 L583.5 20.9 L589.0 16.2 L594.5 6.0 L600.0 9.3 L600 260 L0 260 Z" fill="url(#chart-fill)" />
+            <path d="M0.0 222.9 L5.5 225.5 L11.0 224.3 L16.5 224.7 L22.0 226.6 L27.5 227.8 L33.0 228.8 L38.5 228.7 L44.0 227.4 L49.5 224.5 L55.0 223.6 L60.6 220.4 L66.1 218.9 L71.6 218.4 L77.1 218.8 L82.6 221.2 L88.1 225.3 L93.6 225.3 L99.1 225.5 L104.6 224.5 L110.1 223.4 L115.6 226.5 L121.1 228.2 L126.6 230.8 L132.1 228.2 L137.6 228.3 L143.1 227.8 L148.6 230.0 L154.1 233.0 L159.6 234.2 L165.1 234.3 L170.6 233.1 L176.1 236.6 L181.7 235.7 L187.2 237.6 L192.7 238.7 L198.2 239.3 L203.7 240.1 L209.2 239.0 L214.7 236.8 L220.2 235.9 L225.7 237.0 L231.2 235.9 L236.7 234.9 L242.2 232.7 L247.7 231.9 L253.2 235.7 L258.7 237.4 L264.2 238.2 L269.7 235.9 L275.2 236.1 L280.7 233.8 L286.2 233.0 L291.7 235.7 L297.2 235.5 L302.8 234.0 L308.3 232.9 L313.8 236.4 L319.3 235.2 L324.8 236.5 L330.3 241.3 L335.8 242.4 L341.3 246.7 L346.8 249.2 L352.3 246.1 L357.8 240.8 L363.3 238.3 L368.8 237.1 L374.3 232.6 L379.8 231.6 L385.3 233.9 L390.8 239.6 L396.3 237.4 L401.8 242.5 L407.3 248.7 L412.8 250.0 L418.3 249.7 L423.9 251.4 L429.4 249.1 L434.9 249.2 L440.4 248.6 L445.9 247.6 L451.4 248.7 L456.9 248.1 L462.4 243.1 L467.9 245.0 L473.4 244.5 L478.9 243.3 L484.4 244.3 L489.9 244.3 L495.4 247.9 L500.9 248.7 L506.4 248.4 L511.9 246.0 L517.4 243.8 L522.9 244.9 L528.4 247.2 L533.9 243.1 L539.4 241.0 L545.0 245.1 L550.5 245.7 L556.0 247.5 L561.5 248.7 L567.0 252.1 L572.5 252.8 L578.0 253.7 L583.5 254.0 L589.0 251.8 L594.5 251.2 L600.0 253.5" fill="none" stroke="#5b5b63" stroke-width="1.6" stroke-dasharray="1 4" stroke-linecap="round" vector-effect="non-scaling-stroke" />
+            <path d="M0.0 232.1 L5.5 235.3 L11.0 232.8 L16.5 239.5 L22.0 239.6 L27.5 245.8 L33.0 242.4 L38.5 241.4 L44.0 237.1 L49.5 238.2 L55.0 236.6 L60.6 237.1 L66.1 238.9 L71.6 238.1 L77.1 241.4 L82.6 242.0 L88.1 239.6 L93.6 239.1 L99.1 239.9 L104.6 233.1 L110.1 232.5 L115.6 233.9 L121.1 233.0 L126.6 234.2 L132.1 235.0 L137.6 235.6 L143.1 229.0 L148.6 228.5 L154.1 227.5 L159.6 224.9 L165.1 217.7 L170.6 218.0 L176.1 219.7 L181.7 210.6 L187.2 215.6 L192.7 216.4 L198.2 213.5 L203.7 204.7 L209.2 207.8 L214.7 216.6 L220.2 213.8 L225.7 215.2 L231.2 216.1 L236.7 213.9 L242.2 212.6 L247.7 211.0 L253.2 212.1 L258.7 206.9 L264.2 200.6 L269.7 199.9 L275.2 201.2 L280.7 197.7 L286.2 195.2 L291.7 198.9 L297.2 200.3 L302.8 195.5 L308.3 195.3 L313.8 196.1 L319.3 194.7 L324.8 194.3 L330.3 193.7 L335.8 201.3 L341.3 193.7 L346.8 192.3 L352.3 195.5 L357.8 190.8 L363.3 188.9 L368.8 188.2 L374.3 183.1 L379.8 172.2 L385.3 168.9 L390.8 160.5 L396.3 148.7 L401.8 153.5 L407.3 155.6 L412.8 150.8 L418.3 159.3 L423.9 160.0 L429.4 152.6 L434.9 146.3 L440.4 142.3 L445.9 152.2 L451.4 138.9 L456.9 134.9 L462.4 129.6 L467.9 125.8 L473.4 135.5 L478.9 143.1 L484.4 149.2 L489.9 138.0 L495.4 142.0 L500.9 142.6 L506.4 143.3 L511.9 139.3 L517.4 135.6 L522.9 133.3 L528.4 139.9 L533.9 157.1 L539.4 155.5 L545.0 153.4 L550.5 146.1 L556.0 145.9 L561.5 148.6 L567.0 145.6 L572.5 153.5 L578.0 158.3 L583.5 162.8 L589.0 160.7 L594.5 149.2 L600.0 144.3" fill="none" stroke="#8b8b94" stroke-width="1.6" stroke-dasharray="6 5" vector-effect="non-scaling-stroke" />
+            <path d="M0.0 230.3 L5.5 228.9 L11.0 226.3 L16.5 226.5 L22.0 228.3 L27.5 227.7 L33.0 226.1 L38.5 223.3 L44.0 224.9 L49.5 226.6 L55.0 224.6 L60.6 222.9 L66.1 219.2 L71.6 216.4 L77.1 215.9 L82.6 215.6 L88.1 209.5 L93.6 209.3 L99.1 210.2 L104.6 211.8 L110.1 210.8 L115.6 209.6 L121.1 209.5 L126.6 208.8 L132.1 207.4 L137.6 205.0 L143.1 201.7 L148.6 200.4 L154.1 203.6 L159.6 201.1 L165.1 203.5 L170.6 203.0 L176.1 205.5 L181.7 204.6 L187.2 205.5 L192.7 204.2 L198.2 195.9 L203.7 195.1 L209.2 192.1 L214.7 194.4 L220.2 194.2 L225.7 191.7 L231.2 190.9 L236.7 189.1 L242.2 187.9 L247.7 189.4 L253.2 187.1 L258.7 188.1 L264.2 182.5 L269.7 182.8 L275.2 180.0 L280.7 179.0 L286.2 175.4 L291.7 176.0 L297.2 172.3 L302.8 171.6 L308.3 167.0 L313.8 164.1 L319.3 162.6 L324.8 163.7 L330.3 160.4 L335.8 157.9 L341.3 151.8 L346.8 151.8 L352.3 148.9 L357.8 146.1 L363.3 144.0 L368.8 142.1 L374.3 140.2 L379.8 140.9 L385.3 143.0 L390.8 143.0 L396.3 139.8 L401.8 133.6 L407.3 129.0 L412.8 124.1 L418.3 120.0 L423.9 116.1 L429.4 114.0 L434.9 109.7 L440.4 101.6 L445.9 101.4 L451.4 102.5 L456.9 93.5 L462.4 90.9 L467.9 85.4 L473.4 80.2 L478.9 83.4 L484.4 71.6 L489.9 62.1 L495.4 59.6 L500.9 54.4 L506.4 52.0 L511.9 54.3 L517.4 53.1 L522.9 49.5 L528.4 42.4 L533.9 37.1 L539.4 34.9 L545.0 26.3 L550.5 28.2 L556.0 22.2 L561.5 14.5 L567.0 14.0 L572.5 21.4 L578.0 24.1 L583.5 20.9 L589.0 16.2 L594.5 6.0 L600.0 9.3" fill="none" stroke="#a3e635" stroke-width="2" vector-effect="non-scaling-stroke" />
+          </svg>
+          <figcaption class="chart__foot"><span>Illustration with demo data: every strategy meets two opponents before it gets money.</span></figcaption>
+        </figure>
+      </article>
 
-        <div class="building__grid">
-          <ul class="feature-list">
-            <li class="reveal">
-              <span class="icon-tile icon-tile--accent"><svg aria-hidden="true"><use href="#i-bot" /></svg></span>
-              <div>
-                <h3>Agents that explain themselves</h3>
-                <p>Every agent trades one strategy with capital of its own, and shows instrument by instrument what it decided and why.</p>
-              </div>
-            </li>
-            <li class="reveal">
-              <span class="icon-tile icon-tile--info"><svg aria-hidden="true"><use href="#i-plug" /></svg></span>
-              <div>
-                <h3>Fourteen connectors</h3>
-                <p>Twelve crypto exchanges, Interactive Brokers and Alpaca, plus a simulator for paper trading — in process, or out of process as gRPC plugins.</p>
-              </div>
-            </li>
-            <li class="reveal">
-              <span class="icon-tile icon-tile--warning"><svg aria-hidden="true"><use href="#i-flask" /></svg></span>
-              <div>
-                <h3>Backtests with honest opponents</h3>
-                <p>A strategy is measured against holding its whole universe and against a random control, on the same prices and with the same costs.</p>
-              </div>
-            </li>
-            <li class="reveal">
-              <span class="icon-tile icon-tile--positive"><svg aria-hidden="true"><use href="#i-code" /></svg></span>
-              <div>
-                <h3>Strategies in any language</h3>
-                <p>Built in, written as TypeScript or JavaScript scripts in the web app, or plugged in over gRPC with SDKs for C#, Python and TypeScript.</p>
-              </div>
-            </li>
-            <li class="reveal">
-              <span class="icon-tile icon-tile--accent"><svg aria-hidden="true"><use href="#i-phone" /></svg></span>
-              <div>
-                <h3>Web, Android and Windows</h3>
-                <p>A React web app, a Flutter phone app with push notifications and a Tauri tray app — all on the same agents and the same money.</p>
-              </div>
-            </li>
-            <li class="reveal">
-              <span class="icon-tile icon-tile--info"><svg aria-hidden="true"><use href="#i-shield" /></svg></span>
-              <div>
-                <h3>Your server, your keys</h3>
-                <p>One Docker Compose stack with PostgreSQL, backups and OpenTelemetry. An optional MCP server lets AI assistants read market data — and trade only behind a second switch.</p>
-              </div>
-            </li>
-          </ul>
-
-          <div class="building__aside">
-            <!-- Illustrative figures, hidden from screen readers so they never read as claims. -->
-            <div class="card live-card reveal" aria-hidden="true" data-live-card>
-              <div class="live-card__head">
-                <span class="overline">Agents · Live</span>
-                <span class="pill pill--positive"><span class="live-dot live-dot--sm"></span>3 running</span>
-              </div>
-              <div class="live-card__money">
-                <span class="live-card__label">Live money</span>
-                <strong class="live-card__value" data-live-money>€67,763.83</strong>
-                <span class="live-card__change"><span class="text-positive" data-live-change>+€86.51 +0.13%</span> <span class="dim">24 h</span></span>
-              </div>
-              <svg class="live-card__chart" viewBox="0 0 320 90" preserveAspectRatio="none" data-live-chart>
-                <defs>
-                  <linearGradient id="live-fill" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0" stop-color="#a3e635" stop-opacity="0.32" />
-                    <stop offset="1" stop-color="#a3e635" stop-opacity="0" />
-                  </linearGradient>
-                </defs>
-                <path class="live-card__area" d="" fill="url(#live-fill)" />
-                <path class="live-card__line" d="" fill="none" stroke="#a3e635" stroke-width="1.8" vector-effect="non-scaling-stroke" />
-              </svg>
-              <div class="live-card__agents">
-                <div class="agent-row stripe-positive">
-                  <div class="agent-row__top"><span>Rotation · Kraken EUR</span><span class="text-positive" data-agent-change>+0.42%</span></div>
-                  <p>€30,000.00 · +€2,000.00 on its capital</p>
-                </div>
-                <div class="agent-row stripe-positive">
-                  <div class="agent-row__top"><span>Funding carry · perps</span><span class="text-positive" data-agent-change>+0.26%</span></div>
-                  <p>Long 1 · short 1 · rebalances Sat</p>
-                </div>
-                <div class="agent-row stripe-warning">
-                  <div class="agent-row__top"><span>Index ETFs · IB</span><span class="dim">market closed</span></div>
-                  <p>Interactive Brokers</p>
-                </div>
-              </div>
-              <p class="live-card__note">Illustration with demo data</p>
-            </div>
-
-            <dl class="numbers reveal">
-              <div><dt>Connectors</dt><dd>14</dd><span>12 exchanges · 2 brokers</span></div>
-              <div><dt>Client apps</dt><dd>3</dd><span>web · Android · Windows</span></div>
-              <div><dt>Plugin SDKs</dt><dd>3</dd><span>C# · Python · TypeScript</span></div>
-              <div><dt>Stack</dt><dd>1</dd><span>Docker Compose, self-hosted</span></div>
-            </dl>
+      <article class="case case--flip reveal" aria-labelledby="case-share" data-cli="share">
+        <div class="case__text">
+          <p class="case__tag"><b>Open source</b> · v0.1.0 · built with AI, for myself</p>
+          <h3 id="case-share">Share</h3>
+          <p>A self-hosted place where family and friends drop photos, videos and documents: sending with a PIN and no account, folders with their own people, and end-to-end encryption per folder.</p>
+          <dl class="case__facts">
+            <div><dt>server, one binary</dt><dd>Go</dd></div>
+            <div><dt>Flutter app</dt><dd>Android</dd></div>
+            <div><dt>per folder</dt><dd>E2EE</dd></div>
+          </dl>
+          <p class="case__stack"><b>Built with</b> Go · PostgreSQL · Preact · TypeScript · Flutter · Kotlin · S3</p>
+          <div class="text-links text-links--small">
+            <a href="https://github.com/eschgi/share" target="_blank" rel="noopener noreferrer" data-cli-source>Source <span aria-hidden="true">↗</span></a>
+            <a href="https://github.com/eschgi/share/releases/latest" target="_blank" rel="noopener noreferrer">Latest release <span aria-hidden="true">↗</span></a>
           </div>
         </div>
-
-        <!-- Architecture, drawn with HTML so it reflows instead of shrinking on a phone. -->
-        <figure class="card arch reveal" aria-labelledby="arch-caption">
-          <figcaption id="arch-caption" class="arch__caption">
-            <span class="overline">Architecture</span>
-            <span>One server in the middle; clients above, the outside world below.</span>
-          </figcaption>
-          <div class="arch__row arch__row--clients">
-            <div class="arch__node"><svg aria-hidden="true"><use href="#i-globe" /></svg><span><strong>Web app</strong>React · TypeScript</span></div>
-            <div class="arch__node"><svg aria-hidden="true"><use href="#i-phone" /></svg><span><strong>Android</strong>Flutter · push</span></div>
-            <div class="arch__node"><svg aria-hidden="true"><use href="#i-monitor" /></svg><span><strong>Windows tray</strong>Tauri</span></div>
-          </div>
-          <div class="arch__flow arch__flow--up" aria-hidden="true"><span></span><span></span><span></span><em>REST · server-sent events</em></div>
-          <div class="arch__server">
-            <div class="arch__server-head">
-              <svg aria-hidden="true"><use href="#i-server" /></svg>
-              <strong>Your server</strong>
-              <span class="pill">.NET 11 · ASP.NET Core</span>
-            </div>
-            <ul class="arch__modules">
-              <li>Agents</li><li>Trading strategies</li><li>Backtests</li><li>Orders &amp; positions</li><li>Notifications</li><li>Backups</li>
-              <li class="arch__db"><svg aria-hidden="true"><use href="#i-database" /></svg>PostgreSQL</li>
-            </ul>
-          </div>
-          <div class="arch__flow arch__flow--down" aria-hidden="true"><span></span><span></span><span></span><span></span><em>TLS · gRPC · MCP · OTLP</em></div>
-          <div class="arch__row arch__row--outside">
-            <div class="arch__node"><svg aria-hidden="true"><use href="#i-plug" /></svg><span><strong>Exchanges &amp; brokers</strong>14 connectors · TLS</span></div>
-            <div class="arch__node"><svg aria-hidden="true"><use href="#i-code" /></svg><span><strong>Strategy plugins</strong>gRPC · any language</span></div>
-            <div class="arch__node"><svg aria-hidden="true"><use href="#i-sparkle" /></svg><span><strong>AI assistants</strong>MCP · opt-in</span></div>
-            <div class="arch__node"><svg aria-hidden="true"><use href="#i-pulse" /></svg><span><strong>Observability</strong>OTLP → Seq</span></div>
+        <figure class="case__visual shots">
+          <img class="shots__computer" src="assets/share/library-computer.webp" width="1440" height="900" loading="lazy" decoding="async"
+               alt="Share's library on a computer: the folders Family, Wedding Anna &amp; Marco, Kindergarten and Taxes 2026 beside the photos, grouped by day" />
+          <div class="shots__phone">
+            <img src="assets/share/send-phone.webp" width="390" height="844" loading="lazy" decoding="async"
+                 alt="Sending on a phone with a PIN: Send your files. Photos, videos, documents, anything. No app, no account." />
           </div>
         </figure>
+      </article>
+    </section>
 
-        <div class="tech-bar reveal">
-          <p class="overline">Built with</p>
-          <p class="tech-bar__items">
-            <span>.NET&nbsp;11</span><span>ASP.NET&nbsp;Core</span><span>React</span><span>TypeScript</span><span>Flutter</span><span>Tauri</span><span>PostgreSQL</span><span>gRPC</span><span>Docker</span><span>OpenTelemetry</span><span>Seq</span><span>MCP</span>
-          </p>
+    <!-- ===================================================================== HOW I WORK -->
+    <section class="wrap section" id="how" aria-labelledby="how-title">
+      <div class="section-top reveal">
+        <div>
+          <p class="label">How I work</p>
+          <h2 id="how-title">Four habits, with or without AI.</h2>
+        </div>
+        <p class="section-note" data-cli="ai">Like most engineers today, I use AI to build new software and to extend existing codebases. Coding agents such as Claude Code work under written rules and hooks, tests decide when a change is done, and the merge stays with me.</p>
+      </div>
+      <ol class="principles reveal">
+        <li><small>01</small><h3>Readable first</h3><p>Code is read far more often than it is written; names and structure come before cleverness.</p></li>
+        <li><small>02</small><h3>Tests define done</h3><p>A change is finished when it builds without warnings and its tests pass — whoever, or whatever, typed it.</p></li>
+        <li><small>03</small><h3>Measure, then optimize</h3><p>Profiles, traces and metrics beat guesses about where the time goes.</p></li>
+        <li><small>04</small><h3>AI with guardrails</h3><p>Agents draft and refactor under written rules and hooks; a human reviews the diff and merges.</p></li>
+      </ol>
+    </section>
+
+    <!-- ===================================================================== EXPERTISE -->
+    <!-- The lists are the source of truth: the Lab's sphere and the terminal's `stack` command read them. -->
+    <section class="wrap section" id="expertise" aria-labelledby="expertise-title">
+      <div class="section-top reveal">
+        <div>
+          <p class="label">Expertise</p>
+          <h2 id="expertise-title">Languages and tools.</h2>
+        </div>
+        <p class="section-note">What I reach for, from the languages to the infrastructure around them. <a href="lab.html#sphere">See them as a sphere <span aria-hidden="true">→</span></a></p>
+      </div>
+      <div class="expertise reveal">
+        <div class="expertise__group" data-stack-group="languages">
+          <h3>Languages</h3>
+          <ul><li data-weight="3">C#</li><li data-weight="3">C++</li><li data-weight="3">Python</li><li data-weight="2">TypeScript</li><li data-weight="2">JavaScript</li><li data-weight="2">Go</li><li data-weight="2">SQL</li><li data-weight="1">Java</li><li data-weight="1">Kotlin</li><li data-weight="1">Dart</li><li data-weight="1">Delphi</li></ul>
+        </div>
+        <div class="expertise__group" data-stack-group="frameworks">
+          <h3>Frameworks &amp; APIs</h3>
+          <ul><li data-weight="3">.NET</li><li data-weight="3">ASP.NET Core</li><li data-weight="2">gRPC</li><li data-weight="2">REST</li><li data-weight="2">Entity Framework Core</li><li data-weight="2">Qt</li><li data-weight="2">React</li><li data-weight="1">Flutter</li><li data-weight="1">Tauri</li></ul>
+        </div>
+        <div class="expertise__group" data-stack-group="data">
+          <h3>Databases</h3>
+          <ul><li data-weight="3">PostgreSQL</li><li data-weight="1">DuckDB</li><li data-weight="1">Firebird</li><li data-weight="1">MySQL</li></ul>
+        </div>
+        <div class="expertise__group" data-stack-group="ops">
+          <h3>DevOps &amp; observability</h3>
+          <ul><li data-weight="2">Docker</li><li data-weight="2">Git</li><li data-weight="1">GitHub Actions</li><li data-weight="1">Docker Compose</li><li data-weight="1">OpenTelemetry</li><li data-weight="1">Seq</li><li data-weight="1">Nginx</li><li data-weight="1">Cloudflare</li><li data-weight="1">Linux</li></ul>
+        </div>
+        <div class="expertise__group" data-stack-group="ai">
+          <h3>AI-assisted engineering</h3>
+          <ul><li data-weight="2">Claude Code</li><li data-weight="1">MCP</li><li data-weight="1">Agentic coding</li></ul>
         </div>
       </div>
     </section>
 
-    <!-- ===================================================================== STACK -->
-    <section class="band" id="stack" aria-labelledby="stack-title">
-      <div class="container section">
-        <div class="section-head section-head--center reveal">
-          <span class="eyebrow">Toolbox</span>
-          <h2 class="section-title" id="stack-title">Languages &amp; technologies</h2>
-          <p class="section-lead">
-            What I reach for, from the languages to the infrastructure around them.
-            <span class="hide-touch">Drag the sphere, or point at a group to light it up.</span>
-            <span class="show-touch">Drag the sphere to spin it.</span>
-          </p>
+    <!-- ===================================================================== ACTIVITY (drawn by site.js from stats.json) -->
+    <section class="wrap section" id="activity" aria-labelledby="activity-title">
+      <div class="section-top reveal">
+        <div>
+          <p class="label">Activity</p>
+          <h2 id="activity-title">A year on GitHub.</h2>
         </div>
-
-        <div class="stack__grid">
-          <!-- The lists are the source of truth: the sphere and the terminal's `stack` command read them. -->
-          <div class="stack__groups reveal">
-            <div class="stack-group" data-stack-group="languages">
-              <h3><span class="swatch" aria-hidden="true"></span>Languages</h3>
-              <ul class="chips">
-                <li data-weight="3">C#</li><li data-weight="3">C++</li><li data-weight="3">Python</li><li data-weight="2">TypeScript</li><li data-weight="2">JavaScript</li><li data-weight="2">Go</li><li data-weight="2">SQL</li><li data-weight="1">Java</li><li data-weight="1">Kotlin</li><li data-weight="1">Dart</li><li data-weight="1">Delphi</li>
-              </ul>
-            </div>
-            <div class="stack-group" data-stack-group="frameworks">
-              <h3><span class="swatch" aria-hidden="true"></span>Frameworks &amp; APIs</h3>
-              <ul class="chips">
-                <li data-weight="3">.NET</li><li data-weight="3">ASP.NET Core</li><li data-weight="2">gRPC</li><li data-weight="2">REST</li><li data-weight="2">Entity Framework Core</li><li data-weight="2">Qt</li><li data-weight="2">React</li><li data-weight="1">Flutter</li><li data-weight="1">Tauri</li>
-              </ul>
-            </div>
-            <div class="stack-group" data-stack-group="data">
-              <h3><span class="swatch" aria-hidden="true"></span>Databases</h3>
-              <ul class="chips">
-                <li data-weight="3">PostgreSQL</li><li data-weight="1">DuckDB</li><li data-weight="1">Firebird</li><li data-weight="1">MySQL</li>
-              </ul>
-            </div>
-            <div class="stack-group" data-stack-group="ops">
-              <h3><span class="swatch" aria-hidden="true"></span>DevOps &amp; observability</h3>
-              <ul class="chips">
-                <li data-weight="2">Docker</li><li data-weight="2">Git</li><li data-weight="1">GitHub Actions</li><li data-weight="1">Docker Compose</li><li data-weight="1">OpenTelemetry</li><li data-weight="1">Seq</li><li data-weight="1">Nginx</li><li data-weight="1">Cloudflare</li><li data-weight="1">Linux</li>
-              </ul>
-            </div>
-            <div class="stack-group" data-stack-group="ai">
-              <h3><span class="swatch" aria-hidden="true"></span>AI-assisted engineering</h3>
-              <ul class="chips">
-                <li data-weight="2">Claude Code</li><li data-weight="1">MCP</li><li data-weight="1">Agentic coding</li>
-              </ul>
-            </div>
-          </div>
-
-          <div class="sphere-wrap reveal" aria-hidden="true">
-            <div class="sphere" data-sphere></div>
-            <div class="sphere__glow"></div>
-          </div>
-        </div>
+        <p class="section-note">Public and private contributions over the last twelve months, collected daily by a GitHub Action.</p>
       </div>
+      <div class="activity reveal" data-activity hidden>
+        <dl class="activity__numbers">
+          <div><dt>contributions</dt><dd data-stat="contributions">0</dd></div>
+          <div><dt>commits</dt><dd data-stat="commits">0</dd></div>
+          <div><dt>pull requests</dt><dd data-stat="pullRequests">0</dd></div>
+          <div><dt>active days</dt><dd data-stat="activeDays">0</dd></div>
+        </dl>
+        <figure class="weeks">
+          <div class="weeks__bars" data-weeks role="img"></div>
+          <figcaption class="weeks__foot"><span data-weeks-readout>Contributions per week</span><span data-weeks-range></span></figcaption>
+        </figure>
+        <p class="activity__languages" data-languages></p>
+        <p class="activity__meta" data-stats-meta></p>
+      </div>
+      <p class="activity__fallback" data-stats-fallback>The numbers live on <a href="https://github.com/eschgi" target="_blank" rel="noopener noreferrer">github.com/eschgi</a>.</p>
     </section>
 
-    <!-- ===================================================================== AI -->
-    <section id="ai" aria-labelledby="ai-title">
-      <div class="container section">
-        <div class="ai__grid">
-          <div class="reveal">
-            <span class="eyebrow"><svg aria-hidden="true"><use href="#i-sparkle" /></svg>AI-assisted engineering</span>
-            <h2 class="section-title" id="ai-title">
-              Built with AI, <span class="text-accent">owned by an engineer.</span>
-            </h2>
-            <p class="section-lead">
-              Like most engineers today, I use AI to build new software and to extend existing codebases.
-              Coding agents such as Claude Code explore unfamiliar code, draft implementations and tests,
-              and carry a refactoring through hundreds of files. Most of my recent commits are co-authored
-              by one. What makes that work is the discipline around it.
-            </p>
-
-            <ul class="ai__points">
-              <li>
-                <span class="icon-tile icon-tile--accent"><svg aria-hidden="true"><use href="#i-book" /></svg></span>
-                <div><h3>Context, written down</h3><p>Conventions, architecture notes and per-area rules live next to the code, so agents and people follow the same playbook.</p></div>
-              </li>
-              <li>
-                <span class="icon-tile icon-tile--warning"><svg aria-hidden="true"><use href="#i-shield" /></svg></span>
-                <div><h3>Guardrails, not hope</h3><p>Hooks ask before anything reaches main, before a force push or a tag. Analyzers and CI catch the rest.</p></div>
-              </li>
-              <li>
-                <span class="icon-tile icon-tile--positive"><svg aria-hidden="true"><use href="#i-check" /></svg></span>
-                <div><h3>Tests define done</h3><p>A change is finished when it builds clean and its tests pass — whoever, or whatever, typed it.</p></div>
-              </li>
-              <li>
-                <span class="icon-tile icon-tile--info"><svg aria-hidden="true"><use href="#i-eye" /></svg></span>
-                <div><h3>Judgment stays human</h3><p>I decide the architecture and the trade-offs, read the diffs, and the merge button stays mine.</p></div>
-              </li>
-            </ul>
-          </div>
-
-          <div class="reveal">
-            <div class="code-well agent" data-agent-session>
-              <div class="window-bar">
-                <span class="window-dots" aria-hidden="true"><span></span><span></span><span></span></span>
-                <span class="window-title">claude — ~/project</span>
-                <button class="window-action" type="button" data-agent-replay hidden>
-                  <svg aria-hidden="true"><use href="#i-replay" /></svg>Replay
-                </button>
-              </div>
-              <!-- A typical session, illustrative. The full log is in the markup for readers without JavaScript. -->
-              <ol class="agent__log" aria-label="An illustrative AI coding session">
-                <li class="agent__prompt"><span class="text-accent">❯</span> Add retry with exponential backoff to the exchange client, with tests.</li>
-                <li><span class="agent__icon text-info">●</span> Reading <code>CLAUDE.md</code> and the client's rules</li>
-                <li><span class="agent__icon text-info">●</span> Plan: 3 files, 1 test class</li>
-                <li><span class="agent__icon text-warning">✎</span> <code>ExchangeClient.cs</code><span class="agent__diff"><span class="text-positive">+38</span> <span class="text-negative">−6</span></span></li>
-                <li><span class="agent__icon text-warning">✎</span> <code>RetryPolicy.cs</code><span class="agent__diff"><span class="text-positive">+54</span></span></li>
-                <li><span class="agent__icon text-warning">✎</span> <code>ExchangeClientRetryTests.cs</code><span class="agent__diff"><span class="text-positive">+91</span></span></li>
-                <li data-run><span class="agent__icon dim">▶</span> <code>dotnet build</code><span class="agent__result text-positive">✓ 0 warnings</span></li>
-                <li data-run><span class="agent__icon dim">▶</span> <code>dotnet test</code><span class="agent__result text-positive">✓ 214 passed</span></li>
-                <li><span class="agent__icon text-warning">⏸</span> <code>git push origin main</code><span class="agent__result text-warning">needs approval</span></li>
-                <li><span class="agent__icon text-positive">✓</span> Pull request opened from <code>feature/retry</code></li>
-              </ol>
-            </div>
-            <p class="ai__note">An illustrative session: the agent drafts and verifies, the hooks stop it at <code>main</code>, and the pull request waits for a human.</p>
-          </div>
-        </div>
-        <!-- The real thing behind the claims above: open source, built with AI agents. -->
-        <article class="card case reveal" aria-labelledby="share-title">
-          <div class="case__copy">
-            <span class="eyebrow"><svg aria-hidden="true"><use href="#i-sparkle" /></svg>Built with AI, for myself</span>
-            <h3 class="case__title" id="share-title">
-              <span class="case__logo" aria-hidden="true"><svg><use href="#i-images" /></svg></span>
-              Share
-            </h3>
-            <p class="case__lead">
-              A self-hosted place where family and friends drop photos, videos and documents. I built it
-              for my own use, with AI coding agents at my side, and published it as open source in case
-              it's useful to you too.
-            </p>
-            <ul class="case__points">
-              <li><svg aria-hidden="true"><use href="#i-check" /></svg><span><strong>Sending with a PIN</strong>, in any browser, with no app and no account. Uploads of several gigabytes resume after a dropped connection.</span></li>
-              <li><svg aria-hidden="true"><use href="#i-check" /></svg><span><strong>Folders with their own people</strong>, each with end-to-end encryption if you want it.</span></li>
-              <li><svg aria-hidden="true"><use href="#i-check" /></svg><span><strong>Photos in full quality over WhatsApp</strong>, packed into ZIPs by the Android app.</span></li>
-            </ul>
-            <ul class="chips chips--sm" aria-label="Built with">
-              <li>Go</li><li>PostgreSQL</li><li>Preact</li><li>TypeScript</li><li>Flutter</li><li>Kotlin</li><li>S3</li>
-            </ul>
-            <div class="case__actions">
-              <a class="btn btn--ghost" href="https://github.com/eschgi/share" target="_blank" rel="noopener noreferrer"><svg aria-hidden="true"><use href="#i-github" /></svg>Source on GitHub</a>
-              <a class="btn btn--ghost" href="https://github.com/eschgi/share/releases/latest" target="_blank" rel="noopener noreferrer"><svg aria-hidden="true"><use href="#i-package" /></svg>Latest release</a>
-              <span class="pill pill--warning">Early development · Apache 2.0</span>
-            </div>
-          </div>
-          <div class="case__visual">
-            <div class="case__stage">
-              <figure class="case__browser">
-                <div class="case__chrome" aria-hidden="true"><span class="window-dots"><span></span><span></span><span></span></span>Share · Library</div>
-                <img src="assets/share/library-computer.webp" width="1440" height="900" loading="lazy" decoding="async"
-                     alt="Share's library on a computer: the folders Family, Wedding Anna &amp; Marco, Kindergarten and Taxes 2026 beside the photos, grouped by day" />
-              </figure>
-              <figure class="case__phone">
-                <img src="assets/share/send-phone.webp" width="390" height="844" loading="lazy" decoding="async"
-                     alt="Sending on a phone with a PIN: Send your files. Photos, videos, documents, anything. No app, no account." />
-              </figure>
-            </div>
-          </div>
-        </article>
-      </div>
-    </section>
-
-    <!-- ===================================================================== ACTIVITY (GitHub stats; revealed by JS once stats.json loads) -->
-    <section class="band" id="activity" aria-labelledby="activity-title">
-      <div class="container section">
-        <div class="section-head section-head--center reveal">
-          <span class="eyebrow"><svg aria-hidden="true"><use href="#i-github" /></svg>GitHub</span>
-          <h2 class="section-title" id="activity-title">A year of commits, <span class="text-accent">in numbers.</span></h2>
-          <p class="section-lead">
-            Public and private contributions over the last twelve months, collected daily by a GitHub Action.
-          </p>
-        </div>
-
-        <div class="stats" data-stats hidden>
-          <div class="stat-tiles">
-            <div class="stat-tile reveal"><span class="stat-tile__value" data-stat="contributions">0</span><span class="stat-tile__label">Contributions</span></div>
-            <div class="stat-tile reveal"><span class="stat-tile__value" data-stat="commits">0</span><span class="stat-tile__label">Commits</span></div>
-            <div class="stat-tile reveal"><span class="stat-tile__value" data-stat="pullRequests">0</span><span class="stat-tile__label">Pull requests</span></div>
-            <div class="stat-tile reveal"><span class="stat-tile__value" data-stat="issues">0</span><span class="stat-tile__label">Issues</span></div>
-            <div class="stat-tile reveal"><span class="stat-tile__value" data-stat="repositories">0</span><span class="stat-tile__label">Repositories</span></div>
-          </div>
-
-          <div class="stats__grid">
-            <div class="card calendar reveal" data-calendar-card hidden>
-              <div class="card__head">
-                <h3 class="card__title">Contribution calendar</h3>
-                <span class="calendar__readout" data-calendar-readout aria-live="polite">Point at a day</span>
-              </div>
-              <div class="calendar__scroll">
-                <div class="calendar__months" data-calendar-months aria-hidden="true"></div>
-                <div class="calendar__grid" data-calendar-grid role="img"></div>
-              </div>
-              <div class="calendar__foot">
-                <dl class="calendar__facts" data-calendar-facts></dl>
-                <span class="calendar__legend" aria-hidden="true">Less <i data-level="0"></i><i data-level="1"></i><i data-level="2"></i><i data-level="3"></i><i data-level="4"></i> More</span>
-              </div>
-            </div>
-
-            <div class="card languages reveal">
-              <div class="card__head">
-                <h3 class="card__title">Top languages</h3>
-                <span class="dim small">by code size</span>
-              </div>
-              <div class="lang-stack" data-lang-stack aria-hidden="true"></div>
-              <ul class="lang-legend" data-lang-legend></ul>
-            </div>
-          </div>
-
-          <p class="stats__meta" data-stats-meta></p>
-        </div>
-
-        <p class="stats__fallback" data-stats-fallback>
-          The numbers live on <a href="https://github.com/eschgi" target="_blank" rel="noopener noreferrer">github.com/eschgi</a>.
-        </p>
-      </div>
-    </section>
-
-    <!-- ===================================================================== BUG BASH -->
-    <section id="bugbash" aria-labelledby="bugbash-title">
-      <div class="container section">
-        <div class="bugbash__head">
-          <div class="section-head reveal">
-            <span class="eyebrow"><svg aria-hidden="true"><use href="#i-bug" /></svg>Bug Bash</span>
-            <h2 class="section-title" id="bugbash-title">Squash the bugs <span class="text-accent">before they reach production.</span></h2>
-            <p class="section-lead">
-              A little game for everyone who has ever deployed on a Friday. Click the bugs crawling
-              through the code — but leave the features alone.
-            </p>
-          </div>
-          <p class="bugbash__best reveal needs-js">Your best: <strong data-bb-best>0</strong></p>
-        </div>
-
-        <div class="game reveal needs-js" data-bugbash>
-          <div class="window-bar game__bar">
-            <span class="window-dots" aria-hidden="true"><span></span><span></span><span></span></span>
-            <span class="window-title">production.ts — Bug Bash</span>
-            <div class="game__hud" aria-live="off">
-              <span class="hud-item"><span class="hud-item__label">Score</span><strong data-bb-score>0</strong></span>
-              <span class="hud-item hud-item--combo" data-bb-combo-wrap><span class="hud-item__label">Combo</span><strong data-bb-combo>×1</strong></span>
-              <span class="hud-item"><span class="hud-item__label">Time</span><strong data-bb-time>45</strong></span>
-              <span class="hud-item hud-item--sla"><span class="hud-item__label">SLA</span><span class="sla"><span class="sla__fill" data-bb-sla></span></span></span>
-              <span class="hud-item hud-item--tests" data-bb-shield hidden><span class="hud-item__label">Tests</span><strong data-bb-shield-count>2</strong></span>
-            </div>
-          </div>
-
-          <div class="game__board" data-bb-board>
-            <pre class="game__code" aria-hidden="true" data-bb-code><span class="bb-line"><span class="tok-dim">// production.ts — last touched on a Friday at 17:59</span></span>
-<span class="bb-line"><span class="tok-kw">import</span> { deploy, rollback } <span class="tok-kw">from</span> <span class="tok-str">"./yolo"</span>;</span>
-<span class="bb-line"></span>
-<span class="bb-line"><span class="tok-kw">export async function</span> <span class="tok-fn">release</span>(build: <span class="tok-type">Build</span>) {</span>
-<span class="bb-line">  <span class="tok-kw">if</span> (<span class="tok-kw">new</span> <span class="tok-type">Date</span>().<span class="tok-fn">getDay</span>() === <span class="tok-lit">5</span>) {</span>
-<span class="bb-line">    console.<span class="tok-fn">warn</span>(<span class="tok-str">"Deploying on a Friday. Bold."</span>);</span>
-<span class="bb-line">  }</span>
-<span class="bb-line"></span>
-<span class="bb-line">  <span class="tok-kw">const</span> tests = <span class="tok-kw">await</span> <span class="tok-fn">runTests</span>(build); <span class="tok-dim">// TODO: write tests</span></span>
-<span class="bb-line">  <span class="tok-kw">if</span> (tests.failed &gt; <span class="tok-lit">0</span>) {</span>
-<span class="bb-line">    <span class="tok-kw">return</span> <span class="tok-str">"works on my machine"</span>;</span>
-<span class="bb-line">  }</span>
-<span class="bb-line"></span>
-<span class="bb-line">  <span class="tok-dim">// nobody knows why this works. do not touch.</span></span>
-<span class="bb-line">  <span class="tok-kw">await</span> <span class="tok-fn">sleep</span>(<span class="tok-type">Math</span>.<span class="tok-fn">random</span>() * <span class="tok-lit">1000</span>);</span>
-<span class="bb-line">  <span class="tok-kw">return</span> <span class="tok-fn">deploy</span>(build, { force: <span class="tok-lit">true</span>, friday: <span class="tok-lit">true</span> });</span>
-<span class="bb-line">}</span>
-<span class="bb-line"></span>
-<span class="bb-line"><span class="tok-kw">const</span> <span class="tok-fn">sleep</span> = (ms: <span class="tok-type">number</span>) =&gt;</span>
-<span class="bb-line">  <span class="tok-kw">new</span> <span class="tok-type">Promise</span>((resolve) =&gt; <span class="tok-fn">setTimeout</span>(resolve, ms));</span></pre>
-            <canvas class="game__canvas" data-bb-canvas tabindex="-1" aria-label="Bug Bash game board"></canvas>
-
-            <div class="game__panel" data-bb-panel>
-              <div class="game__panel-inner" data-bb-panel-content>
-                <h3 class="game__panel-title">Ready to debug?</h3>
-                <p class="game__panel-text">45 seconds. Every bug that crawls off the board escapes to production and costs you SLA.</p>
-                <ul class="bb-legend" data-bb-legend>
-                  <li data-kind="bug"><canvas width="44" height="44"></canvas><span><strong>Bug</strong>+10, the classic</span></li>
-                  <li data-kind="race"><canvas width="44" height="44"></canvas><span><strong>Race condition</strong>+20, fast, comes in pairs</span></li>
-                  <li data-kind="heisen"><canvas width="44" height="44"></canvas><span><strong>Heisenbug</strong>+30, moves when observed</span></li>
-                  <li data-kind="leak"><canvas width="44" height="44"></canvas><span><strong>Memory leak</strong>+25, grows, takes 3 hits</span></li>
-                  <li data-kind="feature"><canvas width="44" height="44"></canvas><span><strong>Feature</strong>not a bug. Don't squash!</span></li>
-                </ul>
-                <ul class="bb-powerups">
-                  <li><canvas width="30" height="30" data-power="coffee"></canvas>Coffee<span class="bb-powerups__more"> slows bugs</span></li>
-                  <li><canvas width="30" height="30" data-power="ai"></canvas>AI pair<span class="bb-powerups__more"> fixes a few</span></li>
-                  <li><canvas width="30" height="30" data-power="tests"></canvas>Tests<span class="bb-powerups__more"> catch escapes</span></li>
-                </ul>
-                <button class="btn btn--primary btn--lg" type="button" data-bb-start>
-                  <svg aria-hidden="true"><use href="#i-play" /></svg>
-                  Start debugging
-                </button>
-                <p class="game__hint"><span class="hide-touch">Click to squash · P or Esc pauses</span><span class="show-touch">Tap to squash</span></p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <noscript><p class="stats__fallback">Bug Bash needs JavaScript — the bugs are made of it.</p></noscript>
-      </div>
-    </section>
-
-    <!-- ===================================================================== TERMINAL -->
-    <section class="band" id="terminal" aria-labelledby="terminal-title">
-      <div class="container section">
-        <div class="section-head section-head--center reveal">
-          <span class="eyebrow"><svg aria-hidden="true"><use href="#i-terminal" /></svg>Terminal</span>
-          <h2 class="section-title" id="terminal-title">Prefer the command line?</h2>
-          <p class="section-lead">
-            Type <code class="inline-code">help</code> and press Enter. Not every command is in the help —
-            curiosity is rewarded.
-          </p>
-        </div>
-
-        <div class="code-well cli reveal needs-js" id="cli">
-          <div class="window-bar">
-            <span class="window-dots" aria-hidden="true"><span></span><span></span><span></span></span>
-            <span class="window-title">stefan@eschgi: ~</span>
-          </div>
-          <div class="cli__body">
-            <div class="cli__log" id="cli-log" role="log" aria-live="polite" aria-label="Command output">
-              <div class="cli__line dim">Welcome to eschgi.com — type <span class="cli__key">help</span> to get started.</div>
-            </div>
-            <form class="cli__form" id="cli-form" autocomplete="off">
-              <label class="cli__ps1" for="cli-input"><span class="text-accent">stefan@eschgi</span>:<span class="text-info">~</span>$</label>
-              <input id="cli-input" class="cli__input" type="text" name="cmd"
-                     aria-label="Type a command and press Enter"
-                     autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" />
-            </form>
-          </div>
-        </div>
+    <!-- ===================================================================== CONTACT -->
+    <section class="wrap contact" id="contact" aria-labelledby="contact-title">
+      <h2 id="contact-title">Not looking for a new role — but always happy to talk about software.</h2>
+      <div class="text-links" data-contact-links>
+        <a href="https://github.com/eschgi" target="_blank" rel="noopener noreferrer" data-label="GitHub">GitHub <span aria-hidden="true">↗</span></a>
+        <a href="https://www.linkedin.com/in/stefaneschgfaeller" target="_blank" rel="noopener noreferrer" data-label="LinkedIn">LinkedIn <span aria-hidden="true">↗</span></a>
       </div>
     </section>
   </main>
 
-  <!-- ===================================================================== FOOTER -->
-  <footer class="footer">
-    <div class="container footer__inner">
-      <a href="#top" class="nav__brand">
-        <svg class="brand-mark" viewBox="0 0 64 64" aria-hidden="true">
-          <rect width="64" height="64" rx="14" fill="#1f1f24" />
-          <rect x="1.5" y="1.5" width="61" height="61" rx="12.5" fill="none" stroke="#323238" stroke-width="3" />
-          <path d="M16 22 L28 32 L16 42" fill="none" stroke="#a3e635" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" />
-          <line x1="33" y1="44" x2="49" y2="44" stroke="#38bdf8" stroke-width="5.5" stroke-linecap="round" />
-        </svg>
-        <span class="nav__name">Stefan Eschgfäller</span>
-      </a>
-      <nav class="footer__nav" aria-label="Footer">
-        <a href="#about">About</a>
-        <a href="#building">Building</a>
-        <a href="#stack">Stack</a>
-        <a href="#ai">AI</a>
-        <a href="#bugbash">Bug Bash</a>
-      </nav>
-      <div class="footer__social" data-contact-links>
-        <a class="icon-btn" href="https://github.com/eschgi" target="_blank" rel="noopener noreferrer" aria-label="GitHub (opens in a new tab)" data-label="GitHub">
-          <svg aria-hidden="true"><use href="#i-github" /></svg>
-        </a>
-        <a class="icon-btn" href="https://www.linkedin.com/in/stefaneschgfaeller" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn (opens in a new tab)" data-label="LinkedIn">
-          <svg aria-hidden="true"><use href="#i-linkedin" /></svg>
-        </a>
-      </div>
-    </div>
-    <div class="container footer__fine">
-      <p>Not looking for a new role — but always happy to talk about software.</p>
-      <p>© <span data-year>2026</span> Stefan Eschgfäller · Hand-built with HTML, CSS and JavaScript. No frameworks, no trackers.</p>
+  <footer class="site-footer">
+    <div class="wrap site-footer__bar">
+      <span>© <span data-year>2026</span> Stefan Eschgfäller · Hand-built, no trackers</span>
+      <span>Lab: <a href="lab.html#bugbash">Bug Bash</a> · <a href="lab.html#sphere">Tech sphere</a> · <a href="lab.html#terminal">Terminal</a></span>
     </div>
   </footer>
 </body>

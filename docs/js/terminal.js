@@ -17,10 +17,6 @@
   function clean(text) {
     return (text || "").replace(/\s+/g, " ").trim();
   }
-  function textOf(selector) {
-    var node = document.querySelector(selector);
-    return node ? clean(node.textContent) : "";
-  }
 
   // ===================================================================== snake
   // Triple-click the avatar (or type `snake`). The high score key is the old site's.
@@ -503,37 +499,20 @@
   // Both clone what is on screen into loose bodies. Each match becomes one body;
   // a match inside another match goes with its container.
   var CHUNKS = [
-    ".nav__brand",
-    ".nav__links a",
-    ".nav__actions .icon-btn",
-    ".eyebrow",
-    ".hero__person",
-    ".hero__title",
-    ".hero__lead",
-    ".hero__actions .btn",
-    ".check-list li",
-    ".code-card",
-    ".hero-badge",
-    ".section-title",
-    ".section-lead",
-    ".card",
-    ".feature-list li",
-    ".numbers > div",
-    ".stack-group h3",
-    ".chips li",
-    ".sphere__tag",
-    ".ai__points li",
-    ".ai__note",
-    ".code-well",
-    ".stat-tile",
-    ".bugbash__best",
+    ".site-name",
+    ".site-nav a",
+    ".menu-button",
+    ".label",
+    ".lab-intro h1",
+    ".lab-intro__lead",
+    ".lab-toc a",
+    ".section-top h2",
+    ".section-note",
     ".game",
-    ".tech-bar .overline",
-    ".tech-bar__items span",
-    ".footer .nav__brand",
-    ".footer__nav a",
-    ".footer__social .icon-btn",
-    ".footer__fine p",
+    ".sphere-legend li",
+    ".sphere__tag",
+    ".code-well",
+    ".site-footer__bar > span",
   ];
 
   // A clone leaves its ancestors behind, and with them every style that depended on
@@ -933,25 +912,66 @@
     function key(text) {
       return '<span class="cli__key">' + escapeHtml(text) + "</span>";
     }
-    function bullets(selector) {
-      Array.prototype.forEach.call(document.querySelectorAll(selector), function (node) {
-        print("  > " + clean(node.textContent));
-      });
-    }
     function goTo(id) {
       if (eschgi.scrollToSection) eschgi.scrollToSection(id);
     }
 
-    function about() {
-      print(textOf(".hero__title"));
-      print(textOf(".hero__lead"));
-      bullets(".hero__checks li");
+    // The content lives on the front page; on the Lab page it is fetched once.
+    function withHome(command) {
+      return function (args) {
+        var load = eschgi.homeDocument ? eschgi.homeDocument() : Promise.resolve(document);
+        load
+          .then(function (doc) {
+            command(doc, args || []);
+          })
+          .catch(function () {
+            print("couldn't read the front page; it's all on eschgi.com", "cli__err");
+          });
+      };
+    }
+    function from(doc, selector) {
+      var node = doc.querySelector(selector);
+      return node ? clean(node.textContent) : "";
+    }
+    function link(label, href) {
+      line(
+        key(label.padEnd(9)) +
+          ' <a href="' +
+          escapeHtml(href) +
+          '" target="_blank" rel="noopener noreferrer">' +
+          escapeHtml(href.replace(/^https?:\/\/(www\.)?/, "")) +
+          "</a>"
+      );
     }
 
-    function building() {
-      print(textOf("#building .section-lead"));
-      bullets(".feature-list h3");
-      line(key("hint") + " the section above has the architecture — " + key("building --open") + " scrolls there");
+    function about(doc) {
+      print(from(doc, '[data-cli="headline"]'));
+      print(from(doc, '[data-cli="intro"]'));
+      Array.prototype.forEach.call(doc.querySelectorAll(".facts > div"), function (fact) {
+        print("  > " + from(fact, "dd") + " " + from(fact, "dt"));
+      });
+    }
+
+    function project(doc, hook) {
+      var card = doc.querySelector('[data-cli="' + hook + '"]');
+      if (!card) return print(hook + ": nothing to show", "cli__err");
+      line(key(from(card, "h3")) + ' <span class="dim">' + escapeHtml(from(card, ".case__tag")) + "</span>");
+      print(from(card, ".case__text > p:not(.case__tag):not(.case__stack)"));
+      var facts = Array.prototype.map.call(card.querySelectorAll(".case__facts > div"), function (fact) {
+        return from(fact, "dd") + " " + from(fact, "dt");
+      });
+      if (facts.length) print("  > " + facts.join("  ·  "));
+      print(from(card, ".case__stack"), "dim");
+      var source = card.querySelector("[data-cli-source]");
+      if (source) link("source", source.href);
+    }
+
+    function building(doc) {
+      project(doc, "trading");
+    }
+
+    function share(doc) {
+      project(doc, "share");
     }
 
     var GROUP_ALIASES = {
@@ -970,86 +990,80 @@
       ai: "ai",
     };
 
-    function stack(arg) {
+    function stack(doc, args) {
+      var arg = args[0];
       var want = arg ? GROUP_ALIASES[arg.toLowerCase().replace(/\/$/, "")] : null;
       if (arg && !want) {
         return print("stack: no such group: " + arg + " (try: languages, frameworks, data, ops, ai)", "cli__err");
       }
-      Array.prototype.forEach.call(document.querySelectorAll("[data-stack-group]"), function (group) {
+      Array.prototype.forEach.call(doc.querySelectorAll("[data-stack-group]"), function (group) {
         if (want && group.getAttribute("data-stack-group") !== want) return;
-        var title = clean(group.querySelector("h3").textContent);
         var items = Array.prototype.map.call(group.querySelectorAll("li"), function (item) {
           return clean(item.textContent);
         });
-        line(key(title.toLowerCase() + "/") + " " + escapeHtml(items.join("  ·  ")));
+        line(key(from(group, "h3").toLowerCase() + "/") + " " + escapeHtml(items.join("  ·  ")));
       });
     }
 
-    function ai() {
-      print(textOf("#ai .section-lead"));
-      bullets(".ai__points h3");
+    function ai(doc) {
+      print(from(doc, '[data-cli="ai"]'));
+      Array.prototype.forEach.call(doc.querySelectorAll(".principles h3"), function (heading) {
+        print("  > " + clean(heading.textContent));
+      });
+    }
+
+    function contact(doc) {
+      Array.prototype.forEach.call(doc.querySelectorAll("[data-contact-links] a"), function (anchor) {
+        link(anchor.getAttribute("data-label") || "link", anchor.href);
+      });
+      print(from(doc, "#contact-title"), "dim");
     }
 
     function stats() {
-      var data = eschgi.stats;
-      if (!data) return print("stats: no numbers yet — they live on github.com/eschgi.", "cli__err");
-      var c = data.contributions || {};
-      var format = eschgi.formatNumber || String;
-      print(
-        format(c.lastYearTotal || 0) +
-          " contributions  ·  " +
-          format(c.commits || 0) +
-          " commits  ·  " +
-          format(c.pullRequests || 0) +
-          " pull requests  ·  " +
-          format(c.issues || 0) +
-          " issues  (last 12 months)"
-      );
-      var languages = (data.languages || []).slice(0, 5).map(function (language) {
-        return language.name + " " + language.percent + "%";
-      });
-      if (languages.length) line(key("top languages") + " " + escapeHtml(languages.join("  ·  ")));
-      goTo("activity");
-    }
-
-    function contact() {
-      Array.prototype.forEach.call(document.querySelectorAll("[data-contact-links] a"), function (link) {
-        line(
-          key((link.getAttribute("data-label") || "link").padEnd(9)) +
-            ' <a href="' +
-            escapeHtml(link.href) +
-            '" target="_blank" rel="noopener noreferrer">' +
-            escapeHtml(link.href.replace(/^https?:\/\/(www\.)?/, "")) +
-            "</a>"
-        );
-      });
-      print(textOf(".footer__fine p"), "dim");
-    }
-
-    function share() {
-      var card = document.querySelector(".case");
-      if (!card) return print("share: not on this page", "cli__err");
-      print(textOf(".case__lead"));
-      Array.prototype.forEach.call(card.querySelectorAll(".case__points strong"), function (node) {
-        print("  > " + clean(node.textContent));
-      });
-      var source = card.querySelector(".case__actions a");
-      if (source) {
-        line(
-          key("source") +
-            ' <a href="' +
-            escapeHtml(source.href) +
-            '" target="_blank" rel="noopener noreferrer">' +
-            escapeHtml(source.href.replace(/^https?:\/\//, "")) +
-            "</a>"
-        );
-      }
+      if (!eschgi.loadStats) return print("stats: no numbers here; they live on github.com/eschgi", "cli__err");
+      eschgi
+        .loadStats()
+        .then(function (data) {
+          var c = data.contributions || {};
+          var format = eschgi.formatNumber || String;
+          print(
+            format(c.lastYearTotal || 0) +
+              " contributions  ·  " +
+              format(c.commits || 0) +
+              " commits  ·  " +
+              format(c.pullRequests || 0) +
+              " pull requests  ·  " +
+              format(c.issues || 0) +
+              " issues  (last 12 months)"
+          );
+          var languages = (data.languages || []).slice(0, 5).map(function (language) {
+            return language.name + " " + language.percent + "%";
+          });
+          if (languages.length) line(key("top languages") + " " + escapeHtml(languages.join("  ·  ")));
+          if (document.getElementById("activity")) goTo("activity");
+          else line('<span class="dim">The weekly chart is on the <a href="./#activity">front page</a>.</span>');
+        })
+        .catch(function () {
+          print("stats: no numbers yet; they live on github.com/eschgi", "cli__err");
+        });
     }
 
     function bugbash() {
-      print("Spawning bugs in production.ts… 🐛 good luck.");
-      document.dispatchEvent(new CustomEvent("eschgi:bugbash"));
+      if (document.querySelector("[data-bugbash]")) {
+        print("Spawning bugs in production.ts… 🐛 good luck.");
+        document.dispatchEvent(new CustomEvent("eschgi:bugbash"));
+      } else {
+        print("Bug Bash lives in the Lab. On my way…");
+        window.location.href = "lab.html#bugbash";
+      }
     }
+
+    var aboutCommand = withHome(about);
+    var buildingCommand = withHome(building);
+    var shareCommand = withHome(share);
+    var stackCommand = withHome(stack);
+    var aiCommand = withHome(ai);
+    var contactCommand = withHome(contact);
 
     function ls() {
       line(
@@ -1060,18 +1074,18 @@
     function cat(arg) {
       switch ((arg || "").toLowerCase()) {
         case "about.txt":
-          return about();
+          return aboutCommand([]);
         case "building.md":
-          return building();
+          return buildingCommand([]);
         case "stack":
         case "stack/":
-          return stack();
+          return stackCommand([]);
         case "ai.md":
-          return ai();
+          return aiCommand([]);
         case "share.md":
-          return share();
+          return shareCommand([]);
         case "contact.txt":
-          return contact();
+          return contactCommand([]);
         case "production.ts":
           return print("// it's crawling with bugs 🐛 — try `bugbash`");
         case "":
@@ -1093,7 +1107,7 @@
       var target = args[0] || "mainframe";
       var granted = '<span class="glitch cli__granted" data-text="ACCESS GRANTED">ACCESS GRANTED</span>';
       var payoff = "…just kidding. It's a static site — nothing to steal but good vibes 😄";
-      var hint = "(try `help`, or triple-click the avatar)";
+      var hint = "(try `help`, or `snake`)";
       if (reduced()) {
         print("> establishing uplink to " + target + "…", "cli__hack");
         print("> bypassing firewall… done", "cli__hack");
@@ -1167,24 +1181,17 @@
         line("  " + key("echo") + " · " + key("date") + " · " + key("history") + " · " + key("clear"));
         line('  <span class="dim">… and a few that are not listed. Tab completes, ↑/↓ walk the history.</span>');
       },
-      about: about,
-      whoami: about,
-      building: function (args) {
-        building();
-        if (args[0] === "--open") goTo("building");
-      },
-      project: building,
-      stack: function (args) {
-        stack(args[0]);
-      },
-      skills: function (args) {
-        stack(args[0]);
-      },
-      ai: ai,
-      share: share,
+      about: aboutCommand,
+      whoami: aboutCommand,
+      building: buildingCommand,
+      project: buildingCommand,
+      stack: stackCommand,
+      skills: stackCommand,
+      ai: aiCommand,
+      share: shareCommand,
       stats: stats,
-      contact: contact,
-      socials: contact,
+      contact: contactCommand,
+      socials: contactCommand,
       bugbash: bugbash,
       bugs: bugbash,
       play: bugbash,
